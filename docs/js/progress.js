@@ -7,7 +7,7 @@
       var stored = localStorage.getItem(STORAGE_KEY);
       if (stored) return JSON.parse(stored);
     } catch(e) {}
-    return 'all';  // 'all' or a specific level name
+    return 'all';
   }
 
   function saveState(state) {
@@ -15,24 +15,40 @@
   }
 
   function applyFilter(state) {
-    LEVELS.forEach(function(level) {
-      var sections = document.querySelectorAll('[data-level="' + level + '"]');
-      var show = (state === 'all' || state === level);
-      sections.forEach(function(el) {
+    // Find all h2 elements with data-level and wrap each section
+    // (h2 + everything until the next h2) in show/hide logic
+    var article = document.querySelector('article');
+    if (!article) return;
+
+    var children = Array.from(article.children);
+    var currentLevel = null;
+
+    children.forEach(function(el) {
+      // Check if this is a leveled h2
+      if (el.tagName === 'H2' && el.hasAttribute('data-level')) {
+        currentLevel = el.getAttribute('data-level');
+      } else if (el.tagName === 'H2') {
+        // An h2 without data-level resets — always show
+        currentLevel = null;
+      } else if (el.tagName === 'H1') {
+        currentLevel = null;
+      }
+
+      // Apply visibility
+      if (currentLevel) {
+        var show = (state === 'all' || state === currentLevel);
         el.style.display = show ? '' : 'none';
-      });
+      }
     });
   }
 
   function updateButtons(state) {
-    // Update "All" button
     var allBtn = document.querySelector('.level-filter-btn[data-level="all"]');
     if (allBtn) {
       if (state === 'all') allBtn.classList.add('active');
       else allBtn.classList.remove('active');
     }
 
-    // Update level buttons
     LEVELS.forEach(function(level) {
       var btn = document.querySelector('.level-filter-btn[data-level="' + level + '"]');
       if (btn) {
@@ -51,7 +67,6 @@
       btn.addEventListener('click', function() {
         var level = btn.getAttribute('data-level');
 
-        // If clicking the already-active filter, reset to "all"
         if (state === level) {
           state = 'all';
         } else {
