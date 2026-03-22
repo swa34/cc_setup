@@ -183,7 +183,7 @@
         <ul>
           <li><a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a> (or Docker Engine on Linux)</li>
           <li>VS Code with the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers" target="_blank">Dev Containers extension</a></li>
-          <li>An Anthropic API key (or Max subscription for Claude Code)</li>
+          <li>A Claude Pro/Max subscription (or an Anthropic API key if using the API directly)</li>
         </ul>
 
         <h3>4 steps to launch</h3>
@@ -192,8 +192,11 @@
           <li><strong>Copy the devcontainer config</strong> into your project. You need three files in a <code>.devcontainer/</code> directory: <code>devcontainer.json</code>, <code>Dockerfile</code>, and <code>init-firewall.sh</code>. Grab the reference implementation from <a href="https://github.com/anthropics/claude-code/tree/main/.devcontainer" target="_blank">github.com/anthropics/claude-code</a>.</li>
           <li><strong>Open in VS Code</strong> and press <kbd>Cmd+Shift+P</kbd> (or <kbd>Ctrl+Shift+P</kbd>) &rarr; <em>"Dev Containers: Reopen in Container"</em>.</li>
           <li><strong>Wait for the build</strong> — first time takes a few minutes as it installs Node.js, Claude Code, ZSH, and configures the firewall.</li>
-          <li><strong>Start Claude</strong> in the integrated terminal:
-            <pre><code class="language-bash"># Full autonomy mode — safe because you're inside the container
+          <li><strong>Log in and start Claude</strong> in the integrated terminal:
+            <pre><code class="language-bash"># Authenticate with your plan (first time only)
+claude login
+
+# Full autonomy mode — safe because you're inside the container
 claude --dangerously-skip-permissions</code></pre>
           </li>
         </ol>
@@ -364,7 +367,9 @@ for domain in \
 
         <p>Containers really shine in automated pipelines where there is no human to approve prompts. You can run Claude headlessly with the <code>-p</code> flag (print mode) to pipe a prompt and get the result:</p>
 
-        <pre><code class="language-bash"># Run a one-shot task in the container
+        <p>For interactive use, <code>claude login</code> persists your session in the container's config volume. For CI/CD where interactive login isn't possible, use an API key:</p>
+
+        <pre><code class="language-bash"># CI one-shot task — API key required (no interactive login in CI)
 docker run --rm \
   --cap-add=NET_ADMIN --cap-add=NET_RAW \
   -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
@@ -419,7 +424,7 @@ jobs:
         <h3>What it does NOT protect</h3>
         <ul>
           <li><strong>The workspace itself</strong> — Claude has full read/write to <code>/workspace</code> since that's the whole point. Review its changes before merging.</li>
-          <li><strong>Claude Code credentials</strong> — Your API key or session token is inside the container. A malicious repo could theoretically exfiltrate it to an allowed domain (like GitHub).</li>
+          <li><strong>Claude Code credentials</strong> — Your session token (from <code>claude login</code>) is inside the container. A malicious repo could theoretically exfiltrate it to an allowed domain (like GitHub).</li>
           <li><strong>Allowed domains</strong> — Traffic to whitelisted domains is not inspected. Data could be sent to <code>api.github.com</code> if that's in the allowlist.</li>
           <li><strong>Build-time attacks</strong> — If the Dockerfile itself is compromised or pulls malicious packages, the container starts in a bad state.</li>
         </ul>

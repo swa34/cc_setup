@@ -1356,9 +1356,12 @@ uv run ruff check . --fix \
                     <li>Install <a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a> and the VS Code <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers" target="_blank">Dev Containers extension</a></li>
                     <li>Copy the <code>.devcontainer/</code> directory (devcontainer.json, Dockerfile, init-firewall.sh) into your project — grab the reference implementation from <a href="https://github.com/anthropics/claude-code/tree/main/.devcontainer" target="_blank">github.com/anthropics/claude-code</a></li>
                     <li><kbd>Cmd+Shift+P</kbd> → "Dev Containers: Reopen in Container"</li>
-                    <li>Start Claude in the integrated terminal:</li>
+                    <li>Log in and start Claude in the integrated terminal:</li>
                 </ol>
-                <pre><code class="language-bash"># Full autonomy — safe because you're inside the container
+                <pre><code class="language-bash"># Authenticate with your plan (first time only)
+claude login
+
+# Full autonomy — safe because you're inside the container
 claude --dangerously-skip-permissions</code></pre>
 
                 <h3>What the container provides</h3>
@@ -1393,7 +1396,8 @@ for domain in \
 ; do</code></pre>
 
                 <h3>Headless mode for CI</h3>
-                <pre><code class="language-bash"># One-shot task in a container
+                <p>For interactive use, run <code>claude login</code> inside the container to authenticate with your plan. For CI/CD where interactive login isn't possible, use an API key:</p>
+                <pre><code class="language-bash"># CI one-shot task — API key required (no interactive login in CI)
 docker run --rm \
   --cap-add=NET_ADMIN --cap-add=NET_RAW \
   -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
