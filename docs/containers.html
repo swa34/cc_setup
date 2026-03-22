@@ -445,6 +445,103 @@ jobs:
           <li><strong>Use named volumes for persistence</strong> — The default config persists bash history and Claude settings between container restarts so you don't lose context.</li>
         </ol>
 
+        <!-- Graduating: The Trust Progression -->
+        <h2 id="trust-progression" data-level="intermediate">Graduating: Container → Sandbox → Normal <span class="level-badge intermediate">Intermediate</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/sandboxing" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Sandboxing Docs
+          </a>
+        </h2>
+
+        <p>Containers are the starting point, not the destination. As you build trust with Claude's behavior in your codebase, you can gradually reduce the overhead. Think of it as training wheels coming off:</p>
+
+        <!-- Trust progression flow -->
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-box primary">Container</div>
+            <div class="flow-label">Full isolation</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box secondary">Sandbox</div>
+            <div class="flow-label">OS-level guardrails</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box secondary">Normal</div>
+            <div class="flow-label">Permissions only</div>
+          </div>
+        </div>
+
+        <h3>Stage 1: Container (maximum isolation)</h3>
+        <p>Start here. Run Claude in a devcontainer with <code>--dangerously-skip-permissions</code>. Watch what it does. Review every diff. This is where you learn what Claude does with autonomy — which commands it runs, which files it touches, how it handles ambiguity.</p>
+        <p><strong>You're ready to move on when:</strong> You've run several sessions and Claude's actions are predictable. You trust the types of commands it runs. You're spending more time waiting for Docker than reviewing diffs.</p>
+
+        <h3>Stage 2: Sandbox (host machine, OS-level boundaries)</h3>
+        <p>Now you're on your actual machine, but with OS-level guardrails. The sandbox restricts which directories Claude can write to and which network domains it can reach — enforced by the kernel, not just Claude's permission system.</p>
+
+        <p>Enable it with <code>/sandbox</code> in a Claude session and choose <strong>auto-allow mode</strong> for the closest experience to container autonomy:</p>
+
+        <pre><code class="language-bash"># Inside a Claude Code session:
+/sandbox</code></pre>
+
+        <p>Configure boundaries in your project's <code>.claude/settings.json</code>:</p>
+
+        <pre><code class="language-json">{
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "allowWrite": [".", "/tmp/build"],
+      "denyRead": ["~/.ssh", "~/.aws", "~/.gnupg"]
+    }
+  }
+}</code></pre>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            What changes from container to sandbox
+          </div>
+          <p><strong>Gone:</strong> Docker overhead, container startup time, separate filesystem image.<br>
+          <strong>Kept:</strong> Filesystem write restrictions, network domain filtering, OS-level enforcement on all child processes.<br>
+          <strong>New:</strong> You need to explicitly define boundaries (the container did this implicitly via isolation). On Linux, install <code>bubblewrap</code> and <code>socat</code> first.</p>
+        </div>
+
+        <p><strong>You're ready to move on when:</strong> You've been running sandboxed for a while with no surprises. You know exactly which commands Claude needs to run and which paths it writes to. The sandbox violation prompts have stopped because your config covers the workflow.</p>
+
+        <h3>Stage 3: Normal (permissions only)</h3>
+        <p>At this point, you trust Claude with your codebase and the permission system is enough. You're in the driver's seat — Claude asks before shell commands and file edits, you approve or deny.</p>
+
+        <p>This doesn't mean zero safety. Set up allow/deny rules for your common workflows:</p>
+
+        <pre><code class="language-json">{
+  "permissions": {
+    "allow": [
+      "Bash(npm test *)",
+      "Bash(npm run build)",
+      "Bash(git diff *)",
+      "Bash(git log *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force *)",
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
+  }
+}</code></pre>
+
+        <p>You can also use <strong>acceptEdits</strong> mode to auto-approve file changes while still prompting for shell commands — a good middle ground for daily work:</p>
+
+        <pre><code class="language-bash">claude --permission-mode acceptEdits</code></pre>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            You can always go back
+          </div>
+          <p>These stages aren't permanent. Working on an unfamiliar repo? Spin up the container again. Doing a massive refactor? Turn on sandboxing for the session. The trust progression is about your <em>default</em> workflow, not a one-way door.</p>
+        </div>
+
         <!-- Troubleshooting -->
         <h2 id="troubleshooting" data-level="beginner">Troubleshooting <span class="level-badge beginner">Beginner</span></h2>
 

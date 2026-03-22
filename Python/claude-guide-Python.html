@@ -1414,6 +1414,55 @@ docker run --rm \
                     <li><strong>Pin the version</strong> — set <code>CLAUDE_CODE_VERSION</code> in devcontainer.json for CI stability</li>
                     <li><strong>Minimize the allowlist</strong> — every allowed domain is a potential exfiltration path</li>
                 </ol>
+
+                <h3>Graduating: Container → Sandbox → Normal</h3>
+
+                <p>Containers are the starting point, not the destination. As you build trust with Claude's behavior, gradually reduce the overhead:</p>
+
+                <table>
+                    <thead>
+                        <tr><th>Stage</th><th>What it means</th><th>Move on when...</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. Container</strong></td>
+                            <td>Full isolation, <code>--dangerously-skip-permissions</code>. Watch what Claude does, review every diff.</td>
+                            <td>Claude's actions are predictable. You trust the commands it runs.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Sandbox</strong></td>
+                            <td>On your host machine with OS-level guardrails. Enable with <code>/sandbox</code>. Filesystem + network boundaries enforced by the kernel.</td>
+                            <td>No more sandbox violation prompts. Your config covers the full workflow.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. Normal</strong></td>
+                            <td>Permissions only. Claude asks before commands, you approve. Use <code>acceptEdits</code> mode for a speed boost.</td>
+                            <td>This is your daily driver for trusted codebases.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>Set up sandbox mode on your host:</p>
+                <pre><code class="language-bash"># Inside a Claude Code session:
+/sandbox
+
+# Linux prerequisite:
+sudo apt-get install bubblewrap socat</code></pre>
+
+                <p>Configure boundaries in <code>.claude/settings.json</code>:</p>
+                <pre><code class="language-json">{
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "allowWrite": [".", "/tmp/build"],
+      "denyRead": ["~/.ssh", "~/.aws"]
+    }
+  }
+}</code></pre>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
+                    <p class="text-sm text-blue-800"><strong>These stages aren't permanent.</strong> Working on an unfamiliar repo? Spin up the container again. Doing a massive refactor? Turn on sandboxing for the session. The progression is about your <em>default</em> workflow, not a one-way door.</p>
+                </div>
             </article>
 
             <!-- Navigation Footer -->
