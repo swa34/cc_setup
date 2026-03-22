@@ -1093,6 +1093,112 @@ claude --add-dir ../other-repo  # Add another directory
 claude update                   # Update Claude Code</code></pre>
             </article>
 
+            <article id="containers" class="page-section hidden">
+                <h1>Containers & Isolation <a class="doc-link" href="https://code.claude.com/docs/en/devcontainer"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+
+                <p>A <strong>development container</strong> wraps Claude in an isolated environment with its own filesystem, network firewall, and user context. Because the container can't damage your host machine, you can safely run with <code>--dangerously-skip-permissions</code> and let Claude work uninterrupted.</p>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <p class="text-sm text-blue-800"><strong>Key idea:</strong> Permissions ask "can I do this?" before each action. Containers say "do whatever you want, but only within these walls."</p>
+                </div>
+
+                <h3>When to use a container</h3>
+                <ul>
+                    <li><strong>Autonomous multi-step tasks</strong> — large refactors, feature builds, test generation where approving each command is the bottleneck</li>
+                    <li><strong>Untrusted or experimental code</strong> — unfamiliar repos, generated code. The firewall prevents data exfiltration</li>
+                    <li><strong>CI/CD pipelines</strong> — headless mode with no human to approve prompts</li>
+                    <li><strong>Team onboarding / demos</strong> — consistent pre-configured environment without risking local machines</li>
+                    <li><strong>Secure client work</strong> — isolate one client's code from your other projects</li>
+                </ul>
+
+                <h3>Containers vs sandboxing</h3>
+                <table>
+                    <thead>
+                        <tr><th></th><th>Sandbox (<code>/sandbox</code>)</th><th>Devcontainer</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Isolates</strong></td>
+                            <td>Bash tool only — filesystem paths + network domains</td>
+                            <td>Entire environment — filesystem, network, processes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Setup</strong></td>
+                            <td>One command: <code>/sandbox</code></td>
+                            <td>Docker + devcontainer config</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Skip permissions?</strong></td>
+                            <td>No — still uses permission system</td>
+                            <td>Yes — safe to use <code>--dangerously-skip-permissions</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Best for</strong></td>
+                            <td>Day-to-day dev with fewer prompts</td>
+                            <td>Full autonomy, CI/CD, untrusted repos</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Getting started</h3>
+                <ol>
+                    <li>Install <a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a> and the VS Code <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers" target="_blank">Dev Containers extension</a></li>
+                    <li>Copy the <code>.devcontainer/</code> directory (devcontainer.json, Dockerfile, init-firewall.sh) into your project</li>
+                    <li><kbd>Cmd+Shift+P</kbd> → "Dev Containers: Reopen in Container"</li>
+                    <li>Start Claude in the integrated terminal:</li>
+                </ol>
+                <pre><code class="language-bash"># Full autonomy — safe because you're inside the container
+claude --dangerously-skip-permissions</code></pre>
+
+                <h3>What the container provides</h3>
+                <ul>
+                    <li><strong>Node.js 20</strong> with Claude Code pre-installed</li>
+                    <li><strong>ZSH</strong> with Powerlevel10k, fzf, git-delta</li>
+                    <li><strong>Network firewall</strong> — default-deny policy, only allows Anthropic API, GitHub, npm, VS Code marketplace</li>
+                    <li><strong>Session persistence</strong> — bash history and Claude config survive container restarts</li>
+                    <li><strong>Non-root user</strong> — runs as <code>node</code>, not root</li>
+                </ul>
+
+                <h3>React/Node customization</h3>
+                <p>For React projects, you may want to add extra domains to the firewall for package CDNs:</p>
+                <pre><code class="language-bash"># In init-firewall.sh, add to the domain loop:
+for domain in \
+    "registry.npmjs.org" \
+    "api.anthropic.com" \
+    "cdn.jsdelivr.net" \
+    "unpkg.com" \
+    "registry.yarnpkg.com" \
+    # ... existing domains ...
+; do</code></pre>
+
+                <h3>Headless mode for CI</h3>
+                <pre><code class="language-bash"># One-shot task in a container
+docker run --rm \
+  --cap-add=NET_ADMIN --cap-add=NET_RAW \
+  -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
+  -v "$(pwd):/workspace" \
+  your-claude-image \
+  claude -p "Run npm test and fix any failures" \
+  --dangerously-skip-permissions</code></pre>
+
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mt-6">
+                    <p class="text-sm text-amber-800"><strong>Warning:</strong> Even inside a container, <code>--dangerously-skip-permissions</code> is only safe with <strong>trusted repositories</strong>. A malicious project could exfiltrate anything accessible inside the container. Always review Claude's changes before merging — <code>git diff</code> is your friend.</p>
+                </div>
+
+                <h3>Best practices</h3>
+                <ol>
+                    <li><strong>Commit before launch</strong> — clean working tree so you can diff Claude's changes</li>
+                    <li><strong>Scope the task</strong> — "Fix the login bug in issue #42" beats "improve the codebase"</li>
+                    <li><strong>Use CLAUDE.md</strong> — the container inherits it from your workspace</li>
+                    <li><strong>Pin the version</strong> — set <code>CLAUDE_CODE_VERSION</code> in devcontainer.json for CI stability</li>
+                    <li><strong>Minimize the allowlist</strong> — every allowed domain is a potential exfiltration path</li>
+                </ol>
+            </article>
+
             <!-- Navigation Footer -->
             <div id="nav-footer" class="mt-16 pt-8 border-t border-gray-200 flex justify-between items-center hidden">
                 <button id="btn-prev"
@@ -1121,9 +1227,10 @@ claude update                   # Update Claude Code</code></pre>
                 { id: 'plugins', title: '7. Plugins' },
                 { id: 'mcp-servers', title: '8. MCP Servers' },
                 { id: 'settings', title: '9. Settings & Permissions' },
-                { id: 'deciding', title: '10. Deciding What to Use' },
-                { id: 'portable', title: '11. Portable Config' },
-                { id: 'commands', title: '12. Useful Commands' }
+                { id: 'containers', title: '10. Containers & Isolation' },
+                { id: 'deciding', title: '11. Deciding What to Use' },
+                { id: 'portable', title: '12. Portable Config' },
+                { id: 'commands', title: '13. Useful Commands' }
             ];
 
             let currentIndex = 0;

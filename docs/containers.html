@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Containers &amp; Isolation — Claude Code Onboarding</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/prism-override.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mobile-toggle" aria-label="Toggle navigation">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Claude Code Onboarding
+      </div>
+      <div class="sidebar-subtitle">Developer Guide</div>
+      <a href="../index.html" class="sidebar-back">&larr; All guides</a>
+    </div>
+    <nav id="sidebar-nav"><!-- Built by nav.js --></nav>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+    <header class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">
+          <a href="index.html">Docs</a>
+          <span class="sep">/</span>
+          Containers &amp; Isolation
+        </div>
+      </div>
+      <div class="page-header-right">
+        <div class="level-filters">
+          <span class="level-filter-label">Show:</span>
+          <button class="level-filter-btn active" data-level="all">All</button>
+          <button class="level-filter-btn" data-level="beginner">Beginner</button>
+          <button class="level-filter-btn" data-level="intermediate">Intermediate</button>
+          <button class="level-filter-btn" data-level="advanced">Advanced</button>
+        </div>
+        <div class="search-container">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search docs..." autocomplete="off">
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-container">
+      <article>
+
+        <h1>Containers &amp; Isolation</h1>
+        <p class="page-description">Run Claude Code inside a development container for full autonomy with hard security boundaries. Containers are the safest way to let the agent loose on real work without babysitting every permission prompt.</p>
+
+        <!-- Why Containers -->
+        <h2 id="why-containers" data-level="beginner">Why Run Claude in a Container <span class="level-badge beginner">Beginner</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/devcontainer" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <p>Claude Code is an agentic tool — it reads files, writes code, runs commands, and iterates. Normally you approve each action through the permission system. But for many workflows, that interruption is the bottleneck. You want Claude to just <em>go</em>.</p>
+
+        <p>A <strong>development container</strong> (devcontainer) gives you that. It wraps Claude in an isolated environment with its own filesystem, network firewall, and user context. Because the container can't damage your host machine, you can safely run with <code>--dangerously-skip-permissions</code> and let Claude work uninterrupted.</p>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Key Concept
+          </div>
+          <p>Think of it this way: <strong>permissions</strong> ask "can I do this?" before each action. <strong>Containers</strong> say "do whatever you want, but only within these walls." Containers trade per-action approval for upfront boundary definition.</p>
+        </div>
+
+        <!-- When to Use -->
+        <h2 id="when-to-use" data-level="beginner">When to Use a Container <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>Not every task needs a container. Here's a decision framework:</p>
+
+        <div class="decision-tree" data-tree='{
+          "question": "Should you run Claude in a container?",
+          "options": [
+            {"label": "Quick edits, Q&A, code review", "desc": "Short tasks where you stay in the loop", "result": "<strong>No container needed.</strong> Default permissions are fine. You are watching and approving anyway."},
+            {"label": "Autonomous multi-step tasks", "desc": "Large refactors, feature builds, test suites", "result": "<strong>Use a container.</strong> Claude will need to run many commands. Approving each one slows everything down and invites approval fatigue."},
+            {"label": "Untrusted or experimental code", "desc": "Unfamiliar repos, generated code, CI pipelines", "result": "<strong>Definitely use a container.</strong> The firewall prevents data exfiltration. The filesystem boundary limits blast radius."},
+            {"label": "Team onboarding or demos", "desc": "New developers, workshops, evaluations", "result": "<strong>Use a container.</strong> Provides a consistent, pre-configured environment without risking anyone&apos;s local machine."}
+          ]
+        }'></div>
+
+        <h3>The sweet spot</h3>
+
+        <p>Containers shine when you want to <strong>fire and forget</strong> — give Claude a well-scoped task and come back to review the result. Common examples:</p>
+
+        <ul>
+          <li><strong>Large refactors</strong> — "Migrate all class components to hooks" across 50+ files</li>
+          <li><strong>Feature implementation</strong> — "Build the user settings page with tests" from a spec</li>
+          <li><strong>Test generation</strong> — "Add unit tests for every exported function in src/utils/"</li>
+          <li><strong>Bug investigation</strong> — "Find and fix the memory leak in the WebSocket handler"</li>
+          <li><strong>CI/CD pipelines</strong> — Running Claude in headless mode as part of automated workflows</li>
+          <li><strong>Security-sensitive client work</strong> — Isolating one client's code from your other projects</li>
+        </ul>
+
+        <!-- Containers vs Sandboxing -->
+        <h2 id="containers-vs-sandboxing" data-level="intermediate">Containers vs Sandboxing <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Claude Code offers two isolation mechanisms. They solve different problems and can be combined.</p>
+
+        <table>
+          <thead>
+            <tr><th></th><th>Sandbox (<code>/sandbox</code>)</th><th>Devcontainer</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>What it isolates</strong></td>
+              <td>The Bash tool only — filesystem paths + network domains</td>
+              <td>The entire environment — filesystem, network, processes, users</td>
+            </tr>
+            <tr>
+              <td><strong>Enforcement</strong></td>
+              <td>OS-level (Seatbelt on macOS, bubblewrap on Linux)</td>
+              <td>Container-level (Docker/OCI isolation + iptables firewall)</td>
+            </tr>
+            <tr>
+              <td><strong>Setup effort</strong></td>
+              <td>One command: <code>/sandbox</code></td>
+              <td>Requires Docker + devcontainer config</td>
+            </tr>
+            <tr>
+              <td><strong>Permission bypass</strong></td>
+              <td>No — still uses Claude's permission system</td>
+              <td>Yes — safe to use <code>--dangerously-skip-permissions</code></td>
+            </tr>
+            <tr>
+              <td><strong>Best for</strong></td>
+              <td>Day-to-day development with reduced prompts</td>
+              <td>Full autonomy, CI/CD, untrusted repos, team onboarding</td>
+            </tr>
+            <tr>
+              <td><strong>Can combine?</strong></td>
+              <td colspan="2">Yes — you can enable sandboxing inside a container for defense in depth</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Rule of Thumb
+          </div>
+          <p><strong>Sandbox</strong> = guardrails for your daily driver. <strong>Container</strong> = a whole separate car. Use sandbox when you're in the driver's seat. Use a container when you want Claude to drive.</p>
+        </div>
+
+        <!-- Getting Started -->
+        <h2 id="getting-started" data-level="beginner">Getting Started <span class="level-badge beginner">Beginner</span></h2>
+
+        <h3>Prerequisites</h3>
+        <ul>
+          <li><a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a> (or Docker Engine on Linux)</li>
+          <li>VS Code with the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers" target="_blank">Dev Containers extension</a></li>
+          <li>An Anthropic API key (or Max subscription for Claude Code)</li>
+        </ul>
+
+        <h3>4 steps to launch</h3>
+
+        <ol>
+          <li><strong>Copy the devcontainer config</strong> into your project. You need three files in a <code>.devcontainer/</code> directory: <code>devcontainer.json</code>, <code>Dockerfile</code>, and <code>init-firewall.sh</code>.</li>
+          <li><strong>Open in VS Code</strong> and press <kbd>Cmd+Shift+P</kbd> (or <kbd>Ctrl+Shift+P</kbd>) &rarr; <em>"Dev Containers: Reopen in Container"</em>.</li>
+          <li><strong>Wait for the build</strong> — first time takes a few minutes as it installs Node.js, Claude Code, ZSH, and configures the firewall.</li>
+          <li><strong>Start Claude</strong> in the integrated terminal:
+            <pre><code class="language-bash"># Full autonomy mode — safe because you're inside the container
+claude --dangerously-skip-permissions</code></pre>
+          </li>
+        </ol>
+
+        <div class="callout warning">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Warning
+          </div>
+          <p>Even inside a container, <code>--dangerously-skip-permissions</code> is only safe with <strong>trusted repositories</strong>. A malicious project could still exfiltrate anything accessible inside the container, including Claude Code credentials. Don't open untrusted repos and skip permissions at the same time without reviewing the code first.</p>
+        </div>
+
+        <!-- Configuration Breakdown -->
+        <h2 id="configuration" data-level="intermediate">Configuration Breakdown <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>The devcontainer setup has three files, each handling a different layer of the environment:</p>
+
+        <h3>devcontainer.json — Container settings</h3>
+
+        <p>This is the control plane. It tells VS Code how to build, mount, and configure the container.</p>
+
+        <pre><code class="language-json">{
+  "name": "Claude Code Sandbox",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "TZ": "${localEnv:TZ:America/Los_Angeles}",
+      "CLAUDE_CODE_VERSION": "latest"
+    }
+  },
+  "runArgs": [
+    "--cap-add=NET_ADMIN",
+    "--cap-add=NET_RAW"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens"
+      ]
+    }
+  },
+  "remoteUser": "node",
+  "mounts": [
+    "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
+    "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume"
+  ],
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
+  "workspaceFolder": "/workspace",
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
+  "waitFor": "postStartCommand"
+}</code></pre>
+
+        <p>Key points:</p>
+        <ul>
+          <li><code>NET_ADMIN</code> and <code>NET_RAW</code> capabilities are required for the firewall (iptables)</li>
+          <li>Named volumes persist bash history and Claude config between container restarts</li>
+          <li>Your workspace is bind-mounted at <code>/workspace</code> — changes are reflected on the host</li>
+          <li>The firewall script runs on every container start via <code>postStartCommand</code></li>
+        </ul>
+
+        <h3>Dockerfile — The image</h3>
+
+        <p>Built on Node.js 20 with development tools pre-installed:</p>
+
+        <pre><code class="language-bash"># What's included:
+# - Node.js 20 (base image)
+# - Claude Code (npm global install)
+# - Git, GitHub CLI (gh), fzf, jq
+# - ZSH with Powerlevel10k theme
+# - git-delta for better diffs
+# - iptables/ipset for the firewall
+# - nano, vim as editors</code></pre>
+
+        <p>Claude Code is installed globally as a non-root <code>node</code> user. You can pin a specific version by changing the <code>CLAUDE_CODE_VERSION</code> build arg.</p>
+
+        <h3>init-firewall.sh — Network security</h3>
+
+        <p>This is what makes the container safe for autonomous operation. The firewall implements a <strong>default-deny policy</strong>:</p>
+
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">Allowed Outbound</div>
+            <div class="card-body">
+              <ul>
+                <li>Anthropic API (<code>api.anthropic.com</code>)</li>
+                <li>GitHub (web, API, git — via dynamic IP resolution)</li>
+                <li>npm registry (<code>registry.npmjs.org</code>)</li>
+                <li>VS Code marketplace &amp; updates</li>
+                <li>DNS and SSH</li>
+                <li>Host network (for Docker communication)</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Blocked</div>
+            <div class="card-body">
+              <ul>
+                <li>Everything else — default DROP policy</li>
+                <li>Blocked requests get immediate REJECT (no silent timeout)</li>
+                <li>Verified at startup: must fail to reach <code>example.com</code> and succeed reaching <code>api.github.com</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            How it works
+          </div>
+          <p>The script uses <strong>ipset</strong> with iptables for efficient IP matching. GitHub IPs are fetched dynamically from <code>api.github.com/meta</code> and aggregated into CIDR blocks. Other domains are resolved via DNS at startup. This means the firewall adapts to infrastructure changes without manual IP management.</p>
+        </div>
+
+        <!-- Customization -->
+        <h2 id="customization" data-level="intermediate">Customizing Your Container <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <h3>Adding allowed domains</h3>
+
+        <p>If your workflow needs access to additional services (PyPI, Docker Hub, your company API, etc.), add them to the domain list in <code>init-firewall.sh</code>:</p>
+
+        <pre><code class="language-bash"># In init-firewall.sh, add domains to the loop:
+for domain in \
+    "registry.npmjs.org" \
+    "api.anthropic.com" \
+    "pypi.org" \
+    "files.pythonhosted.org" \
+    "your-company-api.example.com" \
+    # ... existing domains ...
+; do</code></pre>
+
+        <h3>Adding VS Code extensions</h3>
+
+        <p>Add extension IDs to the <code>customizations.vscode.extensions</code> array in <code>devcontainer.json</code>:</p>
+
+        <pre><code class="language-json">"extensions": [
+  "anthropic.claude-code",
+  "ms-python.python",
+  "ms-python.vscode-pylance",
+  "bradlc.vscode-tailwindcss"
+]</code></pre>
+
+        <h3>Adding system packages</h3>
+
+        <p>Add to the <code>apt-get install</code> line in the Dockerfile:</p>
+
+        <pre><code class="language-bash">RUN apt-get update && apt-get install -y --no-install-recommends \
+  # ... existing packages ...
+  python3 \
+  python3-pip \
+  postgresql-client \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*</code></pre>
+
+        <h3>Pinning Claude Code version</h3>
+
+        <pre><code class="language-json">{
+  "build": {
+    "args": {
+      "CLAUDE_CODE_VERSION": "1.0.42"
+    }
+  }
+}</code></pre>
+
+        <!-- Headless / CI Mode -->
+        <h2 id="headless-mode" data-level="advanced">Headless &amp; CI/CD Mode <span class="level-badge advanced">Advanced</span></h2>
+
+        <p>Containers really shine in automated pipelines where there is no human to approve prompts. You can run Claude headlessly with the <code>-p</code> flag (print mode) to pipe a prompt and get the result:</p>
+
+        <pre><code class="language-bash"># Run a one-shot task in the container
+docker run --rm \
+  --cap-add=NET_ADMIN --cap-add=NET_RAW \
+  -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
+  -v "$(pwd):/workspace" \
+  your-claude-image \
+  claude -p "Review the code in /workspace/src and report any security issues" \
+  --dangerously-skip-permissions</code></pre>
+
+        <p>For GitHub Actions, you can use the devcontainer as a custom runner environment:</p>
+
+        <pre><code class="language-yaml"># .github/workflows/claude-review.yml
+name: Claude Code Review
+on: [pull_request]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    container:
+      image: your-org/claude-code-sandbox:latest
+      options: --cap-add=NET_ADMIN --cap-add=NET_RAW
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Claude review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          sudo /usr/local/bin/init-firewall.sh
+          claude -p "Review the changes in this PR for bugs and security issues" \
+            --dangerously-skip-permissions</code></pre>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Tip
+          </div>
+          <p>In CI pipelines, always use a pinned Claude Code version instead of <code>latest</code> to avoid unexpected behavior changes between runs.</p>
+        </div>
+
+        <!-- Security Considerations -->
+        <h2 id="security-considerations" data-level="intermediate">Security Considerations <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>The container provides strong isolation, but it is not a security silver bullet. Understand the boundaries:</p>
+
+        <h3>What the container protects</h3>
+        <ul>
+          <li><strong>Host filesystem</strong> — Claude can only access the bind-mounted workspace, not your home directory or system files</li>
+          <li><strong>Network exfiltration</strong> — The firewall blocks connections to any domain not explicitly whitelisted</li>
+          <li><strong>System damage</strong> — Claude runs as a non-root user (<code>node</code>) inside the container with no access to the host's Docker socket, SSH keys, or system config</li>
+          <li><strong>Other projects</strong> — Each container is isolated; client A's code can't be accessed from client B's container</li>
+        </ul>
+
+        <h3>What it does NOT protect</h3>
+        <ul>
+          <li><strong>The workspace itself</strong> — Claude has full read/write to <code>/workspace</code> since that's the whole point. Review its changes before merging.</li>
+          <li><strong>Claude Code credentials</strong> — Your API key or session token is inside the container. A malicious repo could theoretically exfiltrate it to an allowed domain (like GitHub).</li>
+          <li><strong>Allowed domains</strong> — Traffic to whitelisted domains is not inspected. Data could be sent to <code>api.github.com</code> if that's in the allowlist.</li>
+          <li><strong>Build-time attacks</strong> — If the Dockerfile itself is compromised or pulls malicious packages, the container starts in a bad state.</li>
+        </ul>
+
+        <div class="callout warning">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Bottom Line
+          </div>
+          <p>Containers make autonomous mode <em>dramatically</em> safer, but they don't make it risk-free. Use <code>--dangerously-skip-permissions</code> with <strong>trusted repositories only</strong>. Always review Claude's output — git diff is your friend.</p>
+        </div>
+
+        <!-- Best Practices -->
+        <h2 id="best-practices" data-level="intermediate">Best Practices <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <ol>
+          <li><strong>Commit before you launch</strong> — Make sure your working tree is clean so you can easily diff Claude's changes against a known baseline.</li>
+          <li><strong>Scope the task clearly</strong> — Autonomous Claude works best with well-defined prompts. "Fix the login bug described in issue #42" beats "improve the codebase."</li>
+          <li><strong>Use CLAUDE.md</strong> — Your container inherits CLAUDE.md from the workspace. Use it to set coding standards, test commands, and guardrails that Claude should follow.</li>
+          <li><strong>Pin the version</strong> — In CI/CD, pin <code>CLAUDE_CODE_VERSION</code> to avoid surprises.</li>
+          <li><strong>Minimize the domain allowlist</strong> — Only add domains you actually need. Every allowed domain is a potential exfiltration path.</li>
+          <li><strong>Review before merge</strong> — Autonomous doesn't mean unreviewed. Treat Claude's commits like any other PR — read the diff, run the tests, check for security issues.</li>
+          <li><strong>Use named volumes for persistence</strong> — The default config persists bash history and Claude settings between container restarts so you don't lose context.</li>
+        </ol>
+
+        <!-- Troubleshooting -->
+        <h2 id="troubleshooting" data-level="beginner">Troubleshooting <span class="level-badge beginner">Beginner</span></h2>
+
+        <h3>Firewall fails to initialize</h3>
+        <p>The container needs <code>NET_ADMIN</code> and <code>NET_RAW</code> capabilities. Make sure your <code>runArgs</code> include both:</p>
+        <pre><code class="language-json">"runArgs": ["--cap-add=NET_ADMIN", "--cap-add=NET_RAW"]</code></pre>
+        <p>On Docker Desktop, ensure "Use kernel networking" is enabled if available in your version.</p>
+
+        <h3>Claude can't reach the API</h3>
+        <p>Check that <code>api.anthropic.com</code> is in the firewall's domain list. Run <code>curl -v https://api.anthropic.com</code> inside the container to debug. If DNS resolution changed, restart the container to re-resolve IPs.</p>
+
+        <h3>npm install fails</h3>
+        <p>Ensure <code>registry.npmjs.org</code> is whitelisted. Some packages fetch from CDNs — you may need to add domains like <code>cdn.jsdelivr.net</code> to the allowlist.</p>
+
+        <h3>Git push/pull fails</h3>
+        <p>GitHub IPs are fetched dynamically at container start. If the GitHub API was unreachable during startup, the firewall won't have the right IPs. Restart the container with internet access available.</p>
+
+        <h3>Container is slow</h3>
+        <p>On macOS with Docker Desktop, bind mounts can be slow for large <code>node_modules</code>. The <code>consistency=delegated</code> flag in <code>workspaceMount</code> helps. For very large projects, consider using a named volume for <code>node_modules</code>.</p>
+
+      </article>
+
+      <nav id="page-nav-footer" class="page-nav-footer"><!-- Built by nav.js --></nav>
+
+      <footer class="site-footer">
+        Built for developers using <a href="https://code.claude.com" target="_blank">Claude Code</a> &mdash;
+        <a href="https://code.claude.com/docs" target="_blank">Official Docs</a>
+      </footer>
+    </div>
+  </main>
+
+  <script defer src="js/nav.js"></script>
+  <script defer src="js/tabs.js"></script>
+  <script defer src="js/collapsible.js"></script>
+  <script defer src="js/terminal.js"></script>
+  <script defer src="js/decision-tree.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/progress.js"></script>
+</body>
+</html>

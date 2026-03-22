@@ -8,6 +8,7 @@
     { id: 'hooks-skills', file: 'hooks-skills.html', title: 'Hooks, Skills & Plugins', icon: '&#x1F527;' },
     { id: 'legacy-codebases', file: 'legacy-codebases.html', title: 'Legacy Codebases', icon: '&#x1F3DB;' },
     { id: 'security', file: 'security.html', title: 'Security & Permissions', icon: '&#x1F512;' },
+    { id: 'containers', file: 'containers.html', title: 'Containers & Isolation', icon: '&#x1F4E6;' },
     { id: 'team-workflows', file: 'team-workflows.html', title: 'Team Workflows & CI/CD', icon: '&#x1F465;' },
     { id: 'cost-optimization', file: 'cost-optimization.html', title: 'Cost Optimization', icon: '&#x1F4B0;' }
   ];
