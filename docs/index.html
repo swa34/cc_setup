@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Getting Started — Claude Code Onboarding</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/prism-override.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mobile-toggle" aria-label="Toggle navigation">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Claude Code Onboarding
+      </div>
+      <div class="sidebar-subtitle">Developer Guide</div>
+      <a href="../index.html" class="sidebar-back">&larr; All guides</a>
+    </div>
+    <nav id="sidebar-nav"><!-- Built by nav.js --></nav>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+    <header class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">
+          <a href="index.html">Docs</a>
+          <span class="sep">/</span>
+          Getting Started
+        </div>
+      </div>
+      <div class="page-header-right">
+        <div class="level-filters">
+          <button class="level-filter-btn active" data-level="beginner">Beginner</button>
+          <button class="level-filter-btn active" data-level="intermediate">Intermediate</button>
+          <button class="level-filter-btn active" data-level="advanced">Advanced</button>
+        </div>
+        <div class="search-container">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search docs..." autocomplete="off">
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-container">
+      <article>
+
+        <h1>Getting Started with Claude Code</h1>
+        <p class="page-description">Everything you need to go from zero to productive with Claude Code — Anthropic's agentic coding assistant that lives in your terminal.</p>
+
+        <!-- What is Claude Code -->
+        <h2 id="what-is-claude-code" data-level="beginner">What is Claude Code <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>Claude Code is a <strong>command-line tool</strong> that brings Claude directly into your terminal. Unlike chat-based AI assistants, Claude Code is <em>agentic</em> — it can read files, write code, run commands, search the web, and iterate on its own work.</p>
+
+        <p>Think of it as a senior engineer pair-programming with you, except it can also grep your entire codebase, run your tests, and fix what it broke — all in one conversation.</p>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Key Concept
+          </div>
+          <p>Claude Code uses an <strong>agentic loop</strong>: it receives your prompt, decides which tools to use, takes action, observes the result, and repeats until the task is done. You approve each step (or configure it to run autonomously).</p>
+        </div>
+
+        <!-- Agentic Loop Visual -->
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-box primary">Your Prompt</div>
+            <div class="flow-label">You ask</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box secondary">Tool Selection</div>
+            <div class="flow-label">Claude decides</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box secondary">Execute</div>
+            <div class="flow-label">Read, write, run</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box secondary">Observe</div>
+            <div class="flow-label">Check result</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box primary">Response</div>
+            <div class="flow-label">Or loop again</div>
+          </div>
+        </div>
+
+        <!-- Installation -->
+        <h2 id="installation" data-level="beginner">Installation <span class="level-badge beginner">Beginner</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/quickstart" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <div class="tab-group">
+          <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="linux">Linux / macOS</button>
+            <button class="tab-btn" data-tab="windows">Windows</button>
+            <button class="tab-btn" data-tab="npm">npm</button>
+          </div>
+          <div class="tab-panel active" data-tab="linux">
+            <pre><code class="language-bash"># One-line install (recommended)
+curl -fsSL https://claude.ai/install.sh | sh
+
+# Or via Homebrew
+brew install --cask claude-code</code></pre>
+          </div>
+          <div class="tab-panel" data-tab="windows">
+            <pre><code class="language-bash"># PowerShell install
+irm https://claude.ai/install.ps1 | iex
+
+# Or via WinGet
+winget install Anthropic.ClaudeCode</code></pre>
+          </div>
+          <div class="tab-panel" data-tab="npm">
+            <pre><code class="language-bash"># Global npm install (any platform)
+npm install -g @anthropic-ai/claude-code</code></pre>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Tip
+          </div>
+          <p>Claude Code also integrates with <strong>VS Code</strong>, <strong>JetBrains IDEs</strong>, and has a <strong>Desktop app</strong>. The CLI is the foundation — IDE integrations wrap it with additional UI.</p>
+        </div>
+
+        <!-- First Run -->
+        <h2 id="first-run" data-level="beginner">First Run & Authentication <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>Navigate to any project directory and run <code>claude</code>:</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">$</span> <span class="command">cd ~/my-project</span>
+<span class="prompt">$</span> <span class="command">claude</span>
+<span class="output">Welcome to Claude Code v1.x</span>
+<span class="output">Authenticate at: https://claude.ai/login?...</span>
+<span class="success">✓ Authenticated successfully</span>
+
+<span class="prompt">$</span> <span class="command">claude /init</span>
+<span class="output">Analyzing your project...</span>
+<span class="success">✓ Generated CLAUDE.md with project context</span>
+          </div>
+        </div>
+
+        <p>On first run, Claude Code opens a browser window for authentication. After that, run <code>/init</code> to auto-generate a <code>CLAUDE.md</code> file — this gives Claude context about your project's tech stack, build commands, and conventions.</p>
+
+        <!-- Essential Commands -->
+        <h2 id="essential-commands" data-level="beginner">Essential Commands <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>These are the commands you'll use daily:</p>
+
+        <table>
+          <thead>
+            <tr><th>Command</th><th>What it does</th><th>When to use it</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/help</code></td><td>Show all available commands</td><td>When you're lost</td></tr>
+            <tr><td><code>/init</code></td><td>Auto-generate CLAUDE.md</td><td>First time in a new project</td></tr>
+            <tr><td><code>/cost</code></td><td>Show token usage and cost</td><td>Check spending</td></tr>
+            <tr><td><code>/clear</code></td><td>Reset conversation context</td><td>Starting a new task</td></tr>
+            <tr><td><code>/compact</code></td><td>Summarize conversation</td><td>Running low on context</td></tr>
+            <tr><td><code>/model</code></td><td>Switch Claude model</td><td>Trade speed vs capability</td></tr>
+            <tr><td><code>/review</code></td><td>Code review current changes</td><td>Before committing</td></tr>
+            <tr><td><code>Shift+Tab</code></td><td>Toggle Plan Mode</td><td>Explore before changing code</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Pro Tip
+          </div>
+          <p>Use <code>/btw</code> for quick side questions — the answer appears in an overlay and <strong>doesn't consume context tokens</strong> in your main conversation.</p>
+        </div>
+
+        <!-- The Agentic Loop -->
+        <h2 id="the-agentic-loop" data-level="beginner">Understanding the Agentic Loop <span class="level-badge beginner">Beginner</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/how-claude-code-works" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <p>Unlike traditional chat AI, Claude Code has <strong>tools</strong> it can use autonomously. When you give it a task, it:</p>
+
+        <ol>
+          <li><strong>Gathers context</strong> — reads files, searches code, checks git history</li>
+          <li><strong>Takes action</strong> — edits files, runs commands, creates tests</li>
+          <li><strong>Verifies results</strong> — runs tests, checks for errors, reviews its own output</li>
+          <li><strong>Iterates</strong> — if something fails, it tries again with a different approach</li>
+        </ol>
+
+        <p>You control how much autonomy Claude has through <strong>permission modes</strong>:</p>
+
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">Default Mode</div>
+            <div class="card-body">Claude asks permission before each write or command. Safest for learning and sensitive repos.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Accept Edits</div>
+            <div class="card-body">Auto-approves file edits but still asks before running shell commands.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Don't Ask</div>
+            <div class="card-body">Full autonomy within allowed tools. Best for trusted, sandboxed environments.</div>
+          </div>
+        </div>
+
+        <collapsible>
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <span class="collapsible-title">Built-in tool categories</span>
+            <svg class="collapsible-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="collapsible-body">
+            <div class="collapsible-content">
+              <table>
+                <thead>
+                  <tr><th>Category</th><th>Tools</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>File Operations</strong></td><td>Read, Write, Edit, Glob (find files)</td></tr>
+                  <tr><td><strong>Search</strong></td><td>Grep (content search), Glob (file patterns)</td></tr>
+                  <tr><td><strong>Execution</strong></td><td>Bash (shell commands), Notebook editing</td></tr>
+                  <tr><td><strong>Web Access</strong></td><td>WebFetch, WebSearch</td></tr>
+                  <tr><td><strong>Coordination</strong></td><td>Agent (subagents), Task management</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigate this guide -->
+        <h2 id="whats-next" data-level="beginner">What's Next <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>This guide is organized from fundamentals to advanced topics. Pick what's relevant to you:</p>
+
+        <div class="guide-cards">
+          <a href="core-workflows.html" class="guide-card">
+            <div class="guide-card-number">Chapter 2</div>
+            <div class="guide-card-title">Core Workflows</div>
+            <div class="guide-card-desc">Code review, committing, debugging, and exploring unfamiliar code.</div>
+          </a>
+          <a href="claude-md.html" class="guide-card">
+            <div class="guide-card-number">Chapter 3</div>
+            <div class="guide-card-title">CLAUDE.md Best Practices</div>
+            <div class="guide-card-desc">Configure project context so Claude understands your codebase.</div>
+          </a>
+          <a href="token-management.html" class="guide-card">
+            <div class="guide-card-number">Chapter 4</div>
+            <div class="guide-card-title">Token Management</div>
+            <div class="guide-card-desc">Context optimization, model selection, and cost awareness.</div>
+          </a>
+          <a href="memory-system.html" class="guide-card">
+            <div class="guide-card-number">Chapter 5</div>
+            <div class="guide-card-title">Memory System</div>
+            <div class="guide-card-desc">Persistent knowledge that carries across sessions.</div>
+          </a>
+          <a href="hooks-skills.html" class="guide-card">
+            <div class="guide-card-number">Chapter 6</div>
+            <div class="guide-card-title">Hooks, Skills & Plugins</div>
+            <div class="guide-card-desc">Extend Claude with automation, custom commands, and external tools.</div>
+          </a>
+          <a href="legacy-codebases.html" class="guide-card">
+            <div class="guide-card-number">Chapter 7</div>
+            <div class="guide-card-title">Legacy Codebases</div>
+            <div class="guide-card-desc">Strategies for navigating and modernizing large, unfamiliar repos.</div>
+          </a>
+          <a href="security.html" class="guide-card">
+            <div class="guide-card-number">Chapter 8</div>
+            <div class="guide-card-title">Security & Permissions</div>
+            <div class="guide-card-desc">API keys, sandboxing, and protecting sensitive files.</div>
+          </a>
+          <a href="team-workflows.html" class="guide-card">
+            <div class="guide-card-number">Chapter 9</div>
+            <div class="guide-card-title">Team Workflows & CI/CD</div>
+            <div class="guide-card-desc">Shared config, automated pipelines, and collaboration patterns.</div>
+          </a>
+          <a href="cost-optimization.html" class="guide-card">
+            <div class="guide-card-number">Chapter 10</div>
+            <div class="guide-card-title">Cost Optimization</div>
+            <div class="guide-card-desc">Token budgeting, model selection, and team spend management.</div>
+          </a>
+        </div>
+
+      </article>
+
+      <nav id="page-nav-footer" class="page-nav-footer"><!-- Built by nav.js --></nav>
+
+      <footer class="site-footer">
+        Built for developers using <a href="https://code.claude.com" target="_blank">Claude Code</a> &mdash;
+        <a href="https://code.claude.com/docs" target="_blank">Official Docs</a>
+      </footer>
+    </div>
+  </main>
+
+  <script defer src="js/nav.js"></script>
+  <script defer src="js/tabs.js"></script>
+  <script defer src="js/collapsible.js"></script>
+  <script defer src="js/terminal.js"></script>
+  <script defer src="js/decision-tree.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/progress.js"></script>
+</body>
+</html>

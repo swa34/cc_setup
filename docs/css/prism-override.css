@@ -1,0 +1,21 @@
+/* Light mode Prism overrides */
+[data-theme="light"] code[class*="language-"],
+[data-theme="light"] pre[class*="language-"] {
+  background: #1e1e2e;
+}
+
+/* Shared overrides */
+pre[class*="language-"] {
+  border-radius: 8px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+code[class*="language-"] {
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+}
+
+/* Ensure code blocks don't get theme text color */
+pre[class*="language-"] code {
+  color: #d4d4d4;
+}

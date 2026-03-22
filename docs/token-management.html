@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Token Management — Claude Code Onboarding</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/prism-override.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mobile-toggle" aria-label="Toggle navigation">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Claude Code Onboarding
+      </div>
+      <div class="sidebar-subtitle">Developer Guide</div>
+      <a href="../index.html" class="sidebar-back">&larr; All guides</a>
+    </div>
+    <nav id="sidebar-nav"><!-- Built by nav.js --></nav>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+    <header class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">
+          <a href="index.html">Docs</a>
+          <span class="sep">/</span>
+          Token Management
+        </div>
+      </div>
+      <div class="page-header-right">
+        <div class="level-filters">
+          <button class="level-filter-btn active" data-level="beginner">Beginner</button>
+          <button class="level-filter-btn active" data-level="intermediate">Intermediate</button>
+          <button class="level-filter-btn active" data-level="advanced">Advanced</button>
+        </div>
+        <div class="search-container">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search docs..." autocomplete="off">
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-container">
+      <article>
+
+        <h1>Token Management</h1>
+        <p class="page-description">Context is the most important resource to manage in Claude Code. Learn how to track usage, reclaim context, choose the right model, and keep costs predictable.</p>
+
+        <!-- Why Context Matters -->
+        <h2 id="why-context-matters" data-level="intermediate">Why Context Matters <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Claude's context window holds your entire conversation: every message you send, every file Claude reads, every command output, your CLAUDE.md, loaded skills, and system instructions. It fills up fast. A single debugging session can consume tens of thousands of tokens.</p>
+
+        <p>This matters because <strong>LLM performance degrades as context fills</strong>. When the window is nearly full, Claude may start "forgetting" earlier instructions or making more mistakes. Managing context isn't just about cost &mdash; it directly affects the quality of Claude's work.</p>
+
+        <!-- Context filling diagram -->
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-box primary">Fresh Session</div>
+            <div class="flow-label">Context: ~5%</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box secondary">Read Files</div>
+            <div class="flow-label">Context: ~25%</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box secondary">Debug Loop</div>
+            <div class="flow-label">Context: ~60%</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box secondary">More Changes</div>
+            <div class="flow-label">Context: ~85%</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box primary">Auto-Compact</div>
+            <div class="flow-label">Summarize &amp; free</div>
+          </div>
+        </div>
+
+        <div class="callout warning">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.072 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            The Biggest Mistake
+          </div>
+          <p>The "kitchen sink session": you start with one task, ask something unrelated, then go back to the first task. Context fills with irrelevant information. Use <code>/clear</code> between unrelated tasks.</p>
+        </div>
+
+
+        <!-- Tracking Usage -->
+        <h2 id="tracking-usage" data-level="intermediate">Tracking Usage <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Use the <code>/cost</code> command to see your current session's token usage and estimated cost. This is most relevant for API users; subscription users can use <code>/stats</code> for usage patterns.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; /cost Output</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">/cost</span>
+<span class="output"></span>
+<span class="highlight">Session Token Usage</span>
+<span class="output">  Total cost:            $0.55</span>
+<span class="output">  Total duration (API):  6m 19.7s</span>
+<span class="output">  Total duration (wall): 6h 33m 10.2s</span>
+<span class="output">  Total code changes:    47 lines added, 12 lines removed</span>
+          </div>
+        </div>
+
+        <p>For continuous monitoring, configure your <strong>status line</strong> to show context usage. The status line appears at the bottom of the terminal and updates in real time.</p>
+
+        <pre><code class="language-json">// ~/.claude/settings.json
+{
+  "statusLine": {
+    "template": "{{model}} | ctx: {{contextPercent}}% | cost: ${{cost}}"
+  }
+}</code></pre>
+
+        <p>Use <code>/context</code> to see a detailed breakdown of what's consuming space in your context window. MCP servers add tool definitions to every request, so a few servers can consume significant context before you start working. Run <code>/mcp</code> to check per-server costs.</p>
+
+
+        <!-- /clear vs /compact -->
+        <h2 id="clear-vs-compact" data-level="intermediate">/clear vs /compact <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>These are your two primary tools for managing context. Choosing the right one depends on whether you need continuity.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>What It Does</th>
+              <th>Context After</th>
+              <th>When to Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/clear</code></td>
+              <td>Resets context entirely. Fresh start.</td>
+              <td>Empty (CLAUDE.md reloaded)</td>
+              <td>Switching to an unrelated task</td>
+            </tr>
+            <tr>
+              <td><code>/compact</code></td>
+              <td>Summarizes conversation, preserving key decisions and code context</td>
+              <td>Compressed summary</td>
+              <td>Running low on context but still working on the same task</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>You can also give <code>/compact</code> instructions about what to preserve:</p>
+
+        <pre><code class="language-bash">/compact Focus on the API changes and test results</code></pre>
+
+        <!-- Decision Tree -->
+        <div class="decision-tree" id="dt-clear-compact">
+          <div class="dt-question">Is your next task related to the current conversation?</div>
+          <div class="dt-options">
+            <div class="dt-option" data-result="compact-check">
+              <div class="dt-option-title">Yes</div>
+              <div class="dt-option-desc">Same feature, same files, follow-up work</div>
+            </div>
+            <div class="dt-option" data-result="use-clear">
+              <div class="dt-option-title">No</div>
+              <div class="dt-option-desc">Different feature, unrelated bug, new topic</div>
+            </div>
+          </div>
+          <div class="dt-connector">&darr;</div>
+          <div class="dt-result" id="dt-result-compact-check">
+            <div class="dt-result-title">One more question: Was your last message within the last ~5 minutes?</div>
+            <div class="dt-result-body">
+              <strong>Yes (cache still warm):</strong> Use <code>/compact</code>. The prompt cache reduces cost of the summarized context, and you keep continuity.<br><br>
+              <strong>No (cache expired):</strong> Consider <code>/clear</code> instead. After ~5 minutes the prompt cache expires, so you'll pay full price for the old context anyway. Starting fresh with a good initial prompt is often cheaper and more effective.
+            </div>
+          </div>
+          <div class="dt-result" id="dt-result-use-clear">
+            <div class="dt-result-title">Use /clear</div>
+            <div class="dt-result-body">
+              Start fresh. Stale context from unrelated work wastes tokens on every subsequent message and can confuse Claude. Use <code>/rename</code> before clearing if you want to find the session later.
+            </div>
+          </div>
+        </div>
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            var tree = document.getElementById('dt-clear-compact');
+            if (!tree) return;
+            var options = tree.querySelectorAll('.dt-option');
+            options.forEach(function(opt) {
+              opt.addEventListener('click', function() {
+                options.forEach(function(o) { o.classList.remove('selected'); });
+                opt.classList.add('selected');
+                tree.querySelectorAll('.dt-result').forEach(function(r) { r.classList.remove('visible'); });
+                var target = document.getElementById('dt-result-' + opt.getAttribute('data-result'));
+                if (target) target.classList.add('visible');
+              });
+            });
+          });
+        </script>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Partial Compaction
+          </div>
+          <p>Use <kbd>Esc + Esc</kbd> or <code>/rewind</code>, select a message checkpoint, and choose <strong>Summarize from here</strong>. This condenses messages from that point forward while keeping earlier context intact &mdash; useful when one part of the conversation went off-track.</p>
+        </div>
+
+        <p>For quick questions that don't need to stay in context, use <code>/btw</code>. The answer appears in a dismissible overlay and never enters conversation history.</p>
+
+
+        <!-- Subagent Delegation -->
+        <h2 id="subagent-delegation" data-level="intermediate">Subagent Delegation <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Subagents run in their own context window, completely separate from your main conversation. Their work doesn't bloat your context. When done, they return a summary. This isolation is why subagents are one of the most powerful tools for managing context.</p>
+
+        <p>When Claude researches a codebase, it reads many files &mdash; all of which consume your context. By delegating investigation to a subagent, the detailed file reads stay in the subagent's context while only a concise summary comes back.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; Subagent Delegation</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">Use subagents to investigate how our authentication system</span>
+<span class="command">         handles token refresh, and whether we have any existing</span>
+<span class="command">         OAuth utilities I should reuse.</span>
+<span class="output"></span>
+<span class="output">Delegating to subagent...</span>
+<span class="comment">  [subagent reads 14 files, traces token flow, checks utils/]</span>
+<span class="output"></span>
+<span class="highlight">Subagent findings:</span>
+<span class="output">  Token refresh: SessionManager.refreshToken() in src/auth/session.ts</span>
+<span class="output">  handles refresh via POST /auth/refresh. Tokens expire after 15min,</span>
+<span class="output">  refresh tokens after 7 days.</span>
+<span class="output"></span>
+<span class="output">  Existing OAuth: src/utils/oauth.ts has a GoogleOAuth class with</span>
+<span class="output">  authorize() and callback() methods. Currently used only for</span>
+<span class="output">  the admin panel. Could be extended for user-facing auth.</span>
+<span class="output"></span>
+<span class="success">Main context: only the summary above was added (~200 tokens)</span>
+<span class="success">Subagent consumed: ~8,400 tokens (stays isolated)</span>
+          </div>
+        </div>
+
+        <p>You can also use subagents for verification after implementing something:</p>
+
+        <pre><code class="language-bash"># Post-implementation review in a separate context
+use a subagent to review this code for edge cases</code></pre>
+
+
+        <!-- Model Selection -->
+        <h2 id="model-selection" data-level="intermediate">Model Selection <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Claude Code supports multiple models with different tradeoffs. Use <code>/model</code> to switch mid-session, or start with <code>claude --model &lt;alias&gt;</code>.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Input / Output Cost (per MTok)</th>
+              <th>Speed</th>
+              <th>Capability</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Haiku</strong></td>
+              <td>$0.80 / $4</td>
+              <td>Fastest</td>
+              <td>Good for simple tasks</td>
+              <td>Simple subagent tasks, quick lookups, boilerplate generation</td>
+            </tr>
+            <tr>
+              <td><strong>Sonnet</strong></td>
+              <td>$3 / $15</td>
+              <td>Fast</td>
+              <td>Strong across most tasks</td>
+              <td>Daily coding, debugging, testing, code review. Default for most work.</td>
+            </tr>
+            <tr>
+              <td><strong>Opus</strong></td>
+              <td>$15 / $75</td>
+              <td>Slower</td>
+              <td>Strongest reasoning</td>
+              <td>Complex architecture decisions, multi-step planning, subtle bugs</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            The opusplan Alias
+          </div>
+          <p>Use <code>/model opusplan</code> for an automated hybrid: Opus during Plan Mode (for deep reasoning), then Sonnet during execution (for fast coding). Best of both worlds.</p>
+        </div>
+
+        <h3>Extended context</h3>
+
+        <p>Opus 4.6 and Sonnet 4.6 support <strong>1 million token context windows</strong>. On Max, Team, and Enterprise plans, Opus automatically gets 1M context. For other plans, use the <code>[1m]</code> suffix:</p>
+
+        <pre><code class="language-bash">/model opus[1m]
+/model sonnet[1m]</code></pre>
+
+        <h3>Effort levels</h3>
+
+        <p>Control how deeply Claude reasons with effort levels: <strong>low</strong>, <strong>medium</strong>, <strong>high</strong>, and <strong>max</strong> (Opus only). Lower effort is faster and cheaper for straightforward tasks.</p>
+
+        <pre><code class="language-bash">/effort low     # Quick tasks, less thinking
+/effort medium  # Default balance
+/effort high    # Complex reasoning
+/effort max     # Deepest reasoning (Opus only, current session only)</code></pre>
+
+
+        <!-- Automatic Compaction -->
+        <h2 id="automatic-compaction" data-level="advanced">Automatic Compaction <span class="level-badge advanced">Advanced</span></h2>
+
+        <p>Claude Code automatically compacts conversation history when you approach context limits. It clears older tool outputs first, then summarizes the conversation if needed. Your requests and key code snippets are preserved; detailed instructions from early in the conversation may be lost.</p>
+
+        <h3>How it triggers</h3>
+
+        <p>Auto-compaction fires when the context window reaches approximately 80-90% capacity. Claude summarizes what matters most: code patterns, file states, key decisions, and recent changes. Older tool outputs and verbose command results are cleared first.</p>
+
+        <h3>Customizing compaction in CLAUDE.md</h3>
+
+        <p>Add a "Compact Instructions" section to your CLAUDE.md to control what survives compaction:</p>
+
+        <pre><code class="language-markdown"># Compact instructions
+
+When compacting, always preserve:
+- The full list of modified files and their paths
+- Any test commands and their results
+- Architecture decisions made during this session
+- The current implementation plan if one exists</code></pre>
+
+        <h3>CLAUDE.md survives compaction</h3>
+
+        <p>CLAUDE.md fully survives compaction. After <code>/compact</code> or auto-compaction, Claude re-reads your CLAUDE.md from disk and re-injects it fresh. If an instruction disappeared after compaction, it was given only in conversation, not written to CLAUDE.md. This is why persistent rules belong in CLAUDE.md, not in chat messages.</p>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Hooks for Compaction
+          </div>
+          <p>You can use hooks to run scripts at compaction time. For example, a <strong>PreCompact</strong> hook could save a snapshot of the current conversation state, and a <strong>PostCompact</strong> hook could verify that critical context was preserved. Configure hooks in <code>.claude/settings.json</code> or ask Claude to write them for you.</p>
+        </div>
+
+        <h3>Token-saving strategies</h3>
+
+        <ul>
+          <li><strong>Disable unused MCP servers</strong> &mdash; each adds tool definitions to every request even when idle. Run <code>/mcp</code> to check costs.</li>
+          <li><strong>Use CLI tools instead of MCP</strong> when possible &mdash; <code>gh</code>, <code>aws</code>, <code>gcloud</code> are more context-efficient than MCP servers.</li>
+          <li><strong>Install code intelligence plugins</strong> for typed languages &mdash; a single "go to definition" replaces grepping and reading multiple files.</li>
+          <li><strong>Use preprocessing hooks</strong> to filter verbose output before it enters context (e.g., grep test output for failures only).</li>
+          <li><strong>Write specific prompts</strong> &mdash; "improve this codebase" triggers broad scanning; "add input validation to login in auth.ts" is targeted.</li>
+        </ul>
+
+
+        <!-- Practical Costs -->
+        <h2 id="practical-costs" data-level="intermediate">Practical Costs <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Here's what real-world Claude Code usage costs for API users. Subscription users (Max, Pro, Team) have usage included in their plan.</p>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Cost Benchmarks (API Users)
+          </div>
+          <p><strong>Average daily cost:</strong> $6 per developer per day</p>
+          <p><strong>90th percentile:</strong> Under $12 per developer per day</p>
+          <p><strong>Monthly estimate:</strong> ~$100-200 per developer with Sonnet 4.6</p>
+          <p>Costs vary with codebase size, query complexity, conversation length, and whether you run automation or multiple parallel sessions.</p>
+        </div>
+
+        <h3>What drives cost</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Factor</th>
+              <th>Impact</th>
+              <th>How to Reduce</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Long conversations without clearing</td>
+              <td>High &mdash; every message re-sends the full context</td>
+              <td>Use <code>/clear</code> between tasks, <code>/compact</code> during long tasks</td>
+            </tr>
+            <tr>
+              <td>Using Opus for everything</td>
+              <td>High &mdash; 5x more expensive than Sonnet</td>
+              <td>Use Sonnet for daily work, Opus for complex planning only</td>
+            </tr>
+            <tr>
+              <td>Extended thinking on simple tasks</td>
+              <td>Medium &mdash; thinking tokens billed as output</td>
+              <td>Use <code>/effort low</code> for straightforward tasks</td>
+            </tr>
+            <tr>
+              <td>Many MCP servers connected</td>
+              <td>Medium &mdash; tool definitions consume context</td>
+              <td>Disable unused servers; prefer CLI tools</td>
+            </tr>
+            <tr>
+              <td>Vague prompts ("improve this codebase")</td>
+              <td>Medium &mdash; triggers broad file scanning</td>
+              <td>Be specific about files and scope</td>
+            </tr>
+            <tr>
+              <td>Agent teams / parallel sessions</td>
+              <td>High &mdash; each session has its own context</td>
+              <td>Keep teams small, use Sonnet for teammates</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Background token usage</h3>
+
+        <p>Claude Code uses a small amount of tokens for background tasks even when idle: conversation summarization for <code>--resume</code>, and command processing. This is typically under $0.04 per session.</p>
+
+        <h3>Prompt caching</h3>
+
+        <p>Claude Code automatically uses <strong>prompt caching</strong> to reduce costs for repeated content like system prompts and CLAUDE.md. Cached tokens cost significantly less than fresh tokens. The cache lasts about 5 minutes, which is why frequent messages in an active session cost less per-message than sporadic ones.</p>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Cost Optimization Checklist
+          </div>
+          <p>1. Use <code>/clear</code> between unrelated tasks.<br>
+             2. Default to Sonnet; switch to Opus only for complex reasoning.<br>
+             3. Use <code>/effort low</code> for simple tasks.<br>
+             4. Delegate verbose investigations to subagents.<br>
+             5. Keep CLAUDE.md lean (under 500 lines).<br>
+             6. Disable unused MCP servers.<br>
+             7. Write specific prompts that scope the work.</p>
+        </div>
+
+      </article>
+
+      <nav id="page-nav-footer" class="page-nav-footer"><!-- Built by nav.js --></nav>
+
+      <footer class="site-footer">
+        Built for developers using <a href="https://code.claude.com" target="_blank">Claude Code</a> &mdash;
+        <a href="https://code.claude.com/docs" target="_blank">Official Docs</a>
+      </footer>
+    </div>
+  </main>
+
+  <script defer src="js/nav.js"></script>
+  <script defer src="js/tabs.js"></script>
+  <script defer src="js/collapsible.js"></script>
+  <script defer src="js/terminal.js"></script>
+  <script defer src="js/decision-tree.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/progress.js"></script>
+</body>
+</html>

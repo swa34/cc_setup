@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security & Permissions — Claude Code Onboarding</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/prism-override.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mobile-toggle" aria-label="Toggle navigation">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Claude Code Onboarding
+      </div>
+      <div class="sidebar-subtitle">Developer Guide</div>
+      <a href="../index.html" class="sidebar-back">&larr; All guides</a>
+    </div>
+    <nav id="sidebar-nav"><!-- Built by nav.js --></nav>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+    <header class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">
+          <a href="index.html">Docs</a>
+          <span class="sep">/</span>
+          Security & Permissions
+        </div>
+      </div>
+      <div class="page-header-right">
+        <div class="level-filters">
+          <button class="level-filter-btn active" data-level="beginner">Beginner</button>
+          <button class="level-filter-btn active" data-level="intermediate">Intermediate</button>
+          <button class="level-filter-btn active" data-level="advanced">Advanced</button>
+        </div>
+        <div class="search-container">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search docs..." autocomplete="off">
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-container">
+      <article>
+
+        <h1>Security & Permissions</h1>
+        <p class="page-description">Claude Code operates with real access to your filesystem, shell, and network. Understanding its permission model is the first step to using it safely — whether you are a solo developer or managing a fleet of engineers.</p>
+
+        <!-- Permission System Overview -->
+        <h2 id="permission-system" data-level="intermediate">Permission System Overview <span class="level-badge intermediate">Intermediate</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/permissions" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <p>Claude Code uses a <strong>tiered permission system</strong> that balances power and safety. Every tool is classified into a tier, and each tier has a different approval requirement. The design principle is <strong>fail-closed</strong>: if a tool is not explicitly allowed, Claude will ask before using it.</p>
+
+        <table>
+          <thead>
+            <tr><th>Tool Type</th><th>Examples</th><th>Approval Required?</th><th>"Don't ask again" Behavior</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Read-only</strong></td>
+              <td>File reads, Grep, Glob</td>
+              <td>No — always allowed</td>
+              <td>N/A</td>
+            </tr>
+            <tr>
+              <td><strong>File modifications</strong></td>
+              <td>Edit, Write, NotebookEdit</td>
+              <td>Yes</td>
+              <td>Persists until session end</td>
+            </tr>
+            <tr>
+              <td><strong>Bash commands</strong></td>
+              <td>Shell execution</td>
+              <td>Yes</td>
+              <td>Permanently per project directory and command</td>
+            </tr>
+            <tr>
+              <td><strong>MCP tools</strong></td>
+              <td>External server tools</td>
+              <td>Yes</td>
+              <td>Follows server-level rules</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>Permission rules are evaluated in a strict order: <strong>deny &rarr; ask &rarr; allow</strong>. The first matching rule wins, which means deny rules always take precedence — no other setting level can override a deny.</p>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Key Concept
+          </div>
+          <p>Use <code>/permissions</code> inside Claude Code to view and manage all active permission rules. This UI lists every rule and shows which <code>settings.json</code> file it originates from.</p>
+        </div>
+
+        <p>Rules follow the format <code>Tool</code> or <code>Tool(specifier)</code>. For example:</p>
+
+        <ul>
+          <li><code>Bash(npm run build)</code> — matches the exact command <code>npm run build</code></li>
+          <li><code>Bash(npm run *)</code> — matches any command starting with <code>npm run</code></li>
+          <li><code>Read(./.env)</code> — matches reading the <code>.env</code> file in the current directory</li>
+          <li><code>mcp__puppeteer__puppeteer_navigate</code> — matches one specific MCP tool</li>
+        </ul>
+
+        <div class="callout warning">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Warning
+          </div>
+          <p><code>Read</code> and <code>Edit</code> deny rules apply to Claude's built-in file tools, <strong>not</strong> to Bash subprocesses. A <code>Read(./.env)</code> deny rule blocks the Read tool but does not prevent <code>cat .env</code> in Bash. For OS-level enforcement that blocks all processes, enable the sandbox.</p>
+        </div>
+
+        <!-- Permission Modes -->
+        <h2 id="permission-modes" data-level="intermediate">Permission Modes <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Claude Code supports several permission modes that determine how much autonomy the agent has. Choosing the right mode depends on your environment, the sensitivity of the codebase, and your comfort level.</p>
+
+        <div class="decision-tree" data-tree='{
+          "question": "How much autonomy should Claude have?",
+          "options": [
+            {"label": "Maximum safety", "desc": "New to Claude Code or sensitive repo", "result": "<strong>Default mode.</strong> Claude asks before every write and command. Best for learning and auditing."},
+            {"label": "Trust file edits", "desc": "Comfortable with Claude&apos;s code changes", "result": "<strong>Accept Edits mode.</strong> Auto-approves file changes but still asks before shell commands. Good balance of speed and safety."},
+            {"label": "Full autonomy", "desc": "Sandboxed environment, trusted codebase", "result": "<strong>Don&apos;t Ask mode.</strong> Claude runs freely within allowed tools. Only use in containers or with strict allowlists."}
+          ]
+        }'></div>
+
+        <p>The full set of modes you can configure via <code>defaultMode</code> in your settings file:</p>
+
+        <table>
+          <thead>
+            <tr><th>Mode</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>default</code></td><td>Standard behavior: prompts for permission on first use of each tool.</td></tr>
+            <tr><td><code>acceptEdits</code></td><td>Automatically approves file edits for the session. Still asks before Bash commands.</td></tr>
+            <tr><td><code>plan</code></td><td>Plan Mode: Claude can analyze but not modify files or execute commands.</td></tr>
+            <tr><td><code>dontAsk</code></td><td>Auto-denies tools unless pre-approved via <code>/permissions</code> or <code>permissions.allow</code> rules.</td></tr>
+            <tr><td><code>bypassPermissions</code></td><td>Skips permission prompts except for writes to protected directories (<code>.git</code>, <code>.claude</code>, <code>.vscode</code>, <code>.idea</code>). Only for isolated environments.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout warning">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Warning
+          </div>
+          <p><code>bypassPermissions</code> mode skips most permission prompts. Only use this in containers or VMs where Claude cannot cause real damage. Administrators can disable this mode entirely by setting <code>disableBypassPermissionsMode</code> to <code>"disable"</code> in managed settings.</p>
+        </div>
+
+        <!-- API Key Management -->
+        <h2 id="api-key-management" data-level="intermediate">API Key Management <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Your API key is the credential that authenticates Claude Code against Anthropic's API (or your cloud provider). Mishandling it can expose your account to unauthorized usage and unexpected costs.</p>
+
+        <h3>Golden Rules</h3>
+        <ul>
+          <li><strong>Never hardcode API keys</strong> in source code, CLAUDE.md, or shell scripts checked into version control.</li>
+          <li><strong>Use environment variables</strong> for local development.</li>
+          <li><strong>Use a secrets manager</strong> (AWS Secrets Manager, GCP Secret Manager, HashiCorp Vault) in CI/CD and production.</li>
+          <li><strong>Rotate keys regularly</strong> and revoke any key that may have been exposed.</li>
+        </ul>
+
+        <p>For local development, store your key in a <code>.env</code> file that is excluded from version control:</p>
+
+        <pre><code class="language-bash"># .env — NEVER commit this file
+ANTHROPIC_API_KEY=sk-ant-api03-...your-key-here...
+
+# For AWS Bedrock (alternative provider)
+# AWS_PROFILE=claude-code
+# AWS_REGION=us-west-2
+
+# For Google Vertex AI (alternative provider)
+# CLOUD_ML_REGION=us-east5
+# ANTHROPIC_VERTEX_PROJECT_ID=my-project-123</code></pre>
+
+        <p>Make sure <code>.env</code> is in your <code>.gitignore</code>:</p>
+
+        <pre><code class="language-bash"># .gitignore
+.env
+.env.*
+*.pem
+credentials.json</code></pre>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Tip
+          </div>
+          <p>For GitHub Actions, always use <code>${{ secrets.ANTHROPIC_API_KEY }}</code> rather than pasting your key into the workflow YAML. For GitLab, use masked CI/CD variables.</p>
+        </div>
+
+        <!-- Sandboxing -->
+        <h2 id="sandboxing" data-level="intermediate">Sandboxing <span class="level-badge intermediate">Intermediate</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/sandboxing" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <p>Sandboxing provides <strong>OS-level isolation</strong> that restricts the Bash tool's filesystem and network access. While permissions control which tools Claude can use, sandboxing enforces boundaries that all child processes inherit — including tools like <code>kubectl</code>, <code>terraform</code>, and <code>npm</code>.</p>
+
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">Filesystem Isolation</div>
+            <div class="card-body">Read and write access restricted to the current working directory and its subdirectories. Cannot modify files outside the project without explicit permission.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Network Isolation</div>
+            <div class="card-body">Only approved domains can be accessed. New domain requests trigger permission prompts. All scripts and subprocesses inherit the same restrictions.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">OS-Level Enforcement</div>
+            <div class="card-body">macOS uses Seatbelt; Linux/WSL2 uses bubblewrap. Child processes cannot escape the sandbox boundaries.</div>
+          </div>
+        </div>
+
+        <p>Enable sandboxing with the <code>/sandbox</code> command, which opens a menu to choose between:</p>
+
+        <ul>
+          <li><strong>Auto-allow mode</strong> — Sandboxed commands run automatically without requiring permission. Commands needing access to non-allowed hosts fall back to the regular permission flow.</li>
+          <li><strong>Regular permissions mode</strong> — All commands go through the standard permission flow, even when sandboxed.</li>
+        </ul>
+
+        <p>On Linux/WSL2, install the required packages first:</p>
+
+        <pre><code class="language-bash"># Ubuntu/Debian
+sudo apt-get install bubblewrap socat
+
+# Fedora
+sudo dnf install bubblewrap socat</code></pre>
+
+        <p>You can customize sandbox behavior through settings. For example, granting write access to paths outside the project directory:</p>
+
+        <pre><code class="language-json">{
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "allowWrite": ["~/.kube", "/tmp/build"]
+    }
+  }
+}</code></pre>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Defense in Depth
+          </div>
+          <p>Permissions and sandboxing are <strong>complementary</strong> security layers. Permission deny rules block Claude from even attempting to access restricted resources. Sandbox restrictions prevent Bash commands from reaching resources outside defined boundaries, even if a prompt injection bypasses Claude's decision-making. Use both for maximum protection.</p>
+        </div>
+
+        <!-- Protecting Sensitive Files -->
+        <h2 id="sensitive-files" data-level="intermediate">Protecting Sensitive Files <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Claude Code automatically reads files it needs for context. Without proper guards, this can expose secrets, credentials, and other sensitive data that should never enter an AI conversation.</p>
+
+        <h3>The .env Auto-Loading Concern</h3>
+
+        <p>Claude Code does not automatically execute <code>.env</code> files, but it <em>can</em> read them if it determines they are relevant context. If Claude reads a <code>.env</code> containing API keys, those keys become part of the conversation context and are sent to the API.</p>
+
+        <h3>Deny Rules in settings.json</h3>
+
+        <p>The most direct defense is adding deny rules to your project's <code>.claude/settings.json</code>:</p>
+
+        <pre><code class="language-json">{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./**/*.pem)",
+      "Read(./**/credentials.json)",
+      "Edit(./.env)",
+      "Edit(./.env.*)",
+      "Edit(./secrets/**)"
+    ]
+  }
+}</code></pre>
+
+        <p>These rules block Claude's built-in <code>Read</code> and <code>Edit</code> tools from accessing the matched paths. Remember that Read/Edit deny rules do not block Bash subprocesses — for OS-level enforcement, enable the sandbox with <code>denyRead</code> paths.</p>
+
+        <h3>.claudeignore</h3>
+
+        <p>Create a <code>.claudeignore</code> file in your project root, following the same syntax as <code>.gitignore</code>. Files matched by <code>.claudeignore</code> are excluded from Claude's automatic context gathering:</p>
+
+        <pre><code class="language-bash"># .claudeignore
+.env
+.env.*
+secrets/
+*.pem
+**/credentials.json
+**/service-account-key.json
+node_modules/</code></pre>
+
+        <h3>.gitignore Synergy</h3>
+
+        <p>If a file is already in your <code>.gitignore</code>, Claude Code is less likely to surface it. But <code>.gitignore</code> alone is not a security boundary — a <code>.claudeignore</code> or deny rule provides explicit protection.</p>
+
+        <div class="callout warning">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Warning
+          </div>
+          <p>Never rely on a single layer. Combine deny rules, <code>.claudeignore</code>, sandbox <code>denyRead</code> paths, and <code>.gitignore</code> for defense in depth. If a secret is accidentally committed to git history, rotating the secret is the only safe remedy.</p>
+        </div>
+
+        <!-- Team Security -->
+        <h2 id="team-security" data-level="advanced">Team Security <span class="level-badge advanced">Advanced</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/server-managed-settings" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <p>For organizations with multiple developers using Claude Code, centralized security configuration ensures consistent policy enforcement across the team.</p>
+
+        <h3>Managed Settings</h3>
+
+        <p>Administrators can deploy <strong>managed settings</strong> that cannot be overridden by user or project settings. These follow the same format as regular settings files and can be delivered through:</p>
+
+        <ul>
+          <li><strong>Server-managed settings</strong> — Configured via the admin console at Claude.ai, delivered automatically when users authenticate. Best for organizations without MDM infrastructure.</li>
+          <li><strong>Endpoint-managed settings</strong> — Deployed via MDM/OS-level policies (macOS managed preferences, Windows registry) or managed settings files. Stronger enforcement on managed devices.</li>
+        </ul>
+
+        <h3>Managed-Only Settings</h3>
+
+        <p>Some settings are only effective in managed settings, giving administrators exclusive control:</p>
+
+        <table>
+          <thead>
+            <tr><th>Setting</th><th>Effect</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>disableBypassPermissionsMode</code></td><td>Prevents <code>bypassPermissions</code> mode and the <code>--dangerously-skip-permissions</code> flag.</td></tr>
+            <tr><td><code>allowManagedPermissionRulesOnly</code></td><td>Only managed settings can define allow/ask/deny rules.</td></tr>
+            <tr><td><code>allowManagedHooksOnly</code></td><td>Only managed hooks and SDK hooks are allowed.</td></tr>
+            <tr><td><code>allowManagedMcpServersOnly</code></td><td>Only managed MCP servers are respected.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Shared Permission Configs</h3>
+
+        <p>Commit a <code>.claude/settings.json</code> to your repository with team-wide deny rules and allowlists. This file applies to all developers who clone the project:</p>
+
+        <pre><code class="language-json">{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(git commit *)",
+      "Bash(git diff *)",
+      "Bash(npx jest *)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "Bash(rm -rf *)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)"
+    ]
+  }
+}</code></pre>
+
+        <h3>OpenTelemetry Monitoring</h3>
+
+        <p>Track Claude Code usage, costs, and tool activity across your organization by exporting telemetry data through OpenTelemetry. Configure via managed settings to ensure all developers emit metrics to your collector:</p>
+
+        <pre><code class="language-json">{
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_METRICS_EXPORTER": "otlp",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://collector.example.com:4317"
+  }
+}</code></pre>
+
+        <p>Available metrics include <code>claude_code.cost.usage</code>, <code>claude_code.token.usage</code>, <code>claude_code.session.count</code>, <code>claude_code.lines_of_code.count</code>, and tool decision events — all segmented by user, session, and model.</p>
+
+        <h3>ConfigChange Audit Hooks</h3>
+
+        <p>Use <code>ConfigChange</code> hooks to detect runtime configuration changes. This lets you log modifications or block unauthorized changes before they take effect:</p>
+
+        <pre><code class="language-json">{
+  "hooks": {
+    "ConfigChange": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/local/bin/audit-config-change.sh"
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Deployment Strategy
+          </div>
+          <p>Start with a small pilot group (5-10 developers) to validate your managed settings and permission rules before rolling out to the full team. Monitor telemetry data during the pilot to identify rules that are too restrictive or too permissive, then adjust before broader deployment.</p>
+        </div>
+
+        <h3>Settings Precedence</h3>
+
+        <p>Understanding the hierarchy is critical for team security. Settings are resolved in this order, from highest to lowest priority:</p>
+
+        <ol>
+          <li><strong>Managed settings</strong> — Cannot be overridden by any other level, including CLI arguments.</li>
+          <li><strong>Command line arguments</strong> — Temporary session overrides.</li>
+          <li><strong>Local project settings</strong> (<code>.claude/settings.local.json</code>) — Developer-specific, not committed.</li>
+          <li><strong>Shared project settings</strong> (<code>.claude/settings.json</code>) — Committed to version control.</li>
+          <li><strong>User settings</strong> (<code>~/.claude/settings.json</code>) — Personal global defaults.</li>
+        </ol>
+
+        <p>If a tool is denied at any level, no other level can allow it. A managed deny always wins.</p>
+
+      </article>
+
+      <nav id="page-nav-footer" class="page-nav-footer"><!-- Built by nav.js --></nav>
+
+      <footer class="site-footer">
+        Built for developers using <a href="https://code.claude.com" target="_blank">Claude Code</a> &mdash;
+        <a href="https://code.claude.com/docs" target="_blank">Official Docs</a>
+      </footer>
+    </div>
+  </main>
+
+  <script defer src="js/nav.js"></script>
+  <script defer src="js/tabs.js"></script>
+  <script defer src="js/collapsible.js"></script>
+  <script defer src="js/terminal.js"></script>
+  <script defer src="js/decision-tree.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/progress.js"></script>
+</body>
+</html>

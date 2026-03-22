@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Working with Legacy Codebases — Claude Code Onboarding</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/prism-override.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mobile-toggle" aria-label="Toggle navigation">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Claude Code Onboarding
+      </div>
+      <div class="sidebar-subtitle">Developer Guide</div>
+      <a href="../index.html" class="sidebar-back">&larr; All guides</a>
+    </div>
+    <nav id="sidebar-nav"><!-- Built by nav.js --></nav>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+    <header class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">
+          <a href="index.html">Docs</a>
+          <span class="sep">/</span>
+          Legacy Codebases
+        </div>
+      </div>
+      <div class="page-header-right">
+        <div class="level-filters">
+          <button class="level-filter-btn active" data-level="beginner">Beginner</button>
+          <button class="level-filter-btn active" data-level="intermediate">Intermediate</button>
+          <button class="level-filter-btn active" data-level="advanced">Advanced</button>
+        </div>
+        <div class="search-container">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search docs..." autocomplete="off">
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-container">
+      <article>
+
+        <h1>Working with Legacy Codebases</h1>
+        <p class="page-description">Strategies for navigating, understanding, and modernizing large, unfamiliar repositories using Claude Code as your guide.</p>
+
+        <!-- The Challenge -->
+        <h2 id="the-challenge" data-level="intermediate">The Challenge <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Legacy codebases are fundamentally different from greenfield projects. The code works &mdash; often in production for years &mdash; but understanding <em>why</em> it works and <em>how</em> to change it safely is the hard part.</p>
+
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">No Documentation</div>
+            <div class="card-body">The README was last updated three years ago. Architecture decisions live in the heads of engineers who have since left the company. Comments, if they exist, describe <em>what</em> the code does, not <em>why</em>.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Tangled Dependencies</div>
+            <div class="card-body">Modules import each other in circular patterns. A change in one file cascades through dozens of others. The dependency graph looks less like a tree and more like a plate of spaghetti.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Unfamiliar Patterns</div>
+            <div class="card-body">The codebase uses patterns from a different era or framework version. What looks "wrong" might be intentional. What looks intentional might be a workaround for a long-fixed bug.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Tribal Knowledge</div>
+            <div class="card-body">"Don't touch the billing module" and "always restart after changing configs" are rules that live in Slack threads and standup notes, not in any file the code can see.</div>
+          </div>
+        </div>
+
+        <p>Claude Code is uniquely suited for these challenges. It can read hundreds of files, trace execution paths, analyze git history, and explain patterns &mdash; all the things that make onboarding to a legacy codebase so painful when done manually.</p>
+
+        <!-- Onboarding Strategy -->
+        <h2 id="onboarding-strategy" data-level="intermediate">Onboarding Strategy <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Use this four-step process when you first encounter a legacy codebase. Each step builds on the previous one:</p>
+
+        <h3>Step 1: Get the overview</h3>
+
+        <p>Start broad. Let Claude survey the project structure, identify the tech stack, and give you a map of the territory.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">$</span> <span class="command">cd ~/work/legacy-monolith</span>
+<span class="prompt">$</span> <span class="command">claude</span>
+
+<span class="prompt">claude&gt;</span> <span class="command">Give me an overview of this codebase. What's the tech stack, how is it organized, and what are the main entry points?</span>
+<span class="output">This is a Java/Spring Boot monolith with ~450 source files...</span>
+<span class="output">Main entry points: Application.java, scheduled jobs in /jobs/, REST controllers in /api/...</span>
+          </div>
+        </div>
+
+        <h3>Step 2: Understand the architecture</h3>
+
+        <p>Once you have the overview, dig into how the pieces fit together. Ask about layers, data flow, and external integrations.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">Explain the main architecture patterns used here. How do requests flow from the API layer to the database?</span>
+<span class="output">The app follows a layered architecture: Controllers -> Services -> Repositories...</span>
+
+<span class="prompt">claude&gt;</span> <span class="command">What external services does this connect to? Check configuration files and service classes.</span>
+<span class="output">Found 5 external integrations: Stripe (payments), SendGrid (email), S3 (files)...</span>
+          </div>
+        </div>
+
+        <h3>Step 3: Trace key flows</h3>
+
+        <p>Pick the most important user journeys and trace them end-to-end. This reveals how the abstractions actually work in practice.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">Trace the user login flow from the HTTP request to the session being created. Include every file involved.</span>
+<span class="output">Login flow: LoginController.login() -> AuthService.authenticate() -> UserRepository.findByEmail()...</span>
+
+<span class="prompt">claude&gt;</span> <span class="command">Trace how a payment is processed. Start from the checkout endpoint and follow through to Stripe.</span>
+<span class="output">Payment flow: CheckoutController -> OrderService.createOrder() -> PaymentService.charge()...</span>
+          </div>
+        </div>
+
+        <h3>Step 4: Learn the conventions</h3>
+
+        <p>Every codebase has unwritten rules. Ask Claude to identify them so you can follow the same patterns when making changes.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">What naming conventions does this codebase use? Look at classes, methods, database tables, and API endpoints.</span>
+<span class="output">Classes: PascalCase with Impl suffix for implementations (e.g., PaymentServiceImpl)...</span>
+
+<span class="prompt">claude&gt;</span> <span class="command">How are errors handled in this codebase? Is there a consistent pattern?</span>
+<span class="output">Error handling uses custom exception hierarchy: BaseException -> BusinessException, TechnicalException...</span>
+          </div>
+        </div>
+
+        <!-- Claude as Codebase Guide -->
+        <h2 id="claude-as-guide" data-level="intermediate">Claude as Codebase Guide <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Think of Claude as the senior engineer you wish you could pair with on day one. Ask it the questions you would ask a colleague who built the system:</p>
+
+        <h3>Understanding systems</h3>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">How does logging work in this project? Where are logs configured and what levels are used?</span>
+<span class="output">Logging uses SLF4J with Logback. Config at src/main/resources/logback-spring.xml...</span>
+
+<span class="prompt">claude&gt;</span> <span class="command">How do I make a new API endpoint? Show me the pattern by looking at existing endpoints.</span>
+<span class="output">Based on existing endpoints, the pattern is: 1) Create a DTO in /dto/ 2) Add a method to the service...</span>
+
+<span class="prompt">claude&gt;</span> <span class="command">What edge cases does the OrderService handle? Look at the implementation and tests.</span>
+<span class="output">OrderService handles: partial payments, out-of-stock during checkout, concurrent order creation...</span>
+          </div>
+        </div>
+
+        <h3>Understanding history</h3>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">Look through the git history of PaymentService and summarize how its API came to be. Why is it shaped the way it is?</span>
+<span class="output">PaymentService evolved over 3 phases: 1) Single payment method (2021) 2) Multi-provider support added (2022)...</span>
+
+<span class="prompt">claude&gt;</span> <span class="command">Why does this code call retryWithBackoff() instead of a simple retry? Check the git blame and PR history.</span>
+<span class="output">Introduced in commit abc123 after a production incident. The PR mentions that Stripe returns 429s during peak hours...</span>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Pro Tip
+          </div>
+          <p>If you have the <code>gh</code> CLI installed, Claude can read PR descriptions, review comments, and issue discussions to understand <em>why</em> code was written, not just <em>what</em> it does.</p>
+        </div>
+
+        <!-- Plan Mode Workflow -->
+        <h2 id="plan-mode-workflow" data-level="intermediate">Plan Mode Workflow <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>When making changes to legacy code, <strong>never jump straight to implementation</strong>. Use the Explore-Plan-Implement-Commit cycle to minimize risk:</p>
+
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-box primary">Explore</div>
+            <div class="flow-label">Read &amp; understand</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box secondary">Plan</div>
+            <div class="flow-label">Design changes</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box secondary">Implement</div>
+            <div class="flow-label">Write &amp; test</div>
+          </div>
+          <div class="flow-arrow">&rarr;</div>
+          <div class="flow-step">
+            <div class="flow-box primary">Commit</div>
+            <div class="flow-label">Review &amp; push</div>
+          </div>
+        </div>
+
+        <h3>Phase 1: Explore (Plan Mode)</h3>
+
+        <p>Enter Plan Mode with <code>Shift+Tab</code>. Claude reads files and answers questions <strong>without making any changes</strong>.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; Plan Mode</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude (plan)&gt;</span> <span class="command">Read src/auth/ and understand how we handle sessions and login. Also look at how we manage environment variables for secrets.</span>
+<span class="output">The auth module uses JWT tokens stored in HTTP-only cookies. Session management...</span>
+<span class="output">Environment variables are loaded via dotenv from .env.local, with defaults in config/defaults.js...</span>
+          </div>
+        </div>
+
+        <h3>Phase 2: Plan (Plan Mode)</h3>
+
+        <p>Ask Claude to create a detailed implementation plan. Review it before any code gets written.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; Plan Mode</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude (plan)&gt;</span> <span class="command">I want to add Google OAuth. What files need to change? What's the session flow? Create a plan.</span>
+<span class="output">Plan: Add Google OAuth Support</span>
+<span class="output">1. Add google-auth-library to package.json</span>
+<span class="output">2. Create src/auth/providers/google.js (new file)</span>
+<span class="output">3. Modify src/auth/AuthService.js to support multiple providers...</span>
+<span class="output">4. Add OAuth callback route in src/routes/auth.js...</span>
+<span class="output">5. Update .env.example with GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET...</span>
+          </div>
+        </div>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Editing the Plan
+          </div>
+          <p>Press <code>Ctrl+G</code> to open the plan in your text editor for direct editing before Claude proceeds. This lets you add constraints, remove steps, or reorder the approach.</p>
+        </div>
+
+        <h3>Phase 3: Implement (Normal Mode)</h3>
+
+        <p>Switch back to Normal Mode and let Claude execute the plan. Always include a verification step.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; Normal Mode</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">Implement the OAuth flow from your plan. Write tests for the callback handler, run the test suite and fix any failures.</span>
+<span class="output">Creating src/auth/providers/google.js...</span>
+<span class="output">Modifying AuthService.js to support provider-based auth...</span>
+<span class="output">Running tests... 2 failures found. Fixing...</span>
+<span class="success">All 47 tests passing.</span>
+          </div>
+        </div>
+
+        <h3>Phase 4: Commit</h3>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">Commit with a descriptive message and open a PR</span>
+<span class="output">Committing: "feat: add Google OAuth provider with session support"</span>
+<span class="success">PR #142 created: https://github.com/org/repo/pull/142</span>
+          </div>
+        </div>
+
+        <!-- Fan-Out Patterns -->
+        <h2 id="fan-out-patterns" data-level="advanced">Fan-Out Patterns <span class="level-badge advanced">Advanced</span></h2>
+
+        <p>When legacy modernization involves changing dozens or hundreds of files, you need strategies that scale beyond one-at-a-time editing.</p>
+
+        <h3>/batch for parallel changes</h3>
+
+        <p>The <code>/batch</code> skill orchestrates large-scale changes across a codebase. It researches the scope, decomposes work into independent units, and spawns one agent per unit in an isolated git worktree:</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">/batch migrate all React class components in src/components/ to functional components with hooks</span>
+<span class="output">Analyzing scope... Found 23 class components to migrate.</span>
+<span class="output">Decomposing into 23 independent units...</span>
+<span class="output">Spawning agents in isolated worktrees...</span>
+<span class="output">Progress: [==================] 23/23 complete</span>
+<span class="success">23 PRs created for review.</span>
+          </div>
+        </div>
+
+        <h3>Scripting with claude -p</h3>
+
+        <p>For custom migration scripts, use <code>claude -p</code> in a loop. This is useful when each file needs the same transformation:</p>
+
+        <pre><code class="language-bash">#!/bin/bash
+# migrate-to-typescript.sh
+# Convert JavaScript files to TypeScript one at a time
+
+# Generate the file list
+claude -p "List all .js files in src/ that should be converted to TypeScript. \
+  Skip test files and config files. Output one file path per line, nothing else." \
+  > files-to-migrate.txt
+
+# Migrate each file
+for file in $(cat files-to-migrate.txt); do
+  echo "Migrating $file..."
+  claude -p "Convert $file from JavaScript to TypeScript. \
+    Add proper type annotations. \
+    Rename the file from .js to .ts. \
+    Fix any imports in other files that reference this file. \
+    Run tsc --noEmit to verify there are no type errors." \
+    --allowedTools "Read,Write,Edit,Bash(tsc *),Bash(mv *)"
+done
+
+echo "Migration complete. Review changes with: git diff"</code></pre>
+
+        <h3>Worktrees for isolation</h3>
+
+        <p>When you need to make changes that might conflict, use git worktrees to work in parallel branches:</p>
+
+        <pre><code class="language-bash"># Create isolated worktrees for different migration tasks
+git worktree add ../project-auth-migration feature/auth-migration
+git worktree add ../project-db-migration feature/db-migration
+
+# Run Claude in each worktree simultaneously
+cd ../project-auth-migration && claude -p "Migrate auth from sessions to JWT" &
+cd ../project-db-migration && claude -p "Migrate from MongoDB to PostgreSQL" &
+
+wait
+echo "Both migrations complete. Review separately, merge sequentially."</code></pre>
+
+        <div class="callout warning">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            Caution
+          </div>
+          <p>Always test on a few files first before running at scale. Refine your prompt based on what goes wrong with the first 2-3 files. The <code>--allowedTools</code> flag restricts what Claude can do, which matters when running unattended.</p>
+        </div>
+
+        <!-- Context Strategies -->
+        <h2 id="context-strategies" data-level="advanced">Context Strategies <span class="level-badge advanced">Advanced</span></h2>
+
+        <p>Legacy codebases are context-hungry. A single debugging session can read dozens of files and fill the context window fast. These strategies keep you productive:</p>
+
+        <h3>Work in focused areas</h3>
+
+        <p>Do not try to understand the entire codebase in one session. Focus on one module, one feature, or one flow at a time. Use <code>/clear</code> between unrelated investigations.</p>
+
+        <h3>Use subagents for research</h3>
+
+        <p>When Claude needs to explore the codebase to answer a question, delegate to a subagent. The subagent runs in a <strong>separate context window</strong> and reports back a summary, keeping your main conversation clean:</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">Use subagents to investigate how our authentication system handles token refresh, and whether we have any existing OAuth utilities I should reuse.</span>
+<span class="output">[Subagent exploring auth module...]</span>
+<span class="output">Summary: Token refresh is handled by RefreshTokenService. It uses a rotating refresh token pattern...</span>
+<span class="output">Found existing OAuthClient utility in src/lib/oauth.js that handles provider registration...</span>
+          </div>
+        </div>
+
+        <h3>Start fresh sessions between tasks</h3>
+
+        <p>If you have corrected Claude more than twice on the same issue, the context is cluttered with failed approaches. Run <code>/clear</code> and start fresh with a more specific prompt that incorporates what you learned. A clean session with a better prompt almost always outperforms a long session with accumulated corrections.</p>
+
+        <h3>Use /compact strategically</h3>
+
+        <p>When auto-compaction triggers, Claude summarizes what matters most. You can guide this by adding instructions to CLAUDE.md:</p>
+
+        <pre><code class="language-markdown"># In your CLAUDE.md
+When compacting, always preserve:
+- The full list of modified files
+- Any test commands that were run
+- Architecture decisions made during the session
+- The current task state and next steps</code></pre>
+
+        <!-- Building CLAUDE.md Incrementally -->
+        <h2 id="building-claude-md" data-level="intermediate">Building CLAUDE.md Incrementally <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>For legacy codebases, <strong>do not try to write a perfect CLAUDE.md on day one</strong>. Build it incrementally as you learn the codebase. Treat it as living documentation that grows with your understanding.</p>
+
+        <h3>Start with /init</h3>
+
+        <p>Run <code>/init</code> in the project root. Claude analyzes the codebase and generates a starting CLAUDE.md with build commands, test instructions, and conventions it discovers:</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">$</span> <span class="command">cd ~/work/legacy-monolith</span>
+<span class="prompt">$</span> <span class="command">claude</span>
+<span class="prompt">claude&gt;</span> <span class="command">/init</span>
+<span class="output">Analyzing your project...</span>
+<span class="output">Detected: Java 17, Spring Boot 3.x, Gradle, PostgreSQL, Redis</span>
+<span class="output">Found: 12 test suites, CI config in .github/workflows/</span>
+<span class="success">Generated CLAUDE.md with project context</span>
+          </div>
+        </div>
+
+        <h3>Add as you learn</h3>
+
+        <p>Every time you discover something non-obvious, add it to CLAUDE.md. Here is a growth pattern over the first week:</p>
+
+        <pre><code class="language-markdown"># CLAUDE.md — built incrementally
+
+# Build & Test
+- `./gradlew build` to compile (takes ~2 min)
+- `./gradlew test` for unit tests
+- `./gradlew integrationTest` requires local PostgreSQL on port 5433 (not 5432!)
+- Redis must be running on port 6380 for session tests
+
+# Architecture
+- Layered: Controllers -> Services (with Impl suffix) -> Repositories
+- DTOs in /dto/, entities in /model/, mappers in /mapper/
+- All API responses wrapped in ApiResponse&lt;T&gt; envelope
+
+# Conventions
+- Exception hierarchy: BaseException -> BusinessException, TechnicalException
+- Logging: SLF4J with Logback, config at src/main/resources/logback-spring.xml
+- DB migrations: Flyway in src/main/resources/db/migration/ (V{n}__{desc}.sql)
+
+# Gotchas
+- PaymentService retries with exponential backoff due to Stripe 429s during peak
+- Don't modify OrderStatus enum order — Hibernate maps by ordinal, not name
+- The "legacy" package contains code shared with the old monolith — do not refactor</code></pre>
+
+        <h3>Keep it under 500 lines</h3>
+
+        <p>CLAUDE.md is loaded every session. If it grows beyond ~500 lines, Claude starts ignoring instructions because important rules get lost in the noise. Strategies to keep it lean:</p>
+
+        <ul>
+          <li><strong>Move detailed content</strong> into <code>.claude/rules/</code> files scoped to specific directories</li>
+          <li><strong>Use @imports</strong> for reference material: <code>@docs/api-guide.md</code></li>
+          <li><strong>Prune regularly</strong> &mdash; if Claude already does something correctly without the instruction, delete it</li>
+          <li><strong>Convert patterns to hooks</strong> &mdash; if a rule must always be followed, make it a hook instead of an instruction</li>
+        </ul>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Team Collaboration
+          </div>
+          <p>Check CLAUDE.md into git so your team can contribute. Each developer adds the gotchas and conventions they discover. Over time, it becomes the documentation the codebase never had &mdash; written in a format optimized for an AI pair programmer.</p>
+        </div>
+
+      </article>
+
+      <nav id="page-nav-footer" class="page-nav-footer"><!-- Built by nav.js --></nav>
+
+      <footer class="site-footer">
+        Built for developers using <a href="https://code.claude.com" target="_blank">Claude Code</a> &mdash;
+        <a href="https://code.claude.com/docs" target="_blank">Official Docs</a>
+      </footer>
+    </div>
+  </main>
+
+  <script defer src="js/nav.js"></script>
+  <script defer src="js/tabs.js"></script>
+  <script defer src="js/collapsible.js"></script>
+  <script defer src="js/terminal.js"></script>
+  <script defer src="js/decision-tree.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/progress.js"></script>
+</body>
+</html>

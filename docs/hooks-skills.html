@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hooks, Skills &amp; Plugins — Claude Code Onboarding</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/prism-override.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mobile-toggle" aria-label="Toggle navigation">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Claude Code Onboarding
+      </div>
+      <div class="sidebar-subtitle">Developer Guide</div>
+      <a href="../index.html" class="sidebar-back">&larr; All guides</a>
+    </div>
+    <nav id="sidebar-nav"><!-- Built by nav.js --></nav>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+    <header class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">
+          <a href="index.html">Docs</a>
+          <span class="sep">/</span>
+          Hooks, Skills &amp; Plugins
+        </div>
+      </div>
+      <div class="page-header-right">
+        <div class="level-filters">
+          <button class="level-filter-btn active" data-level="beginner">Beginner</button>
+          <button class="level-filter-btn active" data-level="intermediate">Intermediate</button>
+          <button class="level-filter-btn active" data-level="advanced">Advanced</button>
+        </div>
+        <div class="search-container">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search docs..." autocomplete="off">
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-container">
+      <article>
+
+        <h1>Hooks, Skills &amp; Plugins</h1>
+        <p class="page-description">Claude Code's extensibility system &mdash; from deterministic lifecycle hooks to on-demand skills, shareable plugins, and external tool connections via MCP.</p>
+
+        <!-- Decision Tree -->
+        <h2 id="decision-tree" data-level="intermediate">When to Use What <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Claude Code has four extension mechanisms that serve different purposes. Use this decision tree to pick the right one:</p>
+
+        <div class="decision-tree" data-tree="extensibility">
+          <div class="dt-question"></div>
+          <script type="application/json">
+          {
+            "question": "What do you want Claude to do?",
+            "options": [
+              {"label": "Run automatically on events", "desc": "Format code after edits, lint, block dangerous commands", "result": "<strong>Use Hooks.</strong> Hooks fire deterministically on lifecycle events (PreToolUse, PostToolUse, etc). Configure in settings.json under the <code>hooks</code> key. Claude cannot skip them."},
+              {"label": "Execute on demand via slash command", "desc": "Code review, deploy, scaffold components", "result": "<strong>Use Skills.</strong> Create a SKILL.md file in <code>.claude/skills/</code>. Invoke with <code>/skill-name</code>. Shared via git."},
+              {"label": "Connect to external tools/services", "desc": "GitHub, databases, browsers, APIs", "result": "<strong>Use MCP Servers.</strong> Model Context Protocol connects Claude to external services. Configure in settings.json under <code>mcpServers</code>."},
+              {"label": "Bundle and share with the team", "desc": "Package hooks + skills + MCP together", "result": "<strong>Use Plugins.</strong> Plugins bundle skills, hooks, and MCP servers into shareable packages. Install with <code>claude plugins add</code>."}
+            ]
+          }
+          </script>
+        </div>
+
+        <!-- Hooks -->
+        <h2 id="hooks" data-level="intermediate">Hooks <span class="level-badge intermediate">Intermediate</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/hooks-guide" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <p>Hooks are <strong>user-defined shell commands</strong> that execute at specific points in Claude Code's lifecycle. Unlike CLAUDE.md instructions (which are advisory), hooks are <strong>deterministic</strong> &mdash; they always run when their event fires, and Claude cannot skip them.</p>
+
+        <h3>Lifecycle events</h3>
+
+        <p>Each hook fires on a specific event. The most commonly used events:</p>
+
+        <table>
+          <thead>
+            <tr><th>Event</th><th>When it fires</th><th>Common use</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>PreToolUse</code></td><td>Before a tool call executes</td><td>Block dangerous commands, validate inputs</td></tr>
+            <tr><td><code>PostToolUse</code></td><td>After a tool call succeeds</td><td>Auto-format edited files, log commands</td></tr>
+            <tr><td><code>SessionStart</code></td><td>When a session begins or resumes</td><td>Inject context after compaction</td></tr>
+            <tr><td><code>Notification</code></td><td>When Claude needs your attention</td><td>Desktop notifications</td></tr>
+            <tr><td><code>Stop</code></td><td>When Claude finishes responding</td><td>Verify all tasks complete</td></tr>
+            <tr><td><code>PermissionRequest</code></td><td>When a permission dialog appears</td><td>Auto-approve safe operations</td></tr>
+            <tr><td><code>ConfigChange</code></td><td>When a config file changes</td><td>Audit logging</td></tr>
+            <tr><td><code>PreCompact</code></td><td>Before context compaction</td><td>Save important context</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Hook configuration</h3>
+
+        <p>Hooks are configured in <code>settings.json</code> (user-level at <code>~/.claude/settings.json</code> or project-level at <code>.claude/settings.json</code>). Here is a complete example that auto-formats files with Prettier after every edit:</p>
+
+        <pre><code class="language-json">{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path' | xargs npx prettier --write"
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Key Concept
+          </div>
+          <p>The <code>matcher</code> field is a regex pattern that filters when the hook fires. For <code>PreToolUse</code>/<code>PostToolUse</code>, it matches the <strong>tool name</strong> (e.g., <code>Bash</code>, <code>Edit|Write</code>, <code>mcp__.*</code>). For <code>SessionStart</code>, it matches the start reason (<code>startup</code>, <code>resume</code>, <code>compact</code>).</p>
+        </div>
+
+        <h3>Hook input and output</h3>
+
+        <p>Hooks receive event data as JSON on <strong>stdin</strong> and communicate results via <strong>exit codes</strong>:</p>
+
+        <ul>
+          <li><strong>Exit 0</strong> &mdash; allow the action to proceed. Stdout content is added to Claude's context for <code>UserPromptSubmit</code> and <code>SessionStart</code> hooks.</li>
+          <li><strong>Exit 2</strong> &mdash; block the action. Write a reason to stderr, and Claude receives it as feedback.</li>
+          <li><strong>Any other exit code</strong> &mdash; action proceeds but stderr is logged for debugging.</li>
+        </ul>
+
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <span class="collapsible-title">Full example: Block edits to protected files</span>
+            <svg class="collapsible-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="collapsible-body">
+            <div class="collapsible-content">
+              <p>Save this as <code>.claude/hooks/protect-files.sh</code> and make it executable with <code>chmod +x</code>:</p>
+              <pre><code class="language-bash">#!/bin/bash
+# protect-files.sh — Block edits to sensitive files
+
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+
+PROTECTED_PATTERNS=(".env" "package-lock.json" ".git/")
+
+for pattern in "${PROTECTED_PATTERNS[@]}"; do
+  if [[ "$FILE_PATH" == *"$pattern"* ]]; then
+    echo "Blocked: $FILE_PATH matches protected pattern '$pattern'" >&2
+    exit 2
+  fi
+done
+
+exit 0</code></pre>
+              <p>Register it in <code>.claude/settings.json</code>:</p>
+              <pre><code class="language-json">{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.sh"
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <h3>Hook types beyond shell commands</h3>
+
+        <p>Besides <code>"type": "command"</code>, hooks support three other types:</p>
+
+        <ul>
+          <li><strong><code>"type": "http"</code></strong> &mdash; POST event data to a URL. Useful for shared audit services or cloud functions.</li>
+          <li><strong><code>"type": "prompt"</code></strong> &mdash; Single-turn LLM evaluation. Claude (Haiku by default) makes a yes/no decision. Returns <code>{"ok": true}</code> or <code>{"ok": false, "reason": "..."}</code>.</li>
+          <li><strong><code>"type": "agent"</code></strong> &mdash; Multi-turn verification with tool access. Spawns a subagent that can read files and run commands before deciding.</li>
+        </ul>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Pro Tip
+          </div>
+          <p>Claude can write hooks for you. Try: <em>"Write a hook that runs eslint after every file edit"</em> or <em>"Write a hook that blocks writes to the migrations folder."</em> Run <code>/hooks</code> to browse what is configured.</p>
+        </div>
+
+        <!-- Skills -->
+        <h2 id="skills" data-level="intermediate">Skills <span class="level-badge intermediate">Intermediate</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/skills" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <p>Skills extend what Claude can do by providing <strong>instructions in a SKILL.md file</strong>. Claude uses skills automatically when relevant, or you invoke one directly with <code>/skill-name</code>. Each skill lives in its own directory under <code>.claude/skills/</code>:</p>
+
+        <pre><code class="language-bash"># Skill directory structure
+.claude/skills/
+├── fix-issue/
+│   └── SKILL.md           # Instructions for fixing GitHub issues
+├── api-conventions/
+│   └── SKILL.md           # REST API design rules
+└── deploy/
+    ├── SKILL.md            # Deployment workflow
+    ├── scripts/
+    │   └── deploy.sh       # Helper script
+    └── templates/
+        └── release-notes.md</code></pre>
+
+        <h3>SKILL.md format</h3>
+
+        <p>A SKILL.md has two parts: YAML frontmatter (between <code>---</code> markers) that tells Claude when to use the skill, and markdown content with the instructions:</p>
+
+        <pre><code class="language-yaml">---
+name: fix-issue
+description: Fix a GitHub issue by number
+disable-model-invocation: true
+allowed-tools: Read, Grep, Glob, Bash(gh *), Edit, Write
+---
+
+Fix GitHub issue $ARGUMENTS following our coding standards.
+
+1. Use `gh issue view $ARGUMENTS` to get the issue details
+2. Understand the problem described in the issue
+3. Search the codebase for relevant files
+4. Implement the fix
+5. Write and run tests to verify
+6. Create a descriptive commit
+7. Push and create a PR linking the issue</code></pre>
+
+        <h3>Key frontmatter fields</h3>
+
+        <dl class="kv-list">
+          <div><dt><code>name</code></dt><dd>Display name and slash command. Invoke with <code>/name</code>.</dd></div>
+          <div><dt><code>description</code></dt><dd>Helps Claude decide when to apply the skill automatically.</dd></div>
+          <div><dt><code>disable-model-invocation</code></dt><dd>Set to <code>true</code> to prevent Claude from auto-loading. Use for workflows with side effects (deploy, commit).</dd></div>
+          <div><dt><code>allowed-tools</code></dt><dd>Tools Claude can use without asking permission when this skill is active.</dd></div>
+          <div><dt><code>context</code></dt><dd>Set to <code>fork</code> to run in an isolated subagent context.</dd></div>
+          <div><dt><code>agent</code></dt><dd>Which subagent type to use when <code>context: fork</code> is set (e.g., <code>Explore</code>, <code>Plan</code>).</dd></div>
+        </dl>
+
+        <h3>Where skills live</h3>
+
+        <table>
+          <thead>
+            <tr><th>Location</th><th>Path</th><th>Applies to</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Personal</td><td><code>~/.claude/skills/&lt;name&gt;/SKILL.md</code></td><td>All your projects</td></tr>
+            <tr><td>Project</td><td><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td><td>This project only</td></tr>
+            <tr><td>Plugin</td><td><code>&lt;plugin&gt;/skills/&lt;name&gt;/SKILL.md</code></td><td>Where plugin is enabled</td></tr>
+            <tr><td>Enterprise</td><td>Managed settings</td><td>All users in organization</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Bundled skills</h3>
+
+        <p>Claude Code ships with powerful built-in skills:</p>
+
+        <table>
+          <thead>
+            <tr><th>Skill</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/batch &lt;instruction&gt;</code></td><td>Orchestrate large-scale parallel changes across a codebase. Decomposes work into 5-30 units, each in an isolated worktree.</td></tr>
+            <tr><td><code>/claude-api</code></td><td>Load Claude API reference for your language. Also auto-activates on Anthropic SDK imports.</td></tr>
+            <tr><td><code>/debug [description]</code></td><td>Troubleshoot your current session by reading the debug log.</td></tr>
+            <tr><td><code>/simplify [focus]</code></td><td>Review recently changed files for code reuse, quality, and efficiency issues.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Dynamic Context Injection
+          </div>
+          <p>Skills support <code>!`command`</code> syntax to run shell commands before the skill content is sent to Claude. For example, <code>!`gh pr diff`</code> fetches the PR diff and injects it into the prompt. This is preprocessing &mdash; Claude only sees the final result.</p>
+        </div>
+
+        <!-- Plugins -->
+        <h2 id="plugins" data-level="advanced">Plugins <span class="level-badge advanced">Advanced</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/plugins" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <p>Plugins <strong>bundle skills, hooks, agents, and MCP servers</strong> into a single installable unit. They are the way to share Claude Code extensions across projects and teams.</p>
+
+        <h3>What plugins contain</h3>
+
+        <pre><code class="language-bash"># Plugin directory structure
+my-plugin/
+├── .claude-plugin/
+│   └── plugin.json        # Manifest: name, description, version
+├── skills/                # Custom skills (SKILL.md files)
+│   └── code-review/
+│       └── SKILL.md
+├── agents/                # Custom agent definitions
+├── hooks/
+│   └── hooks.json         # Event handlers
+├── .mcp.json              # MCP server configurations
+├── .lsp.json              # LSP server configurations
+└── settings.json          # Default settings when plugin is enabled</code></pre>
+
+        <h3>When to use plugins vs standalone config</h3>
+
+        <table>
+          <thead>
+            <tr><th>Approach</th><th>Skill names</th><th>Best for</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Standalone (<code>.claude/</code>)</td><td><code>/hello</code></td><td>Personal workflows, project-specific, quick experiments</td></tr>
+            <tr><td>Plugins</td><td><code>/plugin-name:hello</code></td><td>Sharing with team, distributing to community, reusable across projects</td></tr>
+          </tbody>
+        </table>
+
+        <p>Browse and install plugins with <code>/plugin</code> in Claude Code, or install from a marketplace. Test local plugins during development with <code>claude --plugin-dir ./my-plugin</code>.</p>
+
+        <!-- MCP Servers -->
+        <h2 id="mcp-servers" data-level="advanced">MCP Servers <span class="level-badge advanced">Advanced</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/mcp" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <p>The <strong>Model Context Protocol (MCP)</strong> connects Claude to external tools and services. MCP servers provide Claude with new tools it can call &mdash; databases, APIs, browsers, monitoring services, and more.</p>
+
+        <h3>How MCP works</h3>
+
+        <p>An MCP server is a process that exposes tools over a standard protocol. Claude discovers the available tools at startup and can call them during a session, just like its built-in tools (Read, Write, Bash, etc.).</p>
+
+        <h3>Adding MCP servers</h3>
+
+        <p>The fastest way to add an MCP server is with the CLI:</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">$</span> <span class="command">claude mcp add github --transport stdio -- npx -y @modelcontextprotocol/server-github</span>
+<span class="success">Added MCP server "github"</span>
+
+<span class="prompt">$</span> <span class="command">claude mcp add postgres --transport stdio -- npx -y @modelcontextprotocol/server-postgres</span>
+<span class="success">Added MCP server "postgres"</span>
+
+<span class="prompt">$</span> <span class="command">claude mcp list</span>
+<span class="output">github    stdio  @modelcontextprotocol/server-github</span>
+<span class="output">postgres  stdio  @modelcontextprotocol/server-postgres</span>
+          </div>
+        </div>
+
+        <h3>Manual configuration</h3>
+
+        <p>You can also configure MCP servers directly in <code>.claude/settings.json</code> or <code>~/.claude/settings.json</code>:</p>
+
+        <pre><code class="language-json">{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "your-token-here"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/allowed/dir"]
+    }
+  }
+}</code></pre>
+
+        <h3>Common MCP servers</h3>
+
+        <table>
+          <thead>
+            <tr><th>Server</th><th>What it provides</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>GitHub</td><td>Issues, PRs, repos, code search</td></tr>
+            <tr><td>PostgreSQL</td><td>Database queries, schema inspection</td></tr>
+            <tr><td>Filesystem</td><td>Scoped file access outside working directory</td></tr>
+            <tr><td>Brave Search</td><td>Web search results</td></tr>
+            <tr><td>Puppeteer / Playwright</td><td>Browser automation and testing</td></tr>
+            <tr><td>Sentry</td><td>Error tracking and monitoring data</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            MCP Tool Naming
+          </div>
+          <p>MCP tools follow the naming convention <code>mcp__&lt;server&gt;__&lt;tool&gt;</code>. For example, <code>mcp__github__search_repositories</code>. You can use this pattern in hook matchers to target specific MCP tools.</p>
+        </div>
+
+        <!-- Comparison Table -->
+        <h2 id="comparison" data-level="intermediate">Comparison Table <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>A side-by-side view of all four extensibility mechanisms:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Hooks</th>
+              <th>Skills</th>
+              <th>Plugins</th>
+              <th>MCP Servers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Trigger</strong></td>
+              <td>Lifecycle events (automatic)</td>
+              <td>Slash command or auto-detected</td>
+              <td>Contains hooks + skills</td>
+              <td>Claude calls tools as needed</td>
+            </tr>
+            <tr>
+              <td><strong>Scope</strong></td>
+              <td>User, project, or org</td>
+              <td>User, project, or plugin</td>
+              <td>Installable per project</td>
+              <td>User or project settings</td>
+            </tr>
+            <tr>
+              <td><strong>Deterministic?</strong></td>
+              <td>Yes &mdash; always fires</td>
+              <td>No &mdash; Claude decides (unless manual)</td>
+              <td>Depends on contents</td>
+              <td>No &mdash; Claude decides</td>
+            </tr>
+            <tr>
+              <td><strong>Shared via</strong></td>
+              <td><code>.claude/settings.json</code> in git</td>
+              <td><code>.claude/skills/</code> in git</td>
+              <td>Marketplace or git repo</td>
+              <td>Settings file in git</td>
+            </tr>
+            <tr>
+              <td><strong>Use for</strong></td>
+              <td>Formatting, linting, blocking, notifications</td>
+              <td>Workflows, conventions, domain knowledge</td>
+              <td>Distributing bundles of extensions</td>
+              <td>External tools: DBs, APIs, browsers</td>
+            </tr>
+            <tr>
+              <td><strong>Config location</strong></td>
+              <td><code>settings.json</code> (<code>hooks</code> key)</td>
+              <td><code>.claude/skills/&lt;name&gt;/SKILL.md</code></td>
+              <td><code>.claude-plugin/plugin.json</code></td>
+              <td><code>settings.json</code> (<code>mcpServers</code> key)</td>
+            </tr>
+            <tr>
+              <td><strong>Can Claude skip it?</strong></td>
+              <td>No</td>
+              <td>Yes (unless you invoke manually)</td>
+              <td>Depends on contents</td>
+              <td>Yes</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Rule of Thumb
+          </div>
+          <p>If it <strong>must</strong> happen every time, use a <strong>hook</strong>. If it should happen when relevant, use a <strong>skill</strong>. If it connects to an external service, use <strong>MCP</strong>. If you want to share a bundle, make a <strong>plugin</strong>.</p>
+        </div>
+
+      </article>
+
+      <nav id="page-nav-footer" class="page-nav-footer"><!-- Built by nav.js --></nav>
+
+      <footer class="site-footer">
+        Built for developers using <a href="https://code.claude.com" target="_blank">Claude Code</a> &mdash;
+        <a href="https://code.claude.com/docs" target="_blank">Official Docs</a>
+      </footer>
+    </div>
+  </main>
+
+  <script defer src="js/nav.js"></script>
+  <script defer src="js/tabs.js"></script>
+  <script defer src="js/collapsible.js"></script>
+  <script defer src="js/terminal.js"></script>
+  <script defer src="js/decision-tree.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/progress.js"></script>
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cost Optimization — Claude Code Onboarding</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/prism-override.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mobile-toggle" aria-label="Toggle navigation">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Claude Code Onboarding
+      </div>
+      <div class="sidebar-subtitle">Developer Guide</div>
+      <a href="../index.html" class="sidebar-back">&larr; All guides</a>
+    </div>
+    <nav id="sidebar-nav"><!-- Built by nav.js --></nav>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+    <header class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">
+          <a href="index.html">Docs</a>
+          <span class="sep">/</span>
+          Cost Optimization
+        </div>
+      </div>
+      <div class="page-header-right">
+        <div class="level-filters">
+          <button class="level-filter-btn active" data-level="beginner">Beginner</button>
+          <button class="level-filter-btn active" data-level="intermediate">Intermediate</button>
+          <button class="level-filter-btn active" data-level="advanced">Advanced</button>
+        </div>
+        <div class="search-container">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search docs..." autocomplete="off">
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-container">
+      <article>
+
+        <h1>Cost Optimization</h1>
+        <p class="page-description">Claude Code consumes tokens for every interaction. The average developer spends ~$6/day, with 90% of users staying under $12/day. This chapter shows you how to keep costs predictable — from session hygiene to team budgeting at scale.</p>
+
+        <!-- Token Budgeting -->
+        <h2 id="token-budgeting" data-level="intermediate">Token Budgeting <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <div class="callout warning">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Key Rule
+          </div>
+          <p>A 200K-token conversation <strong>resends ALL context with every prompt</strong>. Each new message costs proportionally more as context grows. The context window is the most important resource to manage.</p>
+        </div>
+
+        <p>Token costs scale with context size: the more context Claude processes, the more tokens you use. Claude Code automatically optimizes costs through <strong>prompt caching</strong> (which provides up to a 90% discount for repeated content like system prompts) and <strong>auto-compaction</strong> (which summarizes conversation history when approaching context limits).</p>
+
+        <h3>Session Hygiene</h3>
+
+        <ul>
+          <li><strong><code>/clear</code> between tasks</strong> — Start fresh when switching to unrelated work. Stale context wastes tokens on every subsequent message. Use <code>/rename</code> before clearing so you can <code>/resume</code> back to it later.</li>
+          <li><strong>Focused prompts naming exact files</strong> — "Fix the TypeScript errors in <code>src/api/auth.ts</code>" is far cheaper than "fix all the errors." Vague prompts trigger broad file scanning.</li>
+          <li><strong>Batch related changes</strong> — Instead of 5 separate prompts for 5 related fixes, describe all 5 in one prompt. Each prompt resends the full context.</li>
+          <li><strong><code>/compact</code> with instructions</strong> — When context gets large, run <code>/compact Focus on the API changes and test output</code> to tell Claude what to preserve during summarization.</li>
+          <li><strong>Use <code>/btw</code> for side questions</strong> — Quick questions answered in an overlay that does not consume context tokens in your main conversation.</li>
+        </ul>
+
+        <p>Track your spending with <code>/cost</code> to see token usage for the current session, or configure your status line to display context usage continuously.</p>
+
+        <!-- Model Selection Guide -->
+        <h2 id="model-selection-guide" data-level="intermediate">Model Selection Guide <span class="level-badge intermediate">Intermediate</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/model-config" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <p>Model choice is the single biggest lever for controlling costs. Sonnet handles ~80% of coding tasks well at a fraction of Opus's price. Reserve Opus for complex architectural decisions or multi-step reasoning where Sonnet falls short.</p>
+
+        <table>
+          <thead>
+            <tr><th>Model</th><th>Input $/MTok</th><th>Output $/MTok</th><th>Best For</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Sonnet 4.6</strong></td>
+              <td>$3</td>
+              <td>$15</td>
+              <td>General coding, ~80% of tasks. Fast, capable, cost-effective.</td>
+            </tr>
+            <tr>
+              <td><strong>Opus 4.6</strong></td>
+              <td>$15</td>
+              <td>$75</td>
+              <td>Complex architecture, multi-file reasoning, difficult debugging.</td>
+            </tr>
+            <tr>
+              <td><strong>Haiku</strong></td>
+              <td>$0.80</td>
+              <td>$4</td>
+              <td>Simple queries, subagents, background tasks.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Prompt Caching Discount
+          </div>
+          <p>Cached input tokens are billed at a 90% discount. Since system prompts, CLAUDE.md, and conversation history are heavily cached, your effective input cost is often much lower than the listed rate.</p>
+        </div>
+
+        <h3>Choosing the Right Model</h3>
+
+        <div class="decision-tree" data-tree='{
+          "question": "What is the task complexity?",
+          "options": [
+            {"label": "Simple / routine", "desc": "Rename variables, add log lines, simple queries", "result": "<strong>Use Haiku</strong> for subagents or <strong>Sonnet</strong> for interactive work. Haiku costs ~$0.80/MTok input — ideal for focused, repeatable tasks."},
+            {"label": "Standard coding", "desc": "Feature implementation, bug fixes, test writing", "result": "<strong>Use Sonnet.</strong> Handles most coding tasks well at $3/MTok input. This is your default for ~80% of work."},
+            {"label": "Complex reasoning", "desc": "Multi-file architecture, difficult debugging, cross-system design", "result": "<strong>Use Opus.</strong> 5x the cost of Sonnet but significantly better at complex multi-step reasoning. Or use <strong>opusplan</strong> to get Opus for planning and Sonnet for execution."}
+          ]
+        }'></div>
+
+        <p>Switch models mid-session with <code>/model</code>, or set a default in <code>/config</code>. The <strong>opusplan</strong> alias provides an automated hybrid: Opus for plan mode reasoning, Sonnet for code execution.</p>
+
+        <!-- Extended Thinking -->
+        <h2 id="extended-thinking" data-level="advanced">Extended Thinking <span class="level-badge advanced">Advanced</span></h2>
+
+        <p>Extended thinking is enabled by default because it significantly improves performance on complex planning and reasoning tasks. However, thinking tokens are billed as <strong>output tokens</strong> — the most expensive token type. The default budget can be tens of thousands of tokens per request.</p>
+
+        <h3>Controlling Thinking Costs</h3>
+
+        <table>
+          <thead>
+            <tr><th>Method</th><th>How</th><th>Effect</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Effort level</strong></td>
+              <td><code>/effort low</code>, <code>/effort medium</code>, <code>/effort high</code></td>
+              <td>Dynamically allocates thinking based on task complexity. Persists across sessions.</td>
+            </tr>
+            <tr>
+              <td><strong>Max effort</strong></td>
+              <td><code>/effort max</code></td>
+              <td>Deepest reasoning, no constraint on thinking tokens. Opus 4.6 only. Current session only.</td>
+            </tr>
+            <tr>
+              <td><strong>Budget cap</strong></td>
+              <td><code>MAX_THINKING_TOKENS=10000</code></td>
+              <td>Hard limit on thinking tokens per request. Only applies when adaptive reasoning is disabled.</td>
+            </tr>
+            <tr>
+              <td><strong>Disable thinking</strong></td>
+              <td>Toggle in <code>/config</code></td>
+              <td>Turns off extended thinking entirely. Faster but less capable.</td>
+            </tr>
+            <tr>
+              <td><strong>Disable adaptive</strong></td>
+              <td><code>CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING=1</code></td>
+              <td>Reverts to fixed thinking budget controlled by MAX_THINKING_TOKENS.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>When to Adjust</h3>
+
+        <ul>
+          <li><strong>Use high/max effort</strong> for complex architectural decisions, multi-file refactors, and difficult debugging sessions where deep reasoning pays off.</li>
+          <li><strong>Use low effort</strong> for routine tasks: renaming variables, adding log lines, simple queries. Thinking tokens have diminishing returns on simple work.</li>
+          <li><strong>Use medium effort</strong> (the default for Opus on subscription plans) as a balanced starting point for most tasks.</li>
+        </ul>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Quick Check
+          </div>
+          <p>The current effort level is displayed next to the logo and spinner (e.g., "with low effort") so you can confirm which setting is active without opening <code>/model</code>.</p>
+        </div>
+
+        <!-- Reducing MCP Overhead -->
+        <h2 id="reducing-mcp-overhead" data-level="advanced">Reducing MCP Overhead <span class="level-badge advanced">Advanced</span></h2>
+
+        <p>Each MCP server adds its tool definitions to your context window — even when those tools are sitting idle. If you have 5 MCP servers configured, you might be paying for thousands of tokens of tool descriptions in every single message, even if you never use them.</p>
+
+        <h3>Diagnosis</h3>
+
+        <p>Run <code>/context</code> to see what is consuming space in your context window. If MCP tool definitions are a significant fraction, you have optimization opportunities.</p>
+
+        <h3>Strategies</h3>
+
+        <ul>
+          <li><strong>Prefer CLI tools over MCP</strong> — Tools like <code>gh</code>, <code>aws</code>, <code>gcloud</code>, and <code>sentry-cli</code> are more context-efficient because they do not add persistent tool definitions. Claude can run CLI commands directly via Bash without the overhead. If a CLI tool exists for the service, it is almost always cheaper than the equivalent MCP server.</li>
+          <li><strong>Disable unused servers</strong> — Run <code>/mcp</code> to see configured servers and disable any you are not actively using in the current session.</li>
+          <li><strong>Enable tool search with a lower threshold</strong> — When MCP tool descriptions exceed a percentage of your context window, Claude Code automatically defers them and loads tools on-demand. Set a lower threshold to be more aggressive:
+            <pre><code class="language-bash"># Defer tools when they exceed 5% of context (default is 10%)
+export ENABLE_TOOL_SEARCH=auto:5</code></pre>
+            Deferred tools only enter context when actually used, so idle tool definitions stop consuming space.
+          </li>
+        </ul>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Example
+          </div>
+          <p>A GitHub MCP server might add 2,000+ tokens of tool definitions. Using the <code>gh</code> CLI instead adds zero persistent overhead — Claude just runs <code>gh pr list</code>, <code>gh issue view 123</code>, etc. as regular Bash commands.</p>
+        </div>
+
+        <!-- CLAUDE.md as Index -->
+        <h2 id="claude-md-as-index" data-level="intermediate">CLAUDE.md as Index <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Your <code>CLAUDE.md</code> file is loaded into context at the start of every session. Because of prompt caching, this content gets a <strong>90% discount on input tokens</strong> — making it one of the most cost-effective ways to give Claude context. But there is a tradeoff: every line in CLAUDE.md is present in every message, so bloat still costs.</p>
+
+        <h3>The Index Pattern</h3>
+
+        <p>Keep CLAUDE.md under ~500 lines by treating it as an <strong>index</strong> that points to detailed reference files. Claude reads the index every session but only loads referenced files when relevant:</p>
+
+        <pre><code class="language-markdown"># Project: my-api
+
+## Build & Test
+- `npm run build` — compile TypeScript
+- `npm test` — run Jest suite (use --testPathPattern for single files)
+- `npm run lint` — ESLint + Prettier check
+
+## Code Style
+- ES modules (import/export), not CommonJS
+- Destructure imports: `import { foo } from 'bar'`
+- Functional components with hooks, no class components
+
+## Architecture
+- See @docs/architecture.md for system overview
+- See @docs/api-conventions.md for REST patterns
+- See @docs/database.md for migration procedures
+
+## Skills (loaded on demand)
+- /fix-issue — Analyze and fix a GitHub issue
+- /review — Code review with security focus
+- /migrate — Database migration workflow</code></pre>
+
+        <p>This pattern gives Claude the essentials (~100-200 tokens) while domain knowledge lives in skills and referenced files that load on-demand.</p>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Pruning Test
+          </div>
+          <p>For each line in your CLAUDE.md, ask: "Would removing this cause Claude to make mistakes?" If not, cut it. Move specialized instructions into skills that load on-demand only when invoked.</p>
+        </div>
+
+        <!-- Team Budgeting -->
+        <h2 id="team-budgeting" data-level="advanced">Team Budgeting <span class="level-badge advanced">Advanced</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/costs" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <p>When using the Claude API, you can set <strong>workspace spend limits</strong> on the total Claude Code workspace spend through the Anthropic Console. Admins can view cost and usage reporting to track team-wide consumption.</p>
+
+        <h3>Rate Limit Recommendations by Team Size</h3>
+
+        <p>The TPM (Tokens Per Minute) per user decreases as team size grows because fewer users tend to use Claude Code concurrently in larger organizations. These limits apply at the organization level, not per individual user.</p>
+
+        <table>
+          <thead>
+            <tr><th>Team Size</th><th>TPM per User</th><th>RPM per User</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1-5 users</td><td>200k-300k</td><td>5-7</td></tr>
+            <tr><td>5-20 users</td><td>100k-150k</td><td>2.5-3.5</td></tr>
+            <tr><td>20-50 users</td><td>50k-75k</td><td>1.25-1.75</td></tr>
+            <tr><td>50-100 users</td><td>25k-35k</td><td>0.62-0.87</td></tr>
+            <tr><td>100-500 users</td><td>15k-20k</td><td>0.37-0.47</td></tr>
+            <tr><td>500+ users</td><td>10k-15k</td><td>0.25-0.35</td></tr>
+          </tbody>
+        </table>
+
+        <p>For example, 200 users at 20k TPM per user = 4 million total TPM (200 * 20,000). Individual users can temporarily consume more than their calculated share when others are not actively using the service.</p>
+
+        <h3>Rollout Strategy</h3>
+
+        <ol>
+          <li><strong>Start with a small pilot</strong> — 5-10 developers for 2-4 weeks to establish usage patterns.</li>
+          <li><strong>Monitor with OpenTelemetry</strong> — Track <code>claude_code.cost.usage</code> and <code>claude_code.token.usage</code> per user and team.</li>
+          <li><strong>Set conservative limits</strong> — Start at the lower end of the recommended range and adjust upward based on actual usage.</li>
+          <li><strong>Educate on cost hygiene</strong> — Share the techniques from this page with your team. The biggest wins come from <code>/clear</code> between tasks and choosing the right model.</li>
+          <li><strong>Expand gradually</strong> — Roll out to additional teams once you have a baseline cost model.</li>
+        </ol>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Monthly Budget Estimate
+          </div>
+          <p>On average, Claude Code costs ~$100-200 per developer per month with Sonnet 4.6, though there is large variance depending on how many instances users are running and whether they use it in automation. Agent teams use approximately 7x more tokens than standard sessions.</p>
+        </div>
+
+        <!-- Quick Reference -->
+        <h2 id="quick-reference" data-level="intermediate">Quick Reference <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>A cheat sheet of the highest-impact cost optimization techniques, sorted by effort required.</p>
+
+        <table>
+          <thead>
+            <tr><th>#</th><th>Technique</th><th>Impact</th><th>Effort</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><strong><code>/clear</code> between tasks</strong></td>
+              <td>High — eliminates stale context from every subsequent message</td>
+              <td>None</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><strong>Use Sonnet by default</strong></td>
+              <td>High — 5x cheaper than Opus for input, 5x for output</td>
+              <td>None</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><strong>Write specific prompts</strong></td>
+              <td>High — fewer file reads, less scanning, less wasted context</td>
+              <td>Low</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><strong>Lower effort for simple tasks</strong></td>
+              <td>Medium — saves thousands of thinking tokens per request</td>
+              <td>None</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td><strong>Prefer CLI tools over MCP</strong></td>
+              <td>Medium — removes persistent tool definitions from context</td>
+              <td>Low</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td><strong>Keep CLAUDE.md concise</strong></td>
+              <td>Medium — reduces base context loaded in every message</td>
+              <td>Low</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td><strong>Use subagents for investigation</strong></td>
+              <td>Medium — verbose output stays in subagent context, not yours</td>
+              <td>Low</td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td><strong>Disable unused MCP servers</strong></td>
+              <td>Medium — each idle server wastes tokens on tool definitions</td>
+              <td>None</td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td><strong>Use <code>/compact</code> with focus instructions</strong></td>
+              <td>Medium — preserves what matters, discards what does not</td>
+              <td>Low</td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td><strong>Move specialized instructions to skills</strong></td>
+              <td>Low-Medium — reduces base CLAUDE.md size, loads on demand</td>
+              <td>Medium</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            The 80/20 Rule
+          </div>
+          <p>Techniques 1-3 alone — clearing between tasks, using Sonnet, and writing specific prompts — account for the majority of cost savings. Master these first before optimizing MCP servers or thinking budgets.</p>
+        </div>
+
+        <h3>Cost Monitoring Commands</h3>
+
+        <pre><code class="language-bash"># Check current session cost
+/cost
+
+# Check context window usage
+/context
+
+# See model and effort level
+/model
+
+# See all MCP servers and their status
+/mcp
+
+# Compact with preservation instructions
+/compact Focus on code changes and test output
+
+# Switch to a cheaper model mid-session
+/model sonnet
+
+# Lower thinking effort for simple tasks
+/effort low</code></pre>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Background Usage
+          </div>
+          <p>Claude Code uses a small number of tokens for background functionality (conversation summarization, command processing) even without active interaction — typically under $0.04 per session. This is normal and not a cost concern.</p>
+        </div>
+
+      </article>
+
+      <nav id="page-nav-footer" class="page-nav-footer"><!-- Built by nav.js --></nav>
+
+      <footer class="site-footer">
+        Built for developers using <a href="https://code.claude.com" target="_blank">Claude Code</a> &mdash;
+        <a href="https://code.claude.com/docs" target="_blank">Official Docs</a>
+      </footer>
+    </div>
+  </main>
+
+  <script defer src="js/nav.js"></script>
+  <script defer src="js/tabs.js"></script>
+  <script defer src="js/collapsible.js"></script>
+  <script defer src="js/terminal.js"></script>
+  <script defer src="js/decision-tree.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/progress.js"></script>
+</body>
+</html>

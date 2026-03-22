@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLAUDE.md Best Practices — Claude Code Onboarding</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/prism-override.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mobile-toggle" aria-label="Toggle navigation">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Claude Code Onboarding
+      </div>
+      <div class="sidebar-subtitle">Developer Guide</div>
+      <a href="../index.html" class="sidebar-back">&larr; All guides</a>
+    </div>
+    <nav id="sidebar-nav"><!-- Built by nav.js --></nav>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+    <header class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">
+          <a href="index.html">Docs</a>
+          <span class="sep">/</span>
+          CLAUDE.md Best Practices
+        </div>
+      </div>
+      <div class="page-header-right">
+        <div class="level-filters">
+          <button class="level-filter-btn active" data-level="beginner">Beginner</button>
+          <button class="level-filter-btn active" data-level="intermediate">Intermediate</button>
+          <button class="level-filter-btn active" data-level="advanced">Advanced</button>
+        </div>
+        <div class="search-container">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search docs..." autocomplete="off">
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-container">
+      <article>
+
+        <h1>CLAUDE.md Best Practices</h1>
+        <p class="page-description">CLAUDE.md is the single most important file for shaping Claude Code's behavior. Get it right and Claude follows your conventions automatically. Get it wrong and Claude ignores your rules or wastes context.</p>
+
+        <!-- What is CLAUDE.md -->
+        <h2 id="what-is-claude-md" data-level="beginner">What is CLAUDE.md <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>CLAUDE.md is a markdown file that Claude reads at the <strong>start of every conversation</strong>. It gives Claude persistent context it cannot infer from code alone: build commands, code style rules, architecture decisions, naming conventions, and workflow instructions.</p>
+
+        <p>Think of it as a README for your AI pair programmer. Everything in CLAUDE.md becomes part of Claude's working context, so it shapes every decision Claude makes during the session.</p>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            How It Works
+          </div>
+          <p>CLAUDE.md content is delivered as a <strong>user message</strong> after the system prompt. Claude reads it and tries to follow it, but it's guidance, not enforced configuration. The more specific and concise your instructions, the more consistently Claude follows them.</p>
+        </div>
+
+        <p>Claude also has a complementary system called <strong>auto memory</strong>, where Claude saves notes for itself as it works (build commands, patterns it discovers, your preferences). Auto memory is stored in <code>~/.claude/projects/&lt;project&gt;/memory/</code> and the first 200 lines of <code>MEMORY.md</code> are loaded each session. CLAUDE.md is for <em>your</em> instructions; auto memory is for <em>Claude's</em> learnings.</p>
+
+
+        <!-- File Hierarchy -->
+        <h2 id="file-hierarchy" data-level="beginner">File Hierarchy <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>CLAUDE.md files can live at multiple levels, each with a different scope. More specific locations take precedence over broader ones.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Location</th>
+              <th>Scope</th>
+              <th>Use Case</th>
+              <th>Shared With</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>~/.claude/CLAUDE.md</code></td>
+              <td>Global (all projects)</td>
+              <td>Personal preferences, tool shortcuts, code style you always want</td>
+              <td>Just you</td>
+            </tr>
+            <tr>
+              <td><code>./CLAUDE.md</code> or <code>./.claude/CLAUDE.md</code></td>
+              <td>Project root</td>
+              <td>Build commands, architecture, team conventions. Check this into git.</td>
+              <td>Team via source control</td>
+            </tr>
+            <tr>
+              <td><code>./subdir/CLAUDE.md</code></td>
+              <td>Subdirectory</td>
+              <td>Rules specific to a package in a monorepo or a subsystem</td>
+              <td>Team via source control</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>How files load</h3>
+
+        <p>Claude Code walks <strong>up</strong> the directory tree from your working directory and loads every CLAUDE.md it finds. If you run Claude in <code>foo/bar/</code>, it loads both <code>foo/bar/CLAUDE.md</code> and <code>foo/CLAUDE.md</code>.</p>
+
+        <p>CLAUDE.md files in <strong>subdirectories</strong> below your working directory load on demand when Claude reads files in those directories, not at startup.</p>
+
+        <h3>Monorepo patterns</h3>
+
+        <p>In a monorepo, put shared conventions at the root and package-specific rules in subdirectories:</p>
+
+        <pre><code class="language-bash">monorepo/
+  CLAUDE.md              # Shared: commit style, CI commands, PR conventions
+  packages/
+    api/
+      CLAUDE.md          # API-specific: REST conventions, Prisma commands
+    web/
+      CLAUDE.md          # Frontend-specific: React patterns, CSS conventions
+    shared/
+      CLAUDE.md          # Shared library rules</code></pre>
+
+        <p>If other teams' CLAUDE.md files get picked up and cause conflicts, use <code>claudeMdExcludes</code> in your local settings to skip them:</p>
+
+        <pre><code class="language-json">// .claude/settings.local.json
+{
+  "claudeMdExcludes": [
+    "**/monorepo/other-team/.claude/rules/**"
+  ]
+}</code></pre>
+
+        <p>There is also a <strong>managed policy</strong> location for organization-wide instructions deployed by IT/DevOps (on Linux: <code>/etc/claude-code/CLAUDE.md</code>). These cannot be excluded by individual settings.</p>
+
+
+        <!-- What to Include -->
+        <h2 id="what-to-include" data-level="intermediate">What to Include <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Include things Claude <strong>cannot figure out by reading your code</strong>. Focus on commands, conventions, and decisions that are non-obvious.</p>
+
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">Build &amp; Test Commands</div>
+            <div class="card-body"><code>npm run build</code>, <code>pytest -x</code>, specific flags or env vars needed. Claude will run these to verify its work.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Code Style Rules</div>
+            <div class="card-body">Rules that differ from defaults: "Use 2-space indentation", "ES modules only, no CommonJS", "Destructure imports".</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Architecture Notes</div>
+            <div class="card-body">Handler -> Service -> Model layering, where new files go, naming patterns for routes.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Testing Instructions</div>
+            <div class="card-body">Preferred test runner, how to run a single test, co-located vs separate test files.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Common Gotchas</div>
+            <div class="card-body">Environment variables that must be set, services that need to be running, non-obvious behaviors.</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Repo Etiquette</div>
+            <div class="card-body">Branch naming (<code>feat/</code>, <code>fix/</code>), commit message format (conventional commits), PR conventions.</div>
+          </div>
+        </div>
+
+        <h3>A good example CLAUDE.md</h3>
+
+        <pre><code class="language-markdown"># Code style
+- Use ES modules (import/export) syntax, not CommonJS (require)
+- Destructure imports when possible (eg. import { foo } from 'bar')
+- Use 2-space indentation
+- Prefer const over let; never use var
+
+# Build &amp; Test
+- Build: `npm run build`
+- Lint: `npm run lint`
+- Test all: `npm test`
+- Test single: `npx jest path/to/test.ts`
+- Typecheck: `npx tsc --noEmit`
+
+# Workflow
+- Be sure to typecheck when you're done making a series of code changes
+- Prefer running single tests, not the whole suite, for performance
+- Use conventional commits: feat:, fix:, docs:, refactor:, test:
+- Branch names: feat/short-description or fix/short-description
+
+# Architecture
+- Handlers in src/api/handlers/ (one per resource)
+- Business logic in src/services/ (handlers call services, never DB directly)
+- Database models in src/models/ (Prisma)
+- Shared utilities in src/utils/
+
+# Gotchas
+- AUTH_TOKEN_CONFIG env var must be set or token validation crashes
+- Run `docker compose up -d` before integration tests (needs PostgreSQL)
+- The CI build uses Node 20; don't use Node 22 features</code></pre>
+
+
+        <!-- What to Exclude -->
+        <h2 id="what-to-exclude" data-level="intermediate">What to Exclude <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Every line in CLAUDE.md consumes context tokens <strong>every session</strong>. Include only what changes Claude's behavior. If removing a line wouldn't cause Claude to make mistakes, delete it.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Do Not Include</th>
+              <th>Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Standard language conventions Claude already knows</td>
+              <td>Claude knows Python PEP 8, JavaScript best practices, etc.</td>
+            </tr>
+            <tr>
+              <td>Things Claude can figure out by reading code</td>
+              <td>It will read your files and infer patterns</td>
+            </tr>
+            <tr>
+              <td>Detailed API documentation</td>
+              <td>Link to docs instead; or use a skill for on-demand loading</td>
+            </tr>
+            <tr>
+              <td>Information that changes frequently</td>
+              <td>Stale instructions cause confusion</td>
+            </tr>
+            <tr>
+              <td>Long explanations or tutorials</td>
+              <td>Be concise; use bullets, not paragraphs</td>
+            </tr>
+            <tr>
+              <td>File-by-file descriptions of the codebase</td>
+              <td>Claude can read the files directly</td>
+            </tr>
+            <tr>
+              <td>Self-evident practices like "write clean code"</td>
+              <td>Too vague to change behavior</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout warning">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.072 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            Anti-Pattern
+          </div>
+          <p>If your CLAUDE.md is too long, Claude ignores half of it because important rules get lost in the noise. If Claude keeps doing something you don't want despite having a rule against it, the file is probably too long. Prune ruthlessly.</p>
+        </div>
+
+
+        <!-- Keeping It Lean -->
+        <h2 id="keeping-it-lean" data-level="intermediate">Keeping It Lean <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Target <strong>under 500 lines</strong> per CLAUDE.md file (the official docs recommend under 200 for best adherence). Longer files consume more context and reduce how reliably Claude follows your rules.</p>
+
+        <h3>Strategies for staying lean</h3>
+
+        <ol>
+          <li><strong>Use <code>@path</code> imports</strong> to pull in external files instead of inlining long content. The imported file is expanded at load time.</li>
+          <li><strong>Move specialized workflows to skills</strong> in <code>.claude/skills/</code>. Skills load on demand instead of every session.</li>
+          <li><strong>Use <code>.claude/rules/</code></strong> for path-scoped rules that only load when Claude works with matching files.</li>
+          <li><strong>Review regularly</strong>. Ask yourself for each line: "Would removing this cause Claude to make mistakes?" If not, cut it.</li>
+        </ol>
+
+        <h3>Import syntax</h3>
+
+        <pre><code class="language-markdown"># In your CLAUDE.md
+See @README.md for project overview and @package.json for npm commands.
+
+# Additional Instructions
+- Git workflow: @docs/git-instructions.md
+- Personal overrides: @~/.claude/my-project-instructions.md</code></pre>
+
+        <p>Both relative and absolute paths work. Relative paths resolve from the file containing the import. Imports can nest up to 5 levels deep.</p>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Skills vs. CLAUDE.md
+          </div>
+          <p>CLAUDE.md is loaded <strong>every session</strong>. Skills load <strong>on demand</strong>. If a block of instructions only applies when doing a specific workflow (like PR reviews or database migrations), move it to a skill. This keeps your base context smaller and improves adherence for the rules that remain.</p>
+        </div>
+
+
+        <!-- Using Emphasis -->
+        <h2 id="using-emphasis" data-level="intermediate">Using Emphasis <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Claude responds to emphasis keywords. When a rule is critical and must never be violated, use strong language:</p>
+
+        <ul>
+          <li><strong>IMPORTANT:</strong> signals a high-priority rule</li>
+          <li><strong>ALWAYS:</strong> for rules that must apply in every case</li>
+          <li><strong>NEVER:</strong> for hard prohibitions</li>
+          <li><strong>YOU MUST:</strong> for mandatory behaviors</li>
+        </ul>
+
+        <pre><code class="language-markdown"># Critical rules
+- IMPORTANT: Never commit directly to main. Always use feature branches.
+- ALWAYS run `npm run typecheck` before committing TypeScript changes.
+- NEVER use `any` type in TypeScript. Use `unknown` and narrow with type guards.
+- YOU MUST include tests for any new API endpoint.</code></pre>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Use Sparingly
+          </div>
+          <p>If every rule uses IMPORTANT and NEVER, none of them stand out. Reserve emphasis for the 3-5 rules that <em>actually</em> matter most. Use normal language for everything else.</p>
+        </div>
+
+
+        <!-- The /init Command -->
+        <h2 id="init-command" data-level="beginner">The /init Command <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>You don't have to write CLAUDE.md from scratch. The <code>/init</code> command analyzes your codebase and generates a starting file with build commands, test instructions, and project conventions it discovers.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; /init Walkthrough</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">$</span> <span class="command">cd ~/my-project</span>
+<span class="prompt">$</span> <span class="command">claude</span>
+<span class="output">Starting Claude Code...</span>
+<span class="prompt">claude&gt;</span> <span class="command">/init</span>
+<span class="output"></span>
+<span class="output">Analyzing your project...</span>
+<span class="output">  Detected: TypeScript, Node.js, Express, Prisma, Jest</span>
+<span class="output">  Found: package.json, tsconfig.json, .eslintrc, jest.config.ts</span>
+<span class="output">  Reading existing patterns...</span>
+<span class="output"></span>
+<span class="success">Generated CLAUDE.md with:</span>
+<span class="success">  - Build command: npm run build</span>
+<span class="success">  - Test command: npx jest</span>
+<span class="success">  - Lint command: npm run lint</span>
+<span class="success">  - Code style: ES modules, 2-space indent</span>
+<span class="success">  - Architecture: handler/service/model layers</span>
+<span class="output"></span>
+<span class="output">Review and refine CLAUDE.md with project-specific rules that</span>
+<span class="output">Claude couldn't discover on its own.</span>
+          </div>
+        </div>
+
+        <p>If a CLAUDE.md already exists, <code>/init</code> suggests improvements rather than overwriting it.</p>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Interactive Init
+          </div>
+          <p>Set <code>CLAUDE_CODE_NEW_INIT=true</code> to enable the interactive multi-phase flow. This version asks which artifacts to set up (CLAUDE.md, skills, hooks), explores your codebase with a subagent, fills in gaps via follow-up questions, and presents a reviewable proposal before writing any files.</p>
+        </div>
+
+        <h3>After /init</h3>
+
+        <p>The generated file is a starting point. Refine it by adding:</p>
+
+        <ul>
+          <li>Rules Claude wouldn't discover on its own (non-obvious gotchas, required environment variables)</li>
+          <li>Commit message and branch naming conventions</li>
+          <li>Architecture decisions that aren't obvious from the code structure</li>
+          <li>Testing preferences (prefer running single tests, avoid mocks, etc.)</li>
+        </ul>
+
+        <p>Check CLAUDE.md into git so your team benefits. The file compounds in value over time as you add rules based on mistakes Claude makes.</p>
+
+
+        <!-- Full annotated example -->
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <span class="collapsible-title">Full annotated CLAUDE.md example</span>
+            <svg class="collapsible-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="collapsible-body">
+            <div class="collapsible-content">
+              <pre><code class="language-markdown"># Acme API — CLAUDE.md
+
+# Code Style
+- Use ES modules (import/export), not CommonJS (require)
+- Destructure imports: import { foo } from 'bar'
+- 2-space indentation, single quotes, trailing commas
+- Prefer const over let; NEVER use var
+- ALWAYS use explicit return types on exported functions
+
+# Build &amp; Test
+- Build: `npm run build`
+- Lint: `npm run lint -- --fix`
+- Typecheck: `npx tsc --noEmit`
+- Test all: `npm test`
+- Test single file: `npx jest path/to/file.test.ts`
+- Test single test: `npx jest -t "test name pattern"`
+- IMPORTANT: Run typecheck after any TypeScript changes
+
+# Workflow
+- Use conventional commits: feat:, fix:, docs:, refactor:, test:, chore:
+- Branch names: feat/short-desc or fix/short-desc
+- NEVER commit directly to main
+- Prefer running single tests during development for speed
+- Run the full suite before committing
+
+# Architecture
+- Route handlers: src/api/handlers/ (one file per resource)
+- Business logic: src/services/ (handlers call services, never DB directly)
+- Database: src/models/ (Prisma schema + generated client)
+- Utilities: src/utils/ (pure functions, no side effects)
+- Middleware: src/middleware/ (auth, rate-limiting, logging)
+- New API routes go in src/api/routes.ts
+
+# Testing
+- Co-locate test files: foo.ts has foo.test.ts in the same directory
+- Use real database for integration tests (not mocks)
+- Factory functions for test data in tests/factories/
+- IMPORTANT: Every new API endpoint must have at least one integration test
+
+# Gotchas
+- AUTH_TOKEN_CONFIG env var MUST be set or token validation crashes
+- Run `docker compose up -d` before integration tests (needs PostgreSQL + Redis)
+- CI uses Node 20 — do not use Node 22 features
+- The /health endpoint is excluded from rate limiting (see middleware/rateLimit.ts)
+- Prisma migrations: `npx prisma migrate dev` (never `migrate reset` in shared envs)
+
+# External docs
+- API design guide: @docs/api-conventions.md
+- Deployment runbook: @docs/deploy.md</code></pre>
+              <p>This example is about 45 lines &mdash; concise, scannable, and focused on things Claude cannot infer from code alone. Each section uses bullets for quick parsing. Critical rules use IMPORTANT and NEVER for emphasis.</p>
+            </div>
+          </div>
+        </div>
+
+      </article>
+
+      <nav id="page-nav-footer" class="page-nav-footer"><!-- Built by nav.js --></nav>
+
+      <footer class="site-footer">
+        Built for developers using <a href="https://code.claude.com" target="_blank">Claude Code</a> &mdash;
+        <a href="https://code.claude.com/docs" target="_blank">Official Docs</a>
+      </footer>
+    </div>
+  </main>
+
+  <script defer src="js/nav.js"></script>
+  <script defer src="js/tabs.js"></script>
+  <script defer src="js/collapsible.js"></script>
+  <script defer src="js/terminal.js"></script>
+  <script defer src="js/decision-tree.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/progress.js"></script>
+</body>
+</html>

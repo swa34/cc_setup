@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Core Workflows — Claude Code Onboarding</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/prism-override.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mobile-toggle" aria-label="Toggle navigation">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Claude Code Onboarding
+      </div>
+      <div class="sidebar-subtitle">Developer Guide</div>
+      <a href="../index.html" class="sidebar-back">&larr; All guides</a>
+    </div>
+    <nav id="sidebar-nav"><!-- Built by nav.js --></nav>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+    <header class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">
+          <a href="index.html">Docs</a>
+          <span class="sep">/</span>
+          Core Workflows
+        </div>
+      </div>
+      <div class="page-header-right">
+        <div class="level-filters">
+          <button class="level-filter-btn active" data-level="beginner">Beginner</button>
+          <button class="level-filter-btn active" data-level="intermediate">Intermediate</button>
+          <button class="level-filter-btn active" data-level="advanced">Advanced</button>
+        </div>
+        <div class="search-container">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search docs..." autocomplete="off">
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-container">
+      <article>
+
+        <h1>Core Workflows</h1>
+        <p class="page-description">The everyday patterns that make Claude Code productive: reviewing code, committing changes, debugging errors, and exploring unfamiliar codebases.</p>
+
+        <!-- Code Review -->
+        <h2 id="code-review" data-level="beginner">Code Review <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>Claude Code can review your changes before you commit, catching bugs, style issues, and logic errors. The simplest approach is the <code>/review</code> slash command, which examines your current diff and posts inline feedback.</p>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Key Concept
+          </div>
+          <p>For the most <strong>unbiased</strong> review, use a <strong>separate Claude session</strong> from the one that wrote the code. Claude won't be biased toward code it just produced. This is the <strong>Writer/Reviewer pattern</strong>.</p>
+        </div>
+
+        <h3>Quick review with /review</h3>
+
+        <p>Run <code>/review</code> inside a Claude session to review your uncommitted changes. Claude reads the diff, identifies potential issues, and explains its findings.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; Code Review</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">/review</span>
+<span class="output">Reviewing uncommitted changes...</span>
+<span class="output"></span>
+<span class="highlight">src/auth/session.ts</span>
+<span class="warning">  Line 42: Token expiry check uses &lt; instead of &lt;=. A token expiring</span>
+<span class="warning">  at exactly the boundary will pass validation but fail on the next</span>
+<span class="warning">  API call. Consider using &lt;= for the comparison.</span>
+<span class="output"></span>
+<span class="highlight">src/api/handlers/login.ts</span>
+<span class="success">  No issues found.</span>
+<span class="output"></span>
+<span class="highlight">src/middleware/rateLimit.ts</span>
+<span class="warning">  Line 18: The rate limit counter resets on every deployment because</span>
+<span class="warning">  it's stored in-memory. Consider using Redis or a shared store if</span>
+<span class="warning">  you run multiple instances.</span>
+          </div>
+        </div>
+
+        <h3>The Writer/Reviewer pattern</h3>
+
+        <p>For high-stakes changes, use two separate sessions. Session A writes the code; Session B reviews it with fresh context and no bias toward the implementation.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; Session B (Reviewer)</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">$</span> <span class="command">claude</span>
+<span class="output">Starting new session...</span>
+<span class="prompt">claude&gt;</span> <span class="command">Review the rate limiter implementation in @src/middleware/rateLimit.ts.</span>
+<span class="command">         Look for edge cases, race conditions, and consistency with our</span>
+<span class="command">         existing middleware patterns.</span>
+<span class="output"></span>
+<span class="output">I'll review the rate limiter implementation...</span>
+<span class="output"></span>
+<span class="highlight">Findings:</span>
+<span class="warning">  1. Race condition: concurrent requests can exceed the limit because</span>
+<span class="warning">     the read-then-increment is not atomic. Use INCR in Redis or a</span>
+<span class="warning">     mutex for in-memory counters.</span>
+<span class="warning">  2. Missing X-RateLimit-Remaining header &mdash; other middleware in</span>
+<span class="warning">     this project (see cors.ts, auth.ts) always set response headers.</span>
+<span class="success">  3. Good: sliding window approach matches the pattern in throttle.ts.</span>
+          </div>
+        </div>
+
+        <h3>Using /simplify for cleaner code</h3>
+
+        <p>After a feature is working, run the <code>/simplify</code> prompt pattern to reduce complexity. Ask Claude to look for unnecessary abstractions, redundant code, or over-engineering.</p>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Tip
+          </div>
+          <p>You can also set up automated PR reviews with Claude's <strong>Code Review</strong> feature for GitHub. It uses a fleet of specialized agents that analyze your PR in context of the full codebase. See the <a href="https://code.claude.com/docs/en/code-review" target="_blank">Code Review docs</a> for setup.</p>
+        </div>
+
+
+        <!-- Committing & Pull Requests -->
+        <h2 id="committing-pull-requests" data-level="beginner">Committing &amp; Pull Requests <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>Claude can create commits and open pull requests directly. Just tell it what you want. Claude examines your staged and unstaged changes, writes a descriptive commit message, and can push and create a PR in one go.</p>
+
+        <h3>Creating commits</h3>
+
+        <p>After making changes, ask Claude to commit. Claude analyzes the diff and writes a message following your project's conventions (which you can specify in <code>CLAUDE.md</code>).</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; Committing</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">commit my changes with a descriptive message</span>
+<span class="output"></span>
+<span class="output">I'll review your changes and create a commit.</span>
+<span class="output"></span>
+<span class="output">Changes to commit:</span>
+<span class="highlight">  modified: src/auth/session.ts</span>
+<span class="highlight">  modified: src/middleware/rateLimit.ts</span>
+<span class="highlight">  new file: src/tests/rateLimit.test.ts</span>
+<span class="output"></span>
+<span class="success">Created commit: fix(auth): use atomic counter for rate limiting</span>
+<span class="success"></span>
+<span class="success">  Replace in-memory read-then-increment with atomic INCR to prevent</span>
+<span class="success">  race conditions under concurrent requests. Add X-RateLimit-Remaining</span>
+<span class="success">  header for consistency with existing middleware. Fix off-by-one in</span>
+<span class="success">  token expiry check.</span>
+          </div>
+        </div>
+
+        <h3>Opening pull requests</h3>
+
+        <p>Claude uses the <code>gh</code> CLI under the hood. Ask it to create a PR and it will push your branch, generate a title and description from the commit history, and open the PR on GitHub.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; Pull Request</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">create a pr for my changes</span>
+<span class="output"></span>
+<span class="output">Pushing branch fix/rate-limit-atomicity to origin...</span>
+<span class="success">Branch pushed.</span>
+<span class="output"></span>
+<span class="output">Creating pull request...</span>
+<span class="success">PR #247 created: fix(auth): atomic rate limiting with race condition fix</span>
+<span class="success">https://github.com/acme/app/pull/247</span>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Commit Message Conventions
+          </div>
+          <p>Add your commit message format to <code>CLAUDE.md</code> so Claude follows it automatically. For example: <code>"Use conventional commits (feat:, fix:, docs:, etc). Keep the subject line under 72 characters."</code></p>
+        </div>
+
+        <h3>Resuming from a PR</h3>
+
+        <p>When you create a PR with Claude, the session is automatically linked. You can resume it later:</p>
+
+        <pre><code class="language-bash"># Resume the session that created PR #247
+claude --from-pr 247</code></pre>
+
+        <p>This restores the full conversation context from when you created the PR, so you can address review feedback without re-explaining the background.</p>
+
+
+        <!-- Debugging -->
+        <h2 id="debugging" data-level="intermediate">Debugging <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Claude excels at debugging because it can read your code, run commands, observe output, and iterate, all in one loop. The key is to give Claude the <strong>symptom</strong> and let it find the <strong>root cause</strong>, rather than pointing it at what you think the problem is.</p>
+
+        <h3>Paste the error, let Claude investigate</h3>
+
+        <p>The fastest way to debug is to paste the error output directly. Claude traces the stack, reads the relevant files, and proposes a fix.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; Debugging</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">I'm seeing this error when I run npm test:</span>
+<span class="command"></span>
+<span class="command">  TypeError: Cannot read properties of undefined (reading 'refresh')</span>
+<span class="command">    at SessionManager.validateToken (src/auth/session.ts:42:28)</span>
+<span class="command">    at LoginHandler.handle (src/api/handlers/login.ts:18:35)</span>
+<span class="output"></span>
+<span class="output">Let me investigate the error...</span>
+<span class="output">Reading src/auth/session.ts...</span>
+<span class="output">Reading src/api/handlers/login.ts...</span>
+<span class="output"></span>
+<span class="highlight">Root cause found:</span>
+<span class="output">  In session.ts line 38, `getTokenConfig()` can return undefined when</span>
+<span class="output">  the environment variable AUTH_TOKEN_CONFIG is not set. Line 42 then</span>
+<span class="output">  tries to access `.refresh` on that undefined value.</span>
+<span class="output"></span>
+<span class="output">  This isn't a test issue &mdash; it's a missing null check that would also</span>
+<span class="output">  crash in production if the env var is unset.</span>
+<span class="output"></span>
+<span class="success">Fix: I'll add a null check with a sensible default, and a test that</span>
+<span class="success">covers the missing-config case.</span>
+          </div>
+        </div>
+
+        <div class="callout warning">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.072 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+            Root Cause vs. Symptoms
+          </div>
+          <p>Tell Claude to <strong>address the root cause, not suppress the error</strong>. A common failure mode: Claude adds a try/catch that swallows the exception instead of fixing the underlying issue. Be explicit: <em>"Fix the root cause. Don't suppress the error."</em></p>
+        </div>
+
+        <h3>The debugging loop</h3>
+
+        <p>For trickier bugs, Claude works through an iterative cycle: reproduce, hypothesize, test, verify. You can guide this process or let Claude drive.</p>
+
+        <ol>
+          <li><strong>Share the error and reproduction steps</strong> &mdash; paste the output, mention if it's intermittent</li>
+          <li><strong>Let Claude investigate</strong> &mdash; it reads files, checks git history, runs commands</li>
+          <li><strong>Review the proposed fix</strong> &mdash; Claude explains its reasoning before changing code</li>
+          <li><strong>Verify</strong> &mdash; Claude runs tests to confirm the fix works</li>
+        </ol>
+
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <span class="collapsible-title">Example debugging prompts</span>
+            <svg class="collapsible-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="collapsible-body">
+            <div class="collapsible-content">
+              <p><strong>When you have a stack trace:</strong></p>
+              <pre><code class="language-bash"># Paste the error and let Claude trace it
+I'm seeing this error when I run npm test:
+[paste full stack trace]
+Fix the root cause, don't suppress the error.</code></pre>
+
+              <p><strong>When behavior is wrong but no error:</strong></p>
+              <pre><code class="language-bash"># Describe expected vs actual behavior
+Users report that login fails after session timeout.
+Check the auth flow in src/auth/, especially token refresh.
+Write a failing test that reproduces the issue, then fix it.</code></pre>
+
+              <p><strong>When the bug is intermittent:</strong></p>
+              <pre><code class="language-bash"># Give Claude reproduction context
+This test fails about 30% of the time in CI:
+tests/integration/checkout.test.ts
+It always passes locally. Suspect a timing issue.
+Investigate and fix it.</code></pre>
+
+              <p><strong>When you want a targeted fix:</strong></p>
+              <pre><code class="language-bash"># Point Claude to the area
+suggest a few ways to fix the @ts-ignore on line 15 of user.ts</code></pre>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Exploring Codebases -->
+        <h2 id="exploring-codebases" data-level="intermediate">Exploring Codebases <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>When you're new to a codebase or investigating unfamiliar code, Claude's <strong>Plan Mode</strong> is your best tool. It lets Claude analyze code read-only, so it explores thoroughly without changing anything.</p>
+
+        <h3>Plan Mode (Shift+Tab)</h3>
+
+        <p>Press <kbd>Shift+Tab</kbd> to cycle through permission modes. From Normal Mode, the first press enables <strong>Auto-Accept</strong> (edits auto-approved); the second press activates <strong>Plan Mode</strong>, indicated by <code>&#9208; plan mode on</code> at the bottom of the terminal.</p>
+
+        <p>In Plan Mode, Claude uses read-only operations: it reads files, searches code, and runs safe commands, but never writes or modifies. This is perfect for exploration and planning.</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; Plan Mode Exploration</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">give me an overview of this codebase</span>
+<span class="comment">                                             &#9208; plan mode on</span>
+<span class="output"></span>
+<span class="output">Reading project structure...</span>
+<span class="output">Reading package.json, tsconfig.json...</span>
+<span class="output">Scanning src/ directory...</span>
+<span class="output"></span>
+<span class="highlight">Project Overview:</span>
+<span class="output">  This is a Node.js REST API built with Express and TypeScript.</span>
+<span class="output"></span>
+<span class="output">  Key directories:</span>
+<span class="output">    src/api/handlers/   - Route handlers (one per resource)</span>
+<span class="output">    src/auth/           - Session management, JWT utilities</span>
+<span class="output">    src/middleware/      - Express middleware (auth, rate limiting, CORS)</span>
+<span class="output">    src/models/          - Prisma database models</span>
+<span class="output">    src/services/        - Business logic layer</span>
+<span class="output"></span>
+<span class="output">  Patterns:</span>
+<span class="output">    - Handler -> Service -> Model layering</span>
+<span class="output">    - JWT-based auth with refresh tokens</span>
+<span class="output">    - Prisma ORM with PostgreSQL</span>
+<span class="output">    - Jest for testing, co-located test files</span>
+          </div>
+        </div>
+
+        <h3>Start broad, then drill down</h3>
+
+        <p>The most effective exploration pattern is to start with high-level questions and narrow progressively. Claude remembers earlier answers in the same session, so each follow-up builds on previous context.</p>
+
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">Step 1: Overview</div>
+            <div class="card-body">"Give me an overview of this codebase" or "Explain the main architecture patterns"</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Step 2: Subsystem</div>
+            <div class="card-body">"How does authentication work?" or "Trace the login flow from front-end to database"</div>
+          </div>
+          <div class="card">
+            <div class="card-title">Step 3: Specifics</div>
+            <div class="card-body">"What edge cases does SessionManager handle?" or "Why does line 134 call foo() instead of bar()?"</div>
+          </div>
+        </div>
+
+        <h3>Starting in Plan Mode from the command line</h3>
+
+        <p>You can also launch Claude directly in Plan Mode:</p>
+
+        <pre><code class="language-bash"># Start an interactive session in Plan Mode
+claude --permission-mode plan
+
+# Run a one-off analysis in Plan Mode (headless)
+claude --permission-mode plan -p "Analyze the authentication system and suggest improvements"</code></pre>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Tip
+          </div>
+          <p>Press <kbd>Ctrl+G</kbd> to open Claude's plan in your default text editor, where you can edit it before Claude proceeds. Useful for refining the approach before switching to Normal Mode for implementation.</p>
+        </div>
+
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <span class="collapsible-title">Useful prompts for codebase exploration</span>
+            <svg class="collapsible-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="collapsible-body">
+            <div class="collapsible-content">
+              <p><strong>Understanding structure:</strong></p>
+              <ul>
+                <li><code>give me an overview of this codebase</code></li>
+                <li><code>explain the main architecture patterns used here</code></li>
+                <li><code>what are the key data models?</code></li>
+                <li><code>how is authentication handled?</code></li>
+                <li><code>what's the testing strategy?</code></li>
+              </ul>
+
+              <p><strong>Finding code:</strong></p>
+              <ul>
+                <li><code>find the files that handle user authentication</code></li>
+                <li><code>how do these authentication files work together?</code></li>
+                <li><code>trace the login process from front-end to database</code></li>
+                <li><code>where are the database migrations?</code></li>
+              </ul>
+
+              <p><strong>Understanding decisions:</strong></p>
+              <ul>
+                <li><code>why does this code call foo() instead of bar() on line 333?</code></li>
+                <li><code>what edge cases does CustomerOnboardingFlowImpl handle?</code></li>
+                <li><code>look through ExecutionFactory's git history and summarize how its API came to be</code></li>
+              </ul>
+
+              <p><strong>Planning changes:</strong></p>
+              <ul>
+                <li><code>I need to add Google OAuth. What files need to change? What's the session flow? Create a plan.</code></li>
+                <li><code>how would I add a new API endpoint following this project's patterns?</code></li>
+                <li><code>what would break if I renamed the User model to Account?</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            When to Skip Planning
+          </div>
+          <p>Plan Mode adds overhead. For tasks where the scope is clear and the fix is small (a typo, a log line, renaming a variable), skip the plan and ask Claude to just do it. Planning is most valuable when you're uncertain about the approach, the change modifies many files, or you're unfamiliar with the code.</p>
+        </div>
+
+      </article>
+
+      <nav id="page-nav-footer" class="page-nav-footer"><!-- Built by nav.js --></nav>
+
+      <footer class="site-footer">
+        Built for developers using <a href="https://code.claude.com" target="_blank">Claude Code</a> &mdash;
+        <a href="https://code.claude.com/docs" target="_blank">Official Docs</a>
+      </footer>
+    </div>
+  </main>
+
+  <script defer src="js/nav.js"></script>
+  <script defer src="js/tabs.js"></script>
+  <script defer src="js/collapsible.js"></script>
+  <script defer src="js/terminal.js"></script>
+  <script defer src="js/decision-tree.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/progress.js"></script>
+</body>
+</html>

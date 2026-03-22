@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory System — Claude Code Onboarding</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/prism-override.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mobile-toggle" aria-label="Toggle navigation">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Claude Code Onboarding
+      </div>
+      <div class="sidebar-subtitle">Developer Guide</div>
+      <a href="../index.html" class="sidebar-back">&larr; All guides</a>
+    </div>
+    <nav id="sidebar-nav"><!-- Built by nav.js --></nav>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+    <header class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">
+          <a href="index.html">Docs</a>
+          <span class="sep">/</span>
+          Memory System
+        </div>
+      </div>
+      <div class="page-header-right">
+        <div class="level-filters">
+          <button class="level-filter-btn active" data-level="beginner">Beginner</button>
+          <button class="level-filter-btn active" data-level="intermediate">Intermediate</button>
+          <button class="level-filter-btn active" data-level="advanced">Advanced</button>
+        </div>
+        <div class="search-container">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search docs..." autocomplete="off">
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-container">
+      <article>
+
+        <h1>Memory System</h1>
+        <p class="page-description">How Claude Code remembers your project across sessions &mdash; from static instructions to automatic note-taking and structured memory hierarchies.</p>
+
+        <!-- Memory Types Overview -->
+        <h2 id="memory-types" data-level="intermediate">Memory Types Overview <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Each Claude Code session starts with a <strong>fresh context window</strong>. Two built-in mechanisms carry knowledge across sessions, and you can add a third with a structured memory system:</p>
+
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-title">CLAUDE.md (Static Context)</div>
+            <div class="card-body">
+              <p>Instructions <strong>you write</strong> that Claude reads at the start of every session. Think of it as your project's operating manual for Claude.</p>
+              <dl class="kv-list">
+                <div><dt>Who writes it</dt><dd>You (the developer)</dd></div>
+                <div><dt>Scope</dt><dd>Project, user, or organization</dd></div>
+                <div><dt>Contains</dt><dd>Coding standards, build commands, architecture decisions</dd></div>
+                <div><dt>Loaded</dt><dd>Fully, at every session start</dd></div>
+              </dl>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Auto Memory (Claude's Notes)</div>
+            <div class="card-body">
+              <p>Notes <strong>Claude writes itself</strong> as it discovers patterns, preferences, and project details during your sessions.</p>
+              <dl class="kv-list">
+                <div><dt>Who writes it</dt><dd>Claude (automatically)</dd></div>
+                <div><dt>Scope</dt><dd>Per working tree / git repo</dd></div>
+                <div><dt>Contains</dt><dd>Build insights, debugging patterns, workflow habits</dd></div>
+                <div><dt>Loaded</dt><dd>First 200 lines of MEMORY.md at session start</dd></div>
+              </dl>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Custom Memory Files</div>
+            <div class="card-body">
+              <p>A <strong>structured system you design</strong> using indexed markdown files organized by topic, domain, and tool.</p>
+              <dl class="kv-list">
+                <div><dt>Who writes it</dt><dd>You + Claude (collaborative)</dd></div>
+                <div><dt>Scope</dt><dd>Cross-project or project-specific</dd></div>
+                <div><dt>Contains</dt><dd>Domain knowledge, tool configs, conventions</dd></div>
+                <div><dt>Loaded</dt><dd>On demand via @imports or Claude reading files</dd></div>
+              </dl>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Key Concept
+          </div>
+          <p>CLAUDE.md and Auto Memory are <strong>complementary</strong>. CLAUDE.md is what you tell Claude; Auto Memory is what Claude tells itself. Both are loaded at every session start. Use CLAUDE.md for standards and rules; let Auto Memory capture the rest.</p>
+        </div>
+
+        <!-- Auto Memory -->
+        <h2 id="auto-memory" data-level="intermediate">Auto Memory <span class="level-badge intermediate">Intermediate</span>
+          <a class="doc-link" href="https://code.claude.com/docs/en/memory#auto-memory" target="_blank">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Docs
+          </a>
+        </h2>
+
+        <p>Auto Memory lets Claude accumulate knowledge across sessions <strong>without you writing anything</strong>. As Claude works, it saves notes for itself: build commands that work, debugging insights, architecture patterns, and your coding preferences. Claude decides what is worth remembering based on whether it would be useful in a future conversation.</p>
+
+        <p>Auto Memory is <strong>on by default</strong> (requires Claude Code v2.1.59+). Toggle it with the <code>/memory</code> command or in your project settings:</p>
+
+        <pre><code class="language-json">{
+  "autoMemoryEnabled": false
+}</code></pre>
+
+        <h3>Where auto memory lives</h3>
+
+        <p>Each project gets its own memory directory derived from the git repository path. All worktrees and subdirectories within the same repo share one auto memory directory:</p>
+
+        <pre><code class="language-bash"># Auto memory directory structure
+~/.claude/projects/&lt;project&gt;/memory/
+├── MEMORY.md              # Concise index — loaded every session (first 200 lines)
+├── debugging.md           # Detailed notes on debugging patterns
+├── api-conventions.md     # API design decisions Claude discovered
+└── build-system.md        # Build commands and workarounds</code></pre>
+
+        <div class="callout warning">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            200-Line Limit
+          </div>
+          <p>Only the first <strong>200 lines</strong> of <code>MEMORY.md</code> are loaded at session start. Content beyond line 200 is invisible until Claude explicitly reads the file. Claude keeps MEMORY.md concise by moving detailed notes into separate topic files.</p>
+        </div>
+
+        <h3>How it works in practice</h3>
+
+        <p>When you see "Writing memory" or "Recalled memory" in the Claude Code interface, Claude is actively updating or reading from the memory directory. Claude does not save something every session &mdash; it decides what is worth remembering based on whether the information would be useful in a future conversation.</p>
+
+        <p>Topic files like <code>debugging.md</code> or <code>patterns.md</code> are <strong>not</strong> loaded at startup. Claude reads them on demand using its standard file tools when it needs the information.</p>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Tip
+          </div>
+          <p>Run <code>/memory</code> to browse and edit auto memory files. Everything is plain markdown you can edit or delete at any time. When you ask Claude to "remember" something (like "always use pnpm, not npm"), it saves to auto memory.</p>
+        </div>
+
+        <!-- Setting Up Persistent Memory -->
+        <h2 id="setting-up-memory" data-level="intermediate">Setting Up Persistent Memory <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Beyond the built-in Auto Memory, you can create a <strong>structured memory system</strong> that gives you full control over what Claude remembers. This is especially useful when you want cross-project knowledge, domain-specific references, or tool configurations that persist across all your work.</p>
+
+        <p>The structured memory system uses an indexed hierarchy of markdown files rooted at <code>~/.claude/memory/</code>:</p>
+
+        <pre><code class="language-bash"># Structured memory directory
+~/.claude/memory/
+├── memory.md                  # Index of all memory files (always read first)
+├── general.md                 # Cross-project facts, preferences, environment
+├── domain/
+│   ├── kubernetes.md          # Domain: container orchestration patterns
+│   ├── graphql.md             # Domain: GraphQL schema design
+│   └── auth-patterns.md       # Domain: authentication and authorization
+└── tools/
+    ├── docker.md              # Tool: Docker CLI patterns and workarounds
+    ├── git.md                 # Tool: Git workflows and aliases
+    └── claude-code.md         # Tool: Claude Code tips and configuration</code></pre>
+
+        <h3>The memory.md index</h3>
+
+        <p>The <code>memory.md</code> file serves as a table of contents. Claude reads it at session start and loads other files only when they become relevant to the current task:</p>
+
+        <pre><code class="language-markdown"># Memory Index
+
+## General
+- general.md — cross-project conventions, editor prefs, env setup
+
+## Domain Knowledge
+- domain/kubernetes.md — k8s patterns, helm charts, debugging pods
+- domain/graphql.md — schema design, resolver patterns, N+1 prevention
+- domain/auth-patterns.md — OAuth flows, JWT handling, session management
+
+## Tool Configs
+- tools/docker.md — multi-stage builds, compose patterns, troubleshooting
+- tools/git.md — branching strategy, rebase workflow, hooks
+- tools/claude-code.md — prompt patterns, context management, cost tips</code></pre>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Pro Tip
+          </div>
+          <p>For a full walkthrough of setting up the structured memory system with auto-init and maintenance commands, see the <a href="../memory-setup.html">Memory Setup Guide</a>.</p>
+        </div>
+
+        <!-- Organization Patterns -->
+        <h2 id="organization-patterns" data-level="intermediate">Organization Patterns <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>The key to effective memory is organizing by <strong>topic</strong>, not chronology. Each memory entry should answer: "What did I learn, and when might I need it again?"</p>
+
+        <h3>Good memory entries</h3>
+
+        <p>Each entry should include a date, what was learned, and why it matters &mdash; nothing more:</p>
+
+        <pre><code class="language-markdown"># domain/kubernetes.md
+
+## 2025-01-15 — Pod health checks need initialDelaySeconds
+Discovered that our Spring Boot apps take 30-45s to start.
+Without initialDelaySeconds: 60 on liveness probes, k8s kills
+pods during rolling deployments. Set in all deployment manifests.
+
+## 2025-02-03 — HPA scaling threshold should be 70% not 80%
+At 80% CPU target, we hit OOM before scale-up completes.
+Dropped to 70% after prod incident on payment-service.
+
+## 2025-03-10 — Use topologySpreadConstraints over podAntiAffinity
+podAntiAffinity is too strict for our 3-node staging cluster.
+topologySpreadConstraints with maxSkew: 1 gives better distribution.</code></pre>
+
+        <h3>Bad memory entries (avoid these)</h3>
+
+        <pre><code class="language-markdown"># BAD: Too vague, no actionable detail
+## Fixed a bug
+There was a bug in the code and I fixed it.
+
+# BAD: Too verbose, buries the lesson
+## Long debugging session
+First I tried X, then Y, then Z, then I read the docs,
+then I asked on Slack, then I found that...
+[20 more lines of narrative]
+
+# BAD: Duplicates what CLAUDE.md should hold
+## Code style
+Use 2-space indentation. (This belongs in CLAUDE.md, not memory.)</code></pre>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Rule of Thumb
+          </div>
+          <p><strong>CLAUDE.md</strong> = rules Claude should always follow. <strong>Memory files</strong> = knowledge Claude should recall when relevant. If removing an entry from CLAUDE.md would cause Claude to make mistakes, it belongs in CLAUDE.md. If it is background knowledge that informs decisions, it belongs in memory.</p>
+        </div>
+
+        <h3>Splitting files that grow too large</h3>
+
+        <p>When a topic file exceeds ~100 entries, split it. For example, <code>domain/kubernetes.md</code> might split into:</p>
+
+        <pre><code class="language-bash">domain/
+├── k8s-networking.md      # Services, ingress, DNS
+├── k8s-storage.md         # PVCs, storage classes, CSI
+├── k8s-scaling.md         # HPA, VPA, cluster autoscaler
+└── k8s-debugging.md       # Pod troubleshooting, log patterns</code></pre>
+
+        <p>Update <code>memory.md</code> to reflect the new structure so Claude can find what it needs.</p>
+
+        <!-- Cross-Session Knowledge -->
+        <h2 id="cross-session-knowledge" data-level="intermediate">Cross-Session Knowledge <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Getting Claude to remember project context across sessions requires intentional design. Here is what to persist and what to leave out:</p>
+
+        <table>
+          <thead>
+            <tr><th>Persist (worth remembering)</th><th>Skip (do not persist)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Build commands that differ from defaults</td>
+              <td>Temporary workarounds already fixed</td>
+            </tr>
+            <tr>
+              <td>Architecture decisions and their rationale</td>
+              <td>Step-by-step debugging logs</td>
+            </tr>
+            <tr>
+              <td>Non-obvious project conventions</td>
+              <td>Information Claude can infer from code</td>
+            </tr>
+            <tr>
+              <td>Environment quirks (required env vars, port conflicts)</td>
+              <td>Standard language conventions</td>
+            </tr>
+            <tr>
+              <td>Integration gotchas (API rate limits, auth flows)</td>
+              <td>Obvious patterns ("use async/await")</td>
+            </tr>
+            <tr>
+              <td>Domain-specific terminology and business rules</td>
+              <td>Code that is self-documenting</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Making Claude remember specific things</h3>
+
+        <p>You can explicitly ask Claude to remember things during a session. Claude saves these to auto memory:</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">Remember that our API tests require a local Redis instance on port 6380 (not the default 6379)</span>
+<span class="output">I'll save that to memory. In future sessions, I'll know to use port 6380 for Redis in API tests.</span>
+
+<span class="prompt">claude&gt;</span> <span class="command">Always use pnpm, not npm, in this project</span>
+<span class="output">Noted. I'll use pnpm for all package management operations in this project.</span>
+          </div>
+        </div>
+
+        <p>For instructions that should go into CLAUDE.md rather than auto memory, be explicit: <code>"Add to CLAUDE.md: always use pnpm"</code>. Or use <code>/memory</code> to open and edit files directly.</p>
+
+        <h3>Project MEMORY.md for auto-init</h3>
+
+        <p>You can create a project-specific MEMORY.md that gets initialized automatically when Claude first encounters the project. This gives Claude a head start with project-specific knowledge:</p>
+
+        <pre><code class="language-markdown"># MyProject - Project Memory
+
+## Global Memory
+Read ~/.claude/CLAUDE.md for memory rules and topic files.
+
+## Project Notes
+- Uses PostgreSQL 15 with pgvector extension for embeddings
+- CI runs on GitHub Actions; deploy via ArgoCD
+- Frontend is Next.js 14 with App Router (not Pages)
+- API follows JSON:API spec with envelope wrapping</code></pre>
+
+        <!-- Troubleshooting -->
+        <h2 id="troubleshooting" data-level="intermediate">Troubleshooting <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>When Claude ignores your instructions or forgets things between sessions, work through these checks:</p>
+
+        <h3>Claude is not following CLAUDE.md instructions</h3>
+
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <span class="collapsible-title">Diagnostic checklist</span>
+            <svg class="collapsible-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="collapsible-body">
+            <div class="collapsible-content">
+              <ol>
+                <li><strong>Verify it is loaded:</strong> Run <code>/memory</code> and confirm your CLAUDE.md appears in the list. If it is not listed, Claude cannot see it.</li>
+                <li><strong>Check the file location:</strong> CLAUDE.md must be in a location that gets loaded for your working directory (project root, <code>.claude/CLAUDE.md</code>, or <code>~/.claude/CLAUDE.md</code>).</li>
+                <li><strong>Check file size:</strong> Target under 200 lines per CLAUDE.md. Longer files consume more context and reduce adherence. If yours is too large, split into <code>.claude/rules/</code> files.</li>
+                <li><strong>Make instructions specific:</strong> "Use 2-space indentation" works better than "format code nicely."</li>
+                <li><strong>Check for conflicts:</strong> If two CLAUDE.md files give different guidance for the same behavior, Claude may pick one arbitrarily.</li>
+                <li><strong>Add emphasis for critical rules:</strong> Use <code>IMPORTANT:</code> or <code>YOU MUST</code> to improve adherence on rules that matter most.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <h3>Auto memory saved unexpected content</h3>
+
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <span class="collapsible-title">How to audit and clean up</span>
+            <svg class="collapsible-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="collapsible-body">
+            <div class="collapsible-content">
+              <p>Run <code>/memory</code> and select the auto memory folder to browse what Claude saved. Everything is plain markdown &mdash; edit or delete entries freely. You can also browse the directory directly:</p>
+              <pre><code class="language-bash"># List all auto memory files for a project
+ls ~/.claude/projects/&lt;project&gt;/memory/
+
+# Read the MEMORY.md index
+cat ~/.claude/projects/&lt;project&gt;/memory/MEMORY.md
+
+# Delete a topic file if it contains bad info
+rm ~/.claude/projects/&lt;project&gt;/memory/outdated-notes.md</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <h3>Instructions lost after /compact</h3>
+
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <span class="collapsible-title">Why this happens and how to fix it</span>
+            <svg class="collapsible-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="collapsible-body">
+            <div class="collapsible-content">
+              <p>CLAUDE.md <strong>fully survives compaction</strong>. After <code>/compact</code>, Claude re-reads your CLAUDE.md from disk and re-injects it into the session. If an instruction disappeared after compaction, it was given only in conversation, not written to CLAUDE.md.</p>
+              <p><strong>Fix:</strong> Add the instruction to CLAUDE.md so it persists across sessions and compaction. You can also use a <code>SessionStart</code> hook with a <code>compact</code> matcher to re-inject critical context:</p>
+              <pre><code class="language-json">{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Reminder: use pnpm, not npm. Run tests before committing.'"
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <h3>CLAUDE.md is too large</h3>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Solutions
+          </div>
+          <p>If your CLAUDE.md exceeds 200 lines:</p>
+          <ul>
+            <li>Move detailed content into separate files referenced with <code>@path</code> imports</li>
+            <li>Split instructions into <code>.claude/rules/</code> files scoped to file patterns</li>
+            <li>Move domain knowledge to <a href="#setting-up-memory">structured memory files</a> that Claude reads on demand</li>
+            <li>Prune anything Claude already does correctly without the instruction</li>
+          </ul>
+        </div>
+
+      </article>
+
+      <nav id="page-nav-footer" class="page-nav-footer"><!-- Built by nav.js --></nav>
+
+      <footer class="site-footer">
+        Built for developers using <a href="https://code.claude.com" target="_blank">Claude Code</a> &mdash;
+        <a href="https://code.claude.com/docs" target="_blank">Official Docs</a>
+      </footer>
+    </div>
+  </main>
+
+  <script defer src="js/nav.js"></script>
+  <script defer src="js/tabs.js"></script>
+  <script defer src="js/collapsible.js"></script>
+  <script defer src="js/terminal.js"></script>
+  <script defer src="js/decision-tree.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/progress.js"></script>
+</body>
+</html>
