@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code — Scott React/Node Setup</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Menlo', 'Monaco', 'Courier New', 'monospace'] },
+                    colors: { accent: '#2563eb', surface: '#fcfcfc' }
+                }
+            }
+        }
+    </script>
+
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f9fafb;
+        }
+
+        /* Sidebar Styles */
+        .nav-link {
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            background-color: #f3f4f6;
+            color: #111827;
+            border-left-color: #d1d5db;
+        }
+
+        .nav-link.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+            font-weight: 500;
+            border-left-color: #2563eb;
+        }
+
+        /* Content Typography */
+        article p {
+            margin-bottom: 1.25rem;
+            line-height: 1.7;
+            color: #374151;
+        }
+
+        article h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 2rem;
+            letter-spacing: -0.025em;
+        }
+
+        article h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+
+        article h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        article ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1.25rem;
+            color: #374151;
+            space-y: 0.5rem;
+        }
+
+        article li {
+            margin-bottom: 0.5rem;
+        }
+
+        article code:not([class*="language-"]) {
+            background-color: #f3f4f6;
+            color: #ef4444;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-family: 'Menlo', monospace;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Code Blocks */
+        pre {
+            border-radius: 8px;
+            margin: 1.5rem 0 !important;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Doc link styling */
+        .doc-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-decoration: none;
+            padding: 0.2rem 0.6rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 999px;
+            transition: all 0.2s ease;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+
+        .doc-link:hover {
+            color: #2563eb;
+            border-color: #93c5fd;
+            background-color: #eff6ff;
+        }
+
+        .doc-link svg {
+            width: 0.85rem;
+            height: 0.85rem;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body class="flex h-screen overflow-hidden antialiased">
+
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white border-r border-gray-200 flex flex-col h-full shadow-sm z-10 flex-shrink-0">
+        <div class="p-6 border-b border-gray-100">
+            <h1 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                Claude Code Guide
+            </h1>
+            <p class="text-xs text-gray-500 mt-1">Scott Setup</p>
+        </div>
+        <nav class="flex-1 overflow-y-auto p-4 space-y-1" id="nav-menu">
+            <!-- Navigation links injected via JS -->
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto bg-surface relative" id="main-scroll">
+        <div class="max-w-4xl mx-auto p-10 pb-24" id="content-container">
+
+            <!-- PAGE 1: INSTALL -->
+            <article id="install" class="page-section hidden">
+                <h1>Install <a class="doc-link" href="https://code.claude.com/docs/en/quickstart" target="_blank"><svg
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+                <p>Select your operating system to see the installation commands.</p>
+
+                <!-- OS Toggle -->
+                <div class="flex bg-gray-200 p-1 rounded-lg w-fit mb-4 mt-6">
+                    <button id="tab-linux"
+                        class="px-4 py-2 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm transition-all focus:outline-none">Linux
+                        / macOS</button>
+                    <button id="tab-windows"
+                        class="px-4 py-2 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 transition-all focus:outline-none">Windows</button>
+                </div>
+
+                <!-- Linux/macOS Instructions -->
+                <div id="install-linux">
+                    <pre><code class="language-bash"># Primary Method: Linux / macOS
+curl -fsSL https://claude.ai/install.sh | sh
+
+# Alternatives
+brew install --cask claude-code          # Homebrew
+npm install -g @anthropic-ai/claude-code # npm</code></pre>
+                </div>
+
+                <!-- Windows Instructions -->
+                <div id="install-windows" class="hidden">
+                    <pre><code class="language-bash"># Primary Method: Windows (PowerShell)
+irm https://claude.ai/install.ps1 | iex
+
+# Alternatives
+winget install Anthropic.ClaudeCode      # WinGet
+npm install -g @anthropic-ai/claude-code # npm</code></pre>
+                </div>
+
+                <p class="mt-6">Run <code>claude</code> in any project directory to start. Authenticate on first run.
+                </p>
+            </article>
+
+            <!-- PAGE 2: THE BIG PICTURE -->
+            <article id="big-picture" class="page-section hidden">
+                <h1>The Big Picture — What Goes Where <a class="doc-link"
+                        href="https://code.claude.com/docs/en/how-claude-code-works" target="_blank"><svg fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+                <p>Claude Code has several layers of configuration. Here is how they all fit together:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Layer</th>
+                            <th>What it does</th>
+                            <th>When to use it</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>CLAUDE.md</strong></td>
+                            <td>Static project context Claude reads every session</td>
+                            <td>Architecture, conventions, build commands</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Memory</strong></td>
+                            <td>Persistent notes Claude reads/writes across sessions</td>
+                            <td>User preferences, feedback, project context</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hooks</strong></td>
+                            <td>Scripts/agents that fire automatically on events</td>
+                            <td>Post-commit tasks, validation, reminders</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Skills</strong></td>
+                            <td>Reusable slash commands you invoke manually</td>
+                            <td>Repeated workflows, templates, procedures</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Plugins</strong></td>
+                            <td>Packaged bundles of skills + hooks + MCP servers</td>
+                            <td>Shared toolkits (code review, testing, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>MCP Servers</strong></td>
+                            <td>External tool connections (APIs, databases, etc.)</td>
+                            <td>GitHub, Docker, Git, databases, browsers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Settings</strong></td>
+                            <td>Permissions, env vars, plugin toggles</td>
+                            <td>What Claude can/can't do without asking</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>The key distinction</h3>
+                <ul>
+                    <li><strong>CLAUDE.md</strong> = "here's what you need to know"</li>
+                    <li><strong>Memory</strong> = "here's what you've learned"</li>
+                    <li><strong>Hooks</strong> = "when X happens, do Y automatically"</li>
+                    <li><strong>Skills</strong> = "when I say /X, do Y"</li>
+                    <li><strong>MCP</strong> = "here are external tools you can use"</li>
+                </ul>
+            </article>
+
+            <!-- PAGE 3: CLAUDE.MD -->
+            <article id="claude-md" class="page-section hidden">
+                <h1>CLAUDE.md — Project Instructions <a class="doc-link"
+                        href="https://code.claude.com/docs/en/best-practices" target="_blank"><svg fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+                <p>The main way to give Claude context about a project. Claude reads it at the start of every session.
+                </p>
+
+                <h3>Locations (most specific wins)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Scope</th>
+                            <th>Shared</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>~/.claude/CLAUDE.md</code></td>
+                            <td>All your projects</td>
+                            <td>No</td>
+                        </tr>
+                        <tr>
+                            <td><code>&lt;repo&gt;/CLAUDE.md</code></td>
+                            <td>One project</td>
+                            <td>Yes (committed)</td>
+                        </tr>
+                        <tr>
+                            <td><code>&lt;repo&gt;/.claude/rules/*.md</code></td>
+                            <td>Path-scoped rules</td>
+                            <td>Yes</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>What to put in CLAUDE.md</h3>
+                <p><strong>Project overview</strong> — what it is, who it's for, what stage it's in:</p>
+                <div class="bg-gray-100 p-4 rounded text-sm font-mono mb-4 text-gray-700 border border-gray-200">Budget
+                    Contributions app for UGA CAES. ~753 county personnel enter annual budget data. Phase 4
+                    (testing/polish) in progress.</div>
+
+                <p><strong>Tech stack and architecture</strong> — so Claude doesn't guess wrong:</p>
+                <div class="bg-gray-100 p-4 rounded text-sm font-mono mb-4 text-gray-700 border border-gray-200">Node.js
+                    + Express 5 + TypeScript (ESM), PostgreSQL 17 via Knex 3.<br>Frontend: React 19 + Vite 7 + Tailwind
+                    4. AG Grid for spreadsheet views.</div>
+
+                <p><strong>Build / run / test commands</strong> — the exact commands, not generic ones:</p>
+                <div class="bg-gray-100 p-4 rounded text-sm font-mono mb-4 text-gray-700 border border-gray-200">docker
+                    compose up -d # Full stack<br>npm run migrate # Knex migrations<br>npm test # Vitest (backend: 143
+                    tests)</div>
+
+                <h3>What NOT to put in CLAUDE.md</h3>
+
+                <div class="mb-6">
+                    <p class="font-semibold text-gray-800">Event-driven workflows (use hooks instead):</p>
+                    <div class="border-l-4 border-red-500 bg-red-50 p-3 mb-2 text-sm"><span
+                            class="font-bold text-red-700">Bad:</span> "After every commit, run the linter and check for
+                        TODO comments"</div>
+                    <div class="border-l-4 border-green-500 bg-green-50 p-3 text-sm"><span
+                            class="font-bold text-green-700">Good:</span> PostToolUse hook on Bash that detects git
+                        commit and runs checks</div>
+                </div>
+
+                <div class="mb-6">
+                    <p class="font-semibold text-gray-800">Repeated manual procedures (use skills instead):</p>
+                    <div class="border-l-4 border-red-500 bg-red-50 p-3 mb-2 text-sm"><span
+                            class="font-bold text-red-700">Bad:</span> "When I say 'scaffold component', create files X,
+                        Y, Z..."</div>
+                    <div class="border-l-4 border-green-500 bg-green-50 p-3 text-sm"><span
+                            class="font-bold text-green-700">Good:</span> /scaffold-component skill with templates</div>
+                </div>
+
+                <h3>Rules directory (<code>.claude/rules/</code>)</h3>
+                <p>When CLAUDE.md gets too long, split detailed rules into separate files. Each file covers
+                    one topic. Rules without a <code>paths</code> field load every session. Rules with
+                    <code>paths</code> only load when Claude works with matching files — saving context tokens.
+                </p>
+
+                <h3>Directory structure</h3>
+                <pre><code class="language-bash">your-project/
+  .claude/
+    CLAUDE.md              # Keep short — overview + build commands
+    rules/
+      testing.md           # Test conventions (loads every session)
+      api-design.md        # API patterns (loads every session)
+      frontend-styles.md   # CSS/styling (only when editing frontend files)
+      security.md          # Security requirements (loads every session)</code></pre>
+
+                <h3>Example: rule that applies to all files</h3>
+                <pre><code class="language-yaml"># Testing Rules
+
+- Use Vitest for all tests
+- Backend tests use supertest for HTTP assertions
+- Never mock the database in integration tests
+- Test files live in `src/__tests__/` not next to source files</code></pre>
+
+                <h3>Example: rule scoped to specific paths</h3>
+                <pre><code class="language-yaml">---
+paths:
+  - 'frontend/src/components/**/*.tsx'
+  - 'frontend/src/styles/**/*.css'
+---
+
+# Frontend Styling Rules
+
+- Use Tailwind utility classes — no inline styles or CSS modules
+- Use CSS custom properties from the @theme block
+- Never hardcode hex colors or font names
+- AG Grid overrides go in inventory-grid.css, not component styles</code></pre>
+                <p>This rule only loads when Claude reads or edits files matching those glob patterns.
+                    Backend work won't waste tokens loading frontend rules.</p>
+
+                <h3>Path pattern examples</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pattern</th>
+                            <th>Matches</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>src/**/*.test.ts</code></td>
+                            <td>All test files</td>
+                        </tr>
+                        <tr>
+                            <td><code>frontend/**/*.tsx</code></td>
+                            <td>All React components</td>
+                        </tr>
+                        <tr>
+                            <td><code>backend/src/routes/**</code></td>
+                            <td>All route files</td>
+                        </tr>
+                        <tr>
+                            <td><code>**/*.css</code></td>
+                            <td>Any CSS file anywhere</td>
+                        </tr>
+                        <tr>
+                            <td><code>src/api/**/*.ts</code></td>
+                            <td>API layer files</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </article>
+
+            <!-- PAGE 4: MEMORY -->
+            <article id="memory" class="page-section hidden">
+                <h1>Memory — Persistence Across Sessions <a class="doc-link"
+                        href="https://code.claude.com/docs/en/memory" target="_blank"><svg fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+                <p>Claude Code has a built-in memory system so it remembers things across conversations.</p>
+
+                <h3>How it works</h3>
+                <ul>
+                    <li><strong>Auto-memory</strong>: Claude writes notes to
+                        <code>~/.claude/projects/&lt;project&gt;/memory/MEMORY.md</code>
+                    </li>
+                    <li><strong>Global CLAUDE.md</strong>: <code>~/.claude/CLAUDE.md</code> holds rules that apply
+                        everywhere</li>
+                    <li>First 200 lines of <code>MEMORY.md</code> are loaded each session; topic files loaded on demand.
+                    </li>
+                </ul>
+
+                <h3>Memory types</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>What to store</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>user</strong></td>
+                            <td>Role, expertise, preferences</td>
+                            <td>"Senior dev, prefers terse responses"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>feedback</strong></td>
+                            <td>Corrections and confirmed approaches</td>
+                            <td>"Don't mock the database in integration tests"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>project</strong></td>
+                            <td>Ongoing work, decisions, deadlines</td>
+                            <td>"Auth rewrite driven by legal compliance"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>reference</strong></td>
+                            <td>Pointers to external resources</td>
+                            <td>"Pipeline bugs tracked in Linear project INGEST"</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Key rules</h3>
+                <ul>
+                    <li>Run <code>/memory</code> to see all loaded CLAUDE.md and memory files.</li>
+                    <li>Say "reorganize memory" to have Claude clean up and deduplicate.</li>
+                    <li>Before modifying or removing a memory entry, Claude asks for confirmation.</li>
+                </ul>
+            </article>
+
+            <!-- PAGE 5: HOOKS -->
+            <article id="hooks" class="page-section hidden">
+                <h1>Hooks — Automated Reactions <a class="doc-link" href="https://code.claude.com/docs/en/hooks"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+                <p>Hooks fire automatically when specific events happen. They're the backbone of workflow automation.
+                </p>
+
+                <h3>When to use hooks</h3>
+                <p>Use a hook when you want something to happen <strong>automatically</strong>. Good hook candidates:
+                </p>
+                <ul>
+                    <li>"After every commit, run the linter and check for broken tests"</li>
+                    <li>"Before stopping, verify all tests pass"</li>
+                </ul>
+
+                <h3>Hook events</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>When it fires</th>
+                            <th>Common use</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>PreToolUse</code></td>
+                            <td>Before a tool runs</td>
+                            <td>Block dangerous commands</td>
+                        </tr>
+                        <tr>
+                            <td><code>PostToolUse</code></td>
+                            <td>After a tool completes</td>
+                            <td>Lint, format, post-commit tasks</td>
+                        </tr>
+                        <tr>
+                            <td><code>Stop</code></td>
+                            <td>Before Claude stops</td>
+                            <td>Verify work is complete</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Configuration Example</h3>
+                <pre><code class="language-json">{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/my-script.sh",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+
+                <h3>Exit codes for Command Hooks</h3>
+                <ul>
+                    <li><strong>0</strong>: Success — continue</li>
+                    <li><strong>2</strong>: Block — stderr message shown to Claude, must respond</li>
+                    <li><strong>Other</strong>: Non-blocking warning</li>
+                </ul>
+            </article>
+
+            <!-- PAGE 6: SKILLS -->
+            <article id="skills" class="page-section hidden">
+                <h1>Skills — Reusable Workflows <a class="doc-link" href="https://code.claude.com/docs/en/skills"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+                <p>Skills are slash commands you invoke manually. They're for repeated workflows that need your trigger,
+                    not automatic reactions.</p>
+
+                <h3>When to use skills</h3>
+                <ul>
+                    <li>"Set up a new React component with tests and storybook"</li>
+                    <li>"Review this PR with our team's checklist"</li>
+                    <li>"Run the full deploy pipeline"</li>
+                </ul>
+
+                <h3>Skill file format</h3>
+                <pre><code class="language-yaml">---
+name: my-skill
+description: When Claude should suggest this skill
+disable-model-invocation: true # Optional: only triggered by typing /my-skill
+---
+Step-by-step instructions for what Claude should do.
+Can reference files, run commands, use tools.</code></pre>
+
+                <h3>Using skills</h3>
+                <p>Invoke via terminal inside a session:</p>
+                <pre><code class="language-bash">/my-skill              # Invoke by name
+/my-skill some args    # Pass arguments</code></pre>
+            </article>
+
+            <!-- PAGE 7: PLUGINS -->
+            <article id="plugins" class="page-section hidden">
+                <h1>Plugins — Packaged Extensions <a class="doc-link" href="https://code.claude.com/docs/en/plugins"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+                <p>Plugins bundle skills, hooks, agents, and MCP servers into installable packages. Think of them as
+                    "apps" for Claude Code.</p>
+
+                <h3>Managing plugins</h3>
+                <pre><code class="language-bash">/plugins              # Browse and toggle plugins
+/plugins search       # Find available plugins</code></pre>
+
+                <h3>Notable official plugins</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Plugin</th>
+                            <th>What it does</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>code-review</strong></td>
+                            <td>PR review with confidence-based scoring</td>
+                        </tr>
+                        <tr>
+                            <td><strong>playwright</strong></td>
+                            <td>Browser automation and E2E testing</td>
+                        </tr>
+                        <tr>
+                            <td><strong>hookify</strong></td>
+                            <td>Create hooks by analyzing conversation patterns</td>
+                        </tr>
+                        <tr>
+                            <td><strong>frontend-design</strong></td>
+                            <td>Production-grade UI (anti-AI-slop aesthetics)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </article>
+
+            <!-- PAGE 8: MCP SERVERS -->
+            <article id="mcp-servers" class="page-section hidden">
+                <h1>MCP Servers — External Connections <a class="doc-link" href="https://code.claude.com/docs/en/mcp"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+                <p>MCP (Model Context Protocol) servers connect Claude to external tools and data sources — APIs,
+                    databases, browsers, task trackers, etc.</p>
+
+                <h3>Configuration</h3>
+                <pre><code class="language-json">// ~/.claude.json (global) or .mcp.json (project)
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "npx",
+      "args": ["-y", "@some/mcp-server"],
+      "env": {
+        "API_KEY": "your-key"
+      }
+    }
+  }
+}</code></pre>
+
+                <h3>Managing MCP servers</h3>
+                <pre><code class="language-bash">claude mcp add server-name -s user -- command args    # Add
+claude mcp list                                        # List
+claude mcp remove server-name                          # Remove</code></pre>
+            </article>
+
+            <!-- PAGE 9: SETTINGS -->
+            <article id="settings" class="page-section hidden">
+                <h1>Settings & Permissions <a class="doc-link" href="https://code.claude.com/docs/en/settings"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a> <a class="doc-link" href="https://code.claude.com/docs/en/permissions"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Permissions</a></h1>
+
+                <h3>Settings files (most specific wins)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Level</th>
+                            <th>File</th>
+                            <th>Scope</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>User</td>
+                            <td><code>~/.claude/settings.json</code></td>
+                            <td>All projects</td>
+                        </tr>
+                        <tr>
+                            <td>Project</td>
+                            <td><code>.claude/settings.json</code></td>
+                            <td>Shared (committed)</td>
+                        </tr>
+                        <tr>
+                            <td>Local</td>
+                            <td><code>.claude/settings.local.json</code></td>
+                            <td>Personal (gitignored)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Permission modes</h3>
+                <ul>
+                    <li><strong>default</strong>: Ask for most operations</li>
+                    <li><strong>plan</strong>: Read-only, no edits</li>
+                    <li><strong>acceptEdits</strong>: Auto-approve file edits, ask for commands</li>
+                    <li><strong>dontAsk</strong>: Auto-approve everything</li>
+                </ul>
+
+                <h3>Allow rules</h3>
+                <pre><code class="language-json">{
+  "permissions": {
+    "allow": [
+      "Bash(npm test)",
+      "Read(/home/user/project/**)",
+      "Edit(/home/user/project/**)"
+    ]
+  }
+}</code></pre>
+            </article>
+
+            <!-- PAGE 10: DECIDING -->
+            <article id="deciding" class="page-section hidden">
+                <h1>Deciding What to Use</h1>
+                <p>When you have a new need, here's how to decide where it goes:</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <div class="p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <h3 class="mt-0 text-accent text-sm font-bold uppercase tracking-wider">Use CLAUDE.md</h3>
+                        <p class="font-medium text-gray-900 mb-1">"Claude needs to know this about my project"</p>
+                        <p class="text-sm text-gray-600">Architecture, conventions, build commands, schema.</p>
+                    </div>
+
+                    <div class="p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <h3 class="mt-0 text-accent text-sm font-bold uppercase tracking-wider">Use Memory</h3>
+                        <p class="font-medium text-gray-900 mb-1">"Claude keeps forgetting my preference"</p>
+                        <p class="text-sm text-gray-600">Save it as a feedback memory so it persists across sessions.
+                        </p>
+                    </div>
+
+                    <div class="p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <h3 class="mt-0 text-accent text-sm font-bold uppercase tracking-wider">Use a Hook</h3>
+                        <p class="font-medium text-gray-900 mb-1">"After X happens, Claude should do Y"</p>
+                        <p class="text-sm text-gray-600">Post-commit tasks, linting, validation, reminders.</p>
+                    </div>
+
+                    <div class="p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <h3 class="mt-0 text-accent text-sm font-bold uppercase tracking-wider">Use a Skill</h3>
+                        <p class="font-medium text-gray-900 mb-1">"When I say X, Claude should do Y"</p>
+                        <p class="text-sm text-gray-600">Deployment, scaffolding, code generation templates.</p>
+                    </div>
+
+                    <div class="p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <h3 class="mt-0 text-accent text-sm font-bold uppercase tracking-wider">Use an MCP Server</h3>
+                        <p class="font-medium text-gray-900 mb-1">"Claude needs to talk to an external service"</p>
+                        <p class="text-sm text-gray-600">GitHub, Docker, Git, databases, browsers.</p>
+                    </div>
+
+                    <div class="p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <h3 class="mt-0 text-accent text-sm font-bold uppercase tracking-wider">Use a Plugin</h3>
+                        <p class="font-medium text-gray-900 mb-1">"I want to share a bundle of tools"</p>
+                        <p class="text-sm text-gray-600">Package skills + hooks + MCP servers together for your team.
+                        </p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- PAGE 11: PORTABLE CONFIG -->
+            <article id="portable" class="page-section hidden">
+                <h1>Portable Config with a Private Gist</h1>
+                <p>Your Claude Code config lives in directories that aren't tracked by git. To make it portable across
+                    machines, store everything in a private GitHub gist.</p>
+
+                <h3>Step 1 — Create the gist</h3>
+                <pre><code class="language-bash"># Collect files into a temp dir
+mkdir -p /tmp/cc-config
+cp .claude/hooks/*.sh /tmp/cc-config/
+cp ~/.claude/CLAUDE.md /tmp/cc-config/global-CLAUDE.md
+
+# Create the gist (secret by default)
+cd /tmp/cc-config
+gh gist create -d "Claude Code personal config" *.sh *.json *.md</code></pre>
+
+                <h3>Step 2 — Restore on a new machine</h3>
+                <pre><code class="language-bash"># Clone the gist
+gh gist clone <GIST_ID> /tmp/cc-config
+
+# Restore files
+mkdir -p .claude/hooks
+cp /tmp/cc-config/*.sh .claude/hooks/
+chmod +x .claude/hooks/*.sh</code></pre>
+
+                <h3>What to store in the gist</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Local path</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Hook scripts</td>
+                            <td><code>.claude/hooks/*.sh</code></td>
+                            <td>Automated workflows</td>
+                        </tr>
+                        <tr>
+                            <td>Local settings</td>
+                            <td><code>.claude/settings.local.json</code></td>
+                            <td>Hook registration + permissions</td>
+                        </tr>
+                        <tr>
+                            <td>Global CLAUDE.md</td>
+                            <td><code>~/.claude/CLAUDE.md</code></td>
+                            <td>Memory rules + global instructions</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </article>
+
+            <!-- PAGE 12: COMMANDS -->
+            <article id="commands" class="page-section hidden">
+                <h1>Useful Commands <a class="doc-link" href="https://code.claude.com/docs/en/cli-reference"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>CLI Reference</a></h1>
+
+                <h3>In-session</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>What it does</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>/context</code></td>
+                            <td>Show all loaded context (CLAUDE.md, rules, memory, skills)</td>
+                        </tr>
+                        <tr>
+                            <td><code>/memory</code></td>
+                            <td>Show all loaded CLAUDE.md and memory files</td>
+                        </tr>
+                        <tr>
+                            <td><code>/hooks</code></td>
+                            <td>Browse configured hooks</td>
+                        </tr>
+                        <tr>
+                            <td><code>/plugins</code></td>
+                            <td>Manage plugins</td>
+                        </tr>
+                        <tr>
+                            <td><code>/compact</code></td>
+                            <td>Compress context to free up space</td>
+                        </tr>
+                        <tr>
+                            <td><code>/fast</code></td>
+                            <td>Toggle fast output mode</td>
+                        </tr>
+                        <tr>
+                            <td><code>/help</code></td>
+                            <td>Show all commands</td>
+                        </tr>
+                        <tr>
+                            <td><code>! command</code></td>
+                            <td>Run a shell command in the session</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>CLI</h3>
+                <pre><code class="language-bash">claude                          # Interactive session
+claude "do something"           # Start with a prompt
+claude -c                       # Continue last session
+claude -r "session-name"        # Resume named session
+claude -p "query"               # Non-interactive (for scripts/CI)
+claude --permission-mode plan   # Read-only exploration
+claude --model claude-opus      # Pick a model
+claude --add-dir ../other-repo  # Add another directory
+claude update                   # Update Claude Code</code></pre>
+            </article>
+
+            <!-- Navigation Footer -->
+            <div id="nav-footer" class="mt-16 pt-8 border-t border-gray-200 flex justify-between items-center hidden">
+                <button id="btn-prev"
+                    class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-accent flex items-center gap-2 transition-colors">
+                    &larr; <span id="label-prev">Previous</span>
+                </button>
+                <button id="btn-next"
+                    class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-accent flex items-center gap-2 transition-colors">
+                    <span id="label-next">Next</span> &rarr;
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Define the Node Structure exactly mirroring the articles
+            const nodes = [
+                { id: 'install', title: '1. Install' },
+                { id: 'big-picture', title: '2. The Big Picture' },
+                { id: 'claude-md', title: '3. CLAUDE.md' },
+                { id: 'memory', title: '4. Memory' },
+                { id: 'hooks', title: '5. Hooks' },
+                { id: 'skills', title: '6. Skills' },
+                { id: 'plugins', title: '7. Plugins' },
+                { id: 'mcp-servers', title: '8. MCP Servers' },
+                { id: 'settings', title: '9. Settings & Permissions' },
+                { id: 'deciding', title: '10. Deciding What to Use' },
+                { id: 'portable', title: '11. Portable Config' },
+                { id: 'commands', title: '12. Useful Commands' }
+            ];
+
+            let currentIndex = 0;
+            const navMenu = document.getElementById('nav-menu');
+            const navFooter = document.getElementById('nav-footer');
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            const labelPrev = document.getElementById('label-prev');
+            const labelNext = document.getElementById('label-next');
+            const scrollArea = document.getElementById('main-scroll');
+
+            // 1. Build the Sidebar Nav dynamically
+            nodes.forEach((node, index) => {
+                const a = document.createElement('a');
+                a.href = `#${node.id}`;
+                a.className = 'nav-link block px-3 py-2 rounded-md text-sm text-gray-600 mb-1';
+                // Remove numbers for cleaner sidebar look
+                a.textContent = node.title.replace(/^\d+\.\s*/, '');
+                a.dataset.index = index;
+
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateTo(index);
+                });
+
+                navMenu.appendChild(a);
+            });
+
+            // 2. Navigation Logic
+            function navigateTo(index) {
+                if (index < 0 || index >= nodes.length) return;
+                currentIndex = index;
+                const targetId = nodes[currentIndex].id;
+
+                // Update UI: Hide all articles, show target
+                document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+                document.getElementById(targetId).classList.remove('hidden');
+
+                // Update UI: Sidebar active state
+                document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+                navMenu.children[currentIndex].classList.add('active');
+
+                // Update UI: Footer Buttons
+                navFooter.classList.remove('hidden');
+
+                if (currentIndex === 0) {
+                    btnPrev.style.visibility = 'hidden';
+                } else {
+                    btnPrev.style.visibility = 'visible';
+                    labelPrev.textContent = nodes[currentIndex - 1].title.replace(/^\d+\.\s*/, '');
+                }
+
+                if (currentIndex === nodes.length - 1) {
+                    btnNext.style.visibility = 'hidden';
+                } else {
+                    btnNext.style.visibility = 'visible';
+                    labelNext.textContent = nodes[currentIndex + 1].title.replace(/^\d+\.\s*/, '');
+                }
+
+                // Scroll to top
+                scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+
+                // Update URL Hash without jumping
+                history.replaceState(null, null, `#${targetId}`);
+            }
+
+            // Footer Event Listeners
+            btnPrev.addEventListener('click', () => navigateTo(currentIndex - 1));
+            btnNext.addEventListener('click', () => navigateTo(currentIndex + 1));
+
+            // 3. Add Copy Buttons to all Pre blocks
+            document.querySelectorAll('pre').forEach(pre => {
+                const btn = document.createElement('button');
+                btn.className = 'copy-btn';
+                btn.textContent = 'Copy';
+                btn.onclick = () => {
+                    const code = pre.querySelector('code').innerText;
+
+                    // Fallback copy method to bypass strict file:// constraints
+                    const textarea = document.createElement('textarea');
+                    textarea.value = code;
+                    textarea.style.position = 'fixed';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        btn.textContent = 'Copied!';
+                        setTimeout(() => btn.textContent = 'Copy', 2000);
+                    } catch (err) {
+                        btn.textContent = 'Error';
+                    } finally {
+                        document.body.removeChild(textarea);
+                    }
+                };
+                pre.appendChild(btn);
+            });
+
+            // 4. OS Toggle Logic for Install Page
+            const tabLinux = document.getElementById('tab-linux');
+            const tabWindows = document.getElementById('tab-windows');
+            const installLinux = document.getElementById('install-linux');
+            const installWindows = document.getElementById('install-windows');
+
+            if (tabLinux && tabWindows) {
+                tabLinux.addEventListener('click', () => {
+                    tabLinux.className = 'px-4 py-2 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm transition-all focus:outline-none';
+                    tabWindows.className = 'px-4 py-2 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 transition-all focus:outline-none';
+                    installLinux.classList.remove('hidden');
+                    installWindows.classList.add('hidden');
+                });
+
+                tabWindows.addEventListener('click', () => {
+                    tabWindows.className = 'px-4 py-2 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm transition-all focus:outline-none';
+                    tabLinux.className = 'px-4 py-2 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 transition-all focus:outline-none';
+                    installWindows.classList.remove('hidden');
+                    installLinux.classList.add('hidden');
+                });
+            }
+
+            // 5. Initial Load
+            const hash = window.location.hash.replace('#', '');
+            const initialIndex = nodes.findIndex(n => n.id === hash);
+            navigateTo(initialIndex !== -1 ? initialIndex : 0);
+        });
+    </script>
+</body>
+
+</html>
