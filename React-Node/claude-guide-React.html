@@ -93,7 +93,7 @@
             padding-left: 1.5rem;
             margin-bottom: 1.25rem;
             color: #374151;
-            space-y: 0.5rem;
+            /* space-y handled by li margin-bottom below */
         }
 
         article li {
@@ -614,22 +614,143 @@ paths:
                 <ul>
                     <li>"Set up a new React component with tests and storybook"</li>
                     <li>"Review this PR with our team's checklist"</li>
-                    <li>"Run the full deploy pipeline"</li>
+                    <li>"Bootstrap a new Vite + React project with our standard stack"</li>
                 </ul>
 
                 <h3>Skill file format</h3>
+                <p>Skills live in <code>.claude/skills/</code> (or a plugin's <code>skills/</code> directory). Each is a Markdown file with YAML frontmatter:</p>
                 <pre><code class="language-yaml">---
 name: my-skill
-description: When Claude should suggest this skill
-disable-model-invocation: true # Optional: only triggered by typing /my-skill
+description: >
+  When Claude should suggest this skill. Include trigger phrases
+  so Claude activates it at the right time.
 ---
 Step-by-step instructions for what Claude should do.
 Can reference files, run commands, use tools.</code></pre>
+
+                <h3>Key frontmatter fields</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>name</code></td>
+                            <td>Unique identifier — used as the slash command name</td>
+                        </tr>
+                        <tr>
+                            <td><code>description</code></td>
+                            <td>Trigger logic — Claude uses this to decide when to suggest the skill. Include keywords and phrases users might say.</td>
+                        </tr>
+                        <tr>
+                            <td><code>disable-model-invocation</code></td>
+                            <td>Optional. If <code>true</code>, the skill only fires when you type <code>/name</code> — Claude won't auto-suggest it.</td>
+                        </tr>
+                    </tbody>
+                </table>
 
                 <h3>Using skills</h3>
                 <p>Invoke via terminal inside a session:</p>
                 <pre><code class="language-bash">/my-skill              # Invoke by name
 /my-skill some args    # Pass arguments</code></pre>
+                <p>Claude can also suggest a skill automatically if the <code>description</code> matches what you're asking about
+                    (unless <code>disable-model-invocation: true</code> is set).</p>
+
+                <h2>Example: Vite + React Setup Skill</h2>
+                <p>This project includes a <code>skills/new-project-setup.md</code> skill that provides opinionated guidance
+                    when bootstrapping new Vite + React applications. It activates during planning and design phases.</p>
+
+                <h3>How it triggers</h3>
+                <p>The skill's description includes trigger phrases like "new project", "scaffold", "setup",
+                    "what stack should I use", "project structure", and "Vite + React". When you ask about any of these topics,
+                    Claude loads the full skill and follows its guidance.</p>
+
+                <h3>What the skill covers</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Section</th>
+                            <th>Guidance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Core stack</strong></td>
+                            <td>Vite + React + TypeScript (strict) + React Router v7+</td>
+                        </tr>
+                        <tr>
+                            <td><strong>State management</strong></td>
+                            <td>React Context + TanStack Query for most apps; Zustand/Redux only when needed</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Styling</strong></td>
+                            <td>Tailwind CSS v4 (<code>@theme</code> tokens), optional shadcn/ui with design-system wrappers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Code quality</strong></td>
+                            <td>ESLint + Prettier (existing teams) or Biome (greenfield)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Testing</strong></td>
+                            <td>Vitest + Testing Library + Supertest + Playwright</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Project structure</strong></td>
+                            <td>Feature-based architecture with <code>features/</code> and <code>shared/</code> directories</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backend</strong></td>
+                            <td>Node.js + Express 5 + TypeScript (ESM) + Knex + PostgreSQL</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dev environment</strong></td>
+                            <td>Docker Compose, Vite proxy config, path aliases</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Feature-based structure (from the skill)</h3>
+                <p>The skill recommends organizing by domain feature, not by file type:</p>
+                <pre><code class="language-bash">src/
+├── features/              # Feature modules
+│   ├── auth/
+│   │   ├── components/    # Feature-specific UI
+│   │   ├── hooks/         # Feature-specific hooks
+│   │   ├── api/           # Feature-specific API calls
+│   │   └── index.ts       # Public API
+│   └── dashboard/
+│       └── ...
+├── shared/                # Cross-feature resources
+│   ├── components/ui/     # Base UI primitives
+│   ├── hooks/             # Shared hooks
+│   ├── lib/               # Third-party wrappers
+│   └── utils/             # Pure helpers
+├── context/               # React Context providers
+├── api/                   # Shared API client setup
+└── routes.tsx             # Route definitions</code></pre>
+
+                <h3>Structure rules</h3>
+                <ul>
+                    <li><strong>No cross-feature imports.</strong> Feature A cannot import from Feature B's internals. Shared code goes in <code>shared/</code>.</li>
+                    <li><strong>Explicit public API.</strong> Each feature's <code>index.ts</code> exports only what others need.</li>
+                    <li><strong>Flat alternative for small apps.</strong> Under ~20 routes, a flat by-concern structure works fine. Migrate to feature-based at 5+ domains.</li>
+                </ul>
+
+                <h3>The skill also generates a CLAUDE.md</h3>
+                <p>When scaffolding a new project, the skill creates a project-specific <code>CLAUDE.md</code> with architecture,
+                    commands, and conventions — so future Claude sessions have full context from the start.</p>
+
+                <h2>Writing Your Own Skills</h2>
+                <p>Use the setup skill as a template. Good skills share these traits:</p>
+                <ul>
+                    <li><strong>Rich description</strong> — include trigger phrases so Claude knows when to activate</li>
+                    <li><strong>Opinionated defaults</strong> — make decisions so the user doesn't have to</li>
+                    <li><strong>Escape hatches</strong> — offer alternatives when the default doesn't fit</li>
+                    <li><strong>Self-contained</strong> — everything Claude needs is in the skill file itself</li>
+                </ul>
             </article>
 
             <!-- PAGE 7: PLUGINS -->
@@ -793,7 +914,7 @@ claude mcp remove server-name                          # Remove</code></pre>
                     <div class="p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
                         <h3 class="mt-0 text-accent text-sm font-bold uppercase tracking-wider">Use a Skill</h3>
                         <p class="font-medium text-gray-900 mb-1">"When I say X, Claude should do Y"</p>
-                        <p class="text-sm text-gray-600">Deployment, scaffolding, code generation templates.</p>
+                        <p class="text-sm text-gray-600">Deployment, scaffolding, code generation templates. Example: the <strong>vite-react-setup-guide</strong> skill activates when you discuss new project setup and walks through stack, structure, and conventions.</p>
                     </div>
 
                     <div class="p-5 bg-white border border-gray-200 rounded-lg shadow-sm">

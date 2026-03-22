@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Setup Guides</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { accent: '#2563eb' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #f9fafb; }
+
+        .guide-card {
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
+        }
+        .guide-card:hover {
+            border-color: #93c5fd;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center justify-center p-8 antialiased">
+
+    <div class="max-w-3xl w-full">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center gap-3 mb-4">
+                <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Claude Code Setup Guides</h1>
+            </div>
+            <p class="text-gray-500 text-lg">Opinionated guides for configuring Claude Code by stack.</p>
+        </div>
+
+        <!-- Guide Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- React / Node -->
+            <a href="React-Node/claude-guide-React.html" class="guide-card block rounded-xl bg-white p-8">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-3xl">&#9883;</span>
+                    <h2 class="text-xl font-semibold text-gray-900">React + Node</h2>
+                </div>
+                <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                    Vite, React, TypeScript, Express, Knex, PostgreSQL. Covers CLAUDE.md, memory, hooks,
+                    skills, plugins, MCP servers, and a project setup skill.
+                </p>
+                <ul class="text-xs text-gray-400 space-y-1">
+                    <li>Feature-based architecture</li>
+                    <li>Tailwind + shadcn/ui styling</li>
+                    <li>Docker Compose dev environment</li>
+                </ul>
+                <div class="mt-5 text-accent text-sm font-medium flex items-center gap-1">
+                    Open guide &rarr;
+                </div>
+            </a>
+
+            <!-- Python -->
+            <a href="Python/claude-guide-Python.html" class="guide-card block rounded-xl bg-white p-8">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-3xl">&#128013;</span>
+                    <h2 class="text-xl font-semibold text-gray-900">Python</h2>
+                </div>
+                <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                    Python-focused Claude Code configuration. Covers project conventions, tooling,
+                    and workflows for Python development.
+                </p>
+                <ul class="text-xs text-gray-400 space-y-1">
+                    <li>Python project structure</li>
+                    <li>Testing and linting setup</li>
+                    <li>Claude Code integration</li>
+                </ul>
+                <div class="mt-5 text-accent text-sm font-medium flex items-center gap-1">
+                    Open guide &rarr;
+                </div>
+            </a>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-16 text-center text-xs text-gray-400">
+            <p>Built for use with <a href="https://claude.ai/claude-code" class="text-accent hover:underline"
+                    target="_blank">Claude Code</a></p>
+        </div>
+    </div>
+
+</body>
+
+</html>
