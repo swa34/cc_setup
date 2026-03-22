@@ -214,7 +214,16 @@ body {
 /* ===== Level Filter Buttons ===== */
 .level-filters {
   display: flex;
+  align-items: center;
   gap: 0.35rem;
+}
+.level-filter-label {
+  font-size: 0.7rem;
+  color: var(--fg-subtle);
+  margin-right: 0.15rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 .level-filter-btn {
   font-size: 0.7rem;
@@ -229,6 +238,7 @@ body {
 }
 .level-filter-btn:hover { border-color: var(--fg-muted); }
 .level-filter-btn.active { color: var(--bg); }
+.level-filter-btn.active[data-level="all"] { background: var(--accent); border-color: var(--accent); }
 .level-filter-btn.active[data-level="beginner"] { background: #16a34a; border-color: #16a34a; }
 .level-filter-btn.active[data-level="intermediate"] { background: #d97706; border-color: #d97706; }
 .level-filter-btn.active[data-level="advanced"] { background: #dc2626; border-color: #dc2626; }

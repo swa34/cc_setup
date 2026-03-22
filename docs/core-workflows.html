@@ -55,9 +55,11 @@
       </div>
       <div class="page-header-right">
         <div class="level-filters">
-          <button class="level-filter-btn active" data-level="beginner">Beginner</button>
-          <button class="level-filter-btn active" data-level="intermediate">Intermediate</button>
-          <button class="level-filter-btn active" data-level="advanced">Advanced</button>
+          <span class="level-filter-label">Show:</span>
+          <button class="level-filter-btn active" data-level="all">All</button>
+          <button class="level-filter-btn" data-level="beginner">Beginner</button>
+          <button class="level-filter-btn" data-level="intermediate">Intermediate</button>
+          <button class="level-filter-btn" data-level="advanced">Advanced</button>
         </div>
         <div class="search-container">
           <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -472,6 +474,152 @@ claude --permission-mode plan -p "Analyze the authentication system and suggest 
             When to Skip Planning
           </div>
           <p>Plan Mode adds overhead. For tasks where the scope is clear and the fix is small (a typo, a log line, renaming a variable), skip the plan and ask Claude to just do it. Planning is most valuable when you're uncertain about the approach, the change modifies many files, or you're unfamiliar with the code.</p>
+        </div>
+
+
+        <!-- Explain & Diagram Code -->
+        <h2 id="explain-diagram" data-level="intermediate">Explain & Diagram Code <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>One of the most powerful onboarding techniques is asking Claude to <strong>explain and visually map</strong> a codebase's architecture. Instead of reading through dozens of files, ask Claude to produce structured explanations with diagrams you can reference later.</p>
+
+        <h3>Mapping API routes and endpoints</h3>
+
+        <p>For any backend codebase, one of the first things you need to understand is the API surface. Claude can read all your route files and produce a complete map:</p>
+
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Terminal &mdash; API Route Mapping</div>
+          </div>
+          <div class="terminal-body">
+<span class="prompt">claude&gt;</span> <span class="command">Please explain and diagram all the API routes in this project.</span>
+<span class="command">         For each route show: method, path, handler, middleware,</span>
+<span class="command">         and what it does. Group by resource.</span>
+<span class="output"></span>
+<span class="highlight">API Route Map</span>
+<span class="output"></span>
+<span class="output">  Auth (/api/auth)</span>
+<span class="output">  ├── POST   /login          → authHandler.login      [rateLimit]</span>
+<span class="output">  ├── POST   /register       → authHandler.register   [rateLimit, validate]</span>
+<span class="output">  ├── POST   /refresh         → authHandler.refresh    [requireAuth]</span>
+<span class="output">  └── DELETE /logout          → authHandler.logout     [requireAuth]</span>
+<span class="output"></span>
+<span class="output">  Users (/api/users)</span>
+<span class="output">  ├── GET    /               → userHandler.list       [requireAuth, adminOnly]</span>
+<span class="output">  ├── GET    /:id            → userHandler.getById    [requireAuth]</span>
+<span class="output">  ├── PATCH  /:id            → userHandler.update     [requireAuth, ownerOnly]</span>
+<span class="output">  └── DELETE /:id            → userHandler.delete     [requireAuth, adminOnly]</span>
+<span class="output"></span>
+<span class="output">  Orders (/api/orders)</span>
+<span class="output">  ├── GET    /               → orderHandler.list      [requireAuth]</span>
+<span class="output">  ├── POST   /               → orderHandler.create    [requireAuth, validate]</span>
+<span class="output">  └── GET    /:id            → orderHandler.getById   [requireAuth]</span>
+          </div>
+        </div>
+
+        <h3>Generating architecture diagrams</h3>
+
+        <p>Claude can create visual diagrams in multiple formats. Ask for <strong>Mermaid</strong>, <strong>Excalidraw</strong>, or <strong>ASCII art</strong> depending on your needs:</p>
+
+        <div class="tab-group">
+          <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="mermaid">Mermaid Diagram</button>
+            <button class="tab-btn" data-tab="ascii">ASCII Diagram</button>
+            <button class="tab-btn" data-tab="excalidraw">Excalidraw</button>
+          </div>
+          <div class="tab-panel active" data-tab="mermaid">
+            <pre><code class="language-bash"># Ask Claude to generate a Mermaid diagram
+claude&gt; Create a Mermaid sequence diagram showing the complete
+        authentication flow from login request to token issuance.
+        Include the middleware chain, database calls, and error paths.
+
+# Claude outputs Mermaid markdown you can paste into any renderer:
+# GitHub README, Notion, Mermaid Live Editor, VS Code preview</code></pre>
+            <pre><code class="language-bash"># More diagram prompts:
+claude&gt; Diagram the database schema as a Mermaid ER diagram
+        showing all tables, relationships, and foreign keys.
+
+claude&gt; Create a Mermaid flowchart showing how an incoming
+        HTTP request flows through middleware, handlers,
+        services, and the database layer.</code></pre>
+          </div>
+          <div class="tab-panel" data-tab="ascii">
+            <pre><code class="language-bash"># Quick ASCII diagrams for terminal/Slack
+claude&gt; Draw an ASCII diagram showing how data flows through
+        the order processing pipeline, from API request
+        to database write to webhook notification.
+
+# Example output:
+#   Request → Validate → Auth Check → Handler
+#                                       ↓
+#   Response ← Format ← Service ← Repository
+#                          ↓
+#                     Event Queue → Webhook</code></pre>
+          </div>
+          <div class="tab-panel" data-tab="excalidraw">
+            <pre><code class="language-bash"># Excalidraw JSON for interactive editing
+claude&gt; Generate an Excalidraw diagram showing the
+        microservice architecture. Include service names,
+        communication protocols, and data stores.
+        Output as an Excalidraw JSON file I can import.
+
+# Claude creates a .excalidraw file you can open in
+# excalidraw.com or the VS Code extension for editing</code></pre>
+          </div>
+        </div>
+
+        <h3>Deep-dive explanation prompts</h3>
+
+        <p>Beyond diagrams, ask Claude to produce structured explanations that serve as living documentation:</p>
+
+        <div class="collapsible">
+          <div class="collapsible-header">
+            <span class="collapsible-title">Example "explain and diagram" prompts</span>
+            <svg class="collapsible-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
+          <div class="collapsible-body">
+            <div class="collapsible-content">
+              <p><strong>API surface mapping:</strong></p>
+              <ul>
+                <li><code>List every API endpoint with its method, path, auth requirements, and a one-line description</code></li>
+                <li><code>What middleware runs on each route? Show me the middleware chain for a typical authenticated request</code></li>
+                <li><code>Which endpoints are public vs authenticated vs admin-only? Create a table</code></li>
+              </ul>
+
+              <p><strong>Data flow and architecture:</strong></p>
+              <ul>
+                <li><code>Trace what happens when a user submits an order, from the button click to the database write. Diagram each step</code></li>
+                <li><code>Explain the event system — what events exist, who publishes them, who subscribes, and what side effects they trigger</code></li>
+                <li><code>Map out the dependency injection setup — what gets injected where and how are services wired together</code></li>
+              </ul>
+
+              <p><strong>Database and models:</strong></p>
+              <ul>
+                <li><code>Diagram the database schema showing all tables, columns, types, and relationships</code></li>
+                <li><code>Explain the migration history — what major schema changes happened and why?</code></li>
+                <li><code>Which models have soft deletes? Which have audit trails? Show me the patterns</code></li>
+              </ul>
+
+              <p><strong>Integration points:</strong></p>
+              <ul>
+                <li><code>List all external services this app calls — APIs, webhooks, queues, email providers. For each, show where it's configured and where it's called</code></li>
+                <li><code>Diagram the CI/CD pipeline from commit to production deploy</code></li>
+                <li><code>What environment variables does this app require? Group them by service (database, auth, external APIs)</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Save the output
+          </div>
+          <p>Ask Claude to <strong>write the diagram to a file</strong> for future reference: <code>"Write this as docs/api-routes.md"</code> or <code>"Save the Mermaid diagram to docs/architecture.mmd"</code>. This turns a one-time exploration into persistent documentation the whole team can use.</p>
         </div>
 
       </article>

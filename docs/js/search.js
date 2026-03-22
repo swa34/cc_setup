@@ -11,7 +11,8 @@
       { heading: 'Code Review', keywords: 'review simplify diff pull request PR', anchor: 'code-review' },
       { heading: 'Committing & Pull Requests', keywords: 'commit pr push git branch', anchor: 'committing-pull-requests' },
       { heading: 'Debugging', keywords: 'debug error stack trace fix bug', anchor: 'debugging' },
-      { heading: 'Exploring Codebases', keywords: 'explore plan mode navigate understand architecture', anchor: 'exploring-codebases' }
+      { heading: 'Exploring Codebases', keywords: 'explore plan mode navigate understand architecture', anchor: 'exploring-codebases' },
+      { heading: 'Explain & Diagram Code', keywords: 'explain diagram api routes endpoints mermaid excalidraw architecture map visual', anchor: 'explain-diagram' }
     ]},
     { page: 'claude-md.html', title: 'CLAUDE.md Best Practices', sections: [
       { heading: 'What is CLAUDE.md', keywords: 'claude md project context instructions', anchor: 'what-is-claude-md' },
