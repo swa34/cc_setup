@@ -189,7 +189,7 @@
         <h3>4 steps to launch</h3>
 
         <ol>
-          <li><strong>Copy the devcontainer config</strong> into your project. You need three files in a <code>.devcontainer/</code> directory: <code>devcontainer.json</code>, <code>Dockerfile</code>, and <code>init-firewall.sh</code>.</li>
+          <li><strong>Copy the devcontainer config</strong> into your project. You need three files in a <code>.devcontainer/</code> directory: <code>devcontainer.json</code>, <code>Dockerfile</code>, and <code>init-firewall.sh</code>. Grab the reference implementation from <a href="https://github.com/anthropics/claude-code/tree/main/.devcontainer" target="_blank">github.com/anthropics/claude-code</a>.</li>
           <li><strong>Open in VS Code</strong> and press <kbd>Cmd+Shift+P</kbd> (or <kbd>Ctrl+Shift+P</kbd>) &rarr; <em>"Dev Containers: Reopen in Container"</em>.</li>
           <li><strong>Wait for the build</strong> — first time takes a few minutes as it installs Node.js, Claude Code, ZSH, and configures the firewall.</li>
           <li><strong>Start Claude</strong> in the integrated terminal:
@@ -533,6 +533,14 @@ jobs:
         <p>You can also use <strong>acceptEdits</strong> mode to auto-approve file changes while still prompting for shell commands — a good middle ground for daily work:</p>
 
         <pre><code class="language-bash">claude --permission-mode acceptEdits</code></pre>
+
+        <div class="callout warning">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Windows Users
+          </div>
+          <p>Sandboxing (Stage 2) requires bubblewrap, which needs Linux kernel features. It works on <strong>macOS</strong> (via Seatbelt) and <strong>Linux/WSL2</strong> (via bubblewrap), but <strong>native Windows is not supported yet</strong>. WSL1 is also not supported. If you're on Windows without WSL2, stay in Stage 1 (container) for autonomous work and jump to Stage 3 (permissions) for interactive sessions.</p>
+        </div>
 
         <div class="callout tip">
           <div class="callout-label">

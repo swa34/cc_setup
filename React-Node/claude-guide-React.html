@@ -1147,7 +1147,7 @@ claude update                   # Update Claude Code</code></pre>
                 <h3>Getting started</h3>
                 <ol>
                     <li>Install <a href="https://www.docker.com/products/docker-desktop/" target="_blank">Docker Desktop</a> and the VS Code <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers" target="_blank">Dev Containers extension</a></li>
-                    <li>Copy the <code>.devcontainer/</code> directory (devcontainer.json, Dockerfile, init-firewall.sh) into your project</li>
+                    <li>Copy the <code>.devcontainer/</code> directory (devcontainer.json, Dockerfile, init-firewall.sh) into your project — grab the reference implementation from <a href="https://github.com/anthropics/claude-code/tree/main/.devcontainer" target="_blank">github.com/anthropics/claude-code</a></li>
                     <li><kbd>Cmd+Shift+P</kbd> → "Dev Containers: Reopen in Container"</li>
                     <li>Start Claude in the integrated terminal:</li>
                 </ol>
@@ -1243,7 +1243,11 @@ sudo apt-get install bubblewrap socat</code></pre>
   }
 }</code></pre>
 
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mt-6">
+                    <p class="text-sm text-amber-800"><strong>Windows users:</strong> Sandboxing (Stage 2) requires bubblewrap, which needs Linux kernel features. It works on macOS (via Seatbelt) and Linux/WSL2, but <strong>native Windows is not supported yet</strong>. If you're on Windows without WSL2, stay in Stage 1 (container) for autonomous work and jump to Stage 3 (permissions) for interactive sessions.</p>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
                     <p class="text-sm text-blue-800"><strong>These stages aren't permanent.</strong> Working on an unfamiliar repo? Spin up the container again. Doing a massive refactor? Turn on sandboxing for the session. The progression is about your <em>default</em> workflow, not a one-way door.</p>
                 </div>
             </article>
