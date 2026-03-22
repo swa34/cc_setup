@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code — Scott Python Setup</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Menlo', 'Monaco', 'Courier New', 'monospace'] },
+                    colors: { accent: '#2563eb', surface: '#fcfcfc' }
+                }
+            }
+        }
+    </script>
+
+    <!-- PrismJS for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-toml.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f9fafb;
+        }
+
+        /* Sidebar Styles */
+        .nav-link {
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            background-color: #f3f4f6;
+            color: #111827;
+            border-left-color: #d1d5db;
+        }
+
+        .nav-link.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+            font-weight: 500;
+            border-left-color: #2563eb;
+        }
+
+        /* Content Typography */
+        article p {
+            margin-bottom: 1.25rem;
+            line-height: 1.7;
+            color: #374151;
+        }
+
+        article h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 2rem;
+            letter-spacing: -0.025em;
+        }
+
+        article h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+
+        article h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        article ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1.25rem;
+            color: #374151;
+            space-y: 0.5rem;
+        }
+
+        article li {
+            margin-bottom: 0.5rem;
+        }
+
+        article code:not([class*="language-"]) {
+            background-color: #f3f4f6;
+            color: #ef4444;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-family: 'Menlo', monospace;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Code Blocks */
+        pre {
+            border-radius: 8px;
+            margin: 1.5rem 0 !important;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Doc link styling */
+        .doc-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-decoration: none;
+            padding: 0.2rem 0.6rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 999px;
+            transition: all 0.2s ease;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+
+        .doc-link:hover {
+            color: #2563eb;
+            border-color: #93c5fd;
+            background-color: #eff6ff;
+        }
+
+        .doc-link svg {
+            width: 0.85rem;
+            height: 0.85rem;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body class="flex h-screen overflow-hidden antialiased">
+
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white border-r border-gray-200 flex flex-col h-full shadow-sm z-10 flex-shrink-0">
+        <div class="p-6 border-b border-gray-100">
+            <h1 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                Python Guide
+            </h1>
+            <p class="text-xs text-gray-500 mt-1">Scott Setup</p>
+        </div>
+        <nav class="flex-1 overflow-y-auto p-4 space-y-1" id="nav-menu">
+            <!-- Navigation links injected via JS -->
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto bg-surface relative" id="main-scroll">
+        <div class="max-w-4xl mx-auto p-10 pb-24" id="content-container">
+
+            <!-- PAGE 1: UV — THE MODERN PYTHON TOOL -->
+            <article id="uv-overview" class="page-section hidden">
+                <h1>UV — The Modern Python Tool <a class="doc-link" href="https://docs.astral.sh/uv/"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+                <p>UV is a fast, all-in-one Python package and project manager from Astral (the Ruff team). It replaces
+                    <code>pip</code>, <code>pip-tools</code>, <code>pyenv</code>, <code>virtualenv</code>, and
+                    <code>pipx</code> — all in a single binary written in Rust.
+                </p>
+
+                <h3>Install UV</h3>
+                <!-- OS Toggle -->
+                <div class="flex bg-gray-200 p-1 rounded-lg w-fit mb-4 mt-2">
+                    <button id="tab-linux"
+                        class="px-4 py-2 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm transition-all focus:outline-none">Linux
+                        / macOS</button>
+                    <button id="tab-windows"
+                        class="px-4 py-2 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 transition-all focus:outline-none">Windows</button>
+                </div>
+
+                <div id="install-linux">
+                    <pre><code class="language-bash"># Install UV
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Or via Homebrew
+brew install uv
+
+# Verify
+uv --version</code></pre>
+                </div>
+
+                <div id="install-windows" class="hidden">
+                    <pre><code class="language-bash"># Install UV (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Or via WinGet
+winget install --id=astral-sh.uv
+
+# Verify
+uv --version</code></pre>
+                </div>
+
+                <h3>Why UV over pip/poetry/pipenv?</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>UV</th>
+                            <th>pip + venv</th>
+                            <th>Poetry</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Speed</td>
+                            <td>10-100x faster</td>
+                            <td>Baseline</td>
+                            <td>Slow resolver</td>
+                        </tr>
+                        <tr>
+                            <td>Lockfile</td>
+                            <td><code>uv.lock</code> (cross-platform)</td>
+                            <td>None (pip-tools needed)</td>
+                            <td><code>poetry.lock</code></td>
+                        </tr>
+                        <tr>
+                            <td>Python management</td>
+                            <td>Built-in (<code>uv python install</code>)</td>
+                            <td>Needs pyenv</td>
+                            <td>Needs pyenv</td>
+                        </tr>
+                        <tr>
+                            <td>Tool runner</td>
+                            <td><code>uvx</code> (like npx)</td>
+                            <td>Needs pipx</td>
+                            <td>No</td>
+                        </tr>
+                        <tr>
+                            <td>Single binary</td>
+                            <td>Yes (Rust)</td>
+                            <td>No</td>
+                            <td>No</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </article>
+
+            <!-- PAGE 2: PROJECT SETUP WITH UV -->
+            <article id="project-setup" class="page-section hidden">
+                <h1>Project Setup with UV <a class="doc-link" href="https://docs.astral.sh/uv/guides/projects/"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+
+                <h3>Create a new project</h3>
+                <pre><code class="language-bash"># Create a new project (creates pyproject.toml, src/, etc.)
+uv init my-project
+cd my-project
+
+# Or initialize in an existing directory
+cd existing-dir
+uv init</code></pre>
+
+                <h3>What UV creates</h3>
+                <pre><code class="language-bash">my-project/
+  pyproject.toml    # Project metadata + dependencies
+  .python-version   # Pinned Python version
+  src/
+    my_project/
+      __init__.py
+  README.md</code></pre>
+
+                <h3>pyproject.toml — the single config file</h3>
+                <p>UV uses <code>pyproject.toml</code> as the single source of truth — no <code>setup.py</code>,
+                    <code>setup.cfg</code>, <code>requirements.txt</code>, or <code>Pipfile</code>.
+                </p>
+                <pre><code class="language-toml">[project]
+name = "my-project"
+version = "0.1.0"
+description = "My Python project"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "httpx>=0.28",
+    "pydantic>=2.10",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.9",
+    "mypy>=1.14",
+]</code></pre>
+
+                <h3>Managing Python versions</h3>
+                <pre><code class="language-bash"># List available Python versions
+uv python list
+
+# Install a specific version
+uv python install 3.12
+
+# Pin version for this project
+uv python pin 3.12</code></pre>
+
+                <h3>Virtual environments</h3>
+                <p>UV creates and manages <code>.venv</code> automatically. You rarely need to think about it.</p>
+                <pre><code class="language-bash"># UV auto-creates .venv when you run commands
+uv run python script.py   # Creates .venv if needed, runs script
+
+# Or explicitly create one
+uv venv                   # Creates .venv in current dir
+uv venv --python 3.12     # With a specific Python version
+
+# Activate manually (if needed for IDE integration)
+source .venv/bin/activate        # Linux/macOS
+.venv\Scripts\activate           # Windows</code></pre>
+            </article>
+
+            <!-- PAGE 3: DEPENDENCIES -->
+            <article id="dependencies" class="page-section hidden">
+                <h1>Managing Dependencies <a class="doc-link"
+                        href="https://docs.astral.sh/uv/guides/projects/#managing-dependencies" target="_blank"><svg
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+
+                <h3>Add dependencies</h3>
+                <pre><code class="language-bash"># Add a production dependency
+uv add fastapi
+uv add "httpx>=0.28"
+
+# Add a dev dependency
+uv add --group dev pytest ruff mypy
+
+# Add multiple at once
+uv add sqlalchemy alembic psycopg2-binary</code></pre>
+
+                <h3>Remove dependencies</h3>
+                <pre><code class="language-bash">uv remove httpx
+uv remove --group dev mypy</code></pre>
+
+                <h3>The lockfile: uv.lock</h3>
+                <p>UV automatically generates and maintains <code>uv.lock</code> — a cross-platform lockfile that pins
+                    exact versions for reproducible builds. <strong>Commit it to git.</strong></p>
+                <pre><code class="language-bash"># Sync your environment to match the lockfile
+uv sync
+
+# Sync including dev dependencies
+uv sync --all-groups
+
+# Update all dependencies to latest compatible versions
+uv lock --upgrade
+
+# Update a specific package
+uv lock --upgrade-package fastapi</code></pre>
+
+                <h3>Dependency groups</h3>
+                <p>UV supports dependency groups in <code>pyproject.toml</code> for organizing dev, test, docs, etc.</p>
+                <pre><code class="language-toml">[dependency-groups]
+dev = [
+    "ruff>=0.9",
+    "mypy>=1.14",
+]
+test = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "pytest-asyncio>=0.25",
+]
+docs = [
+    "mkdocs>=1.6",
+    "mkdocs-material>=9.5",
+]</code></pre>
+                <pre><code class="language-bash"># Install specific groups
+uv sync --group test
+uv sync --group dev --group test
+
+# Install all groups
+uv sync --all-groups</code></pre>
+            </article>
+
+            <!-- PAGE 4: RUNNING CODE -->
+            <article id="running" class="page-section hidden">
+                <h1>Running Code with UV</h1>
+
+                <h3>uv run — the main command</h3>
+                <p><code>uv run</code> ensures your virtual environment exists and is synced, then runs your command
+                    inside it. No manual activation needed.</p>
+                <pre><code class="language-bash"># Run a Python script
+uv run python app.py
+
+# Run a module
+uv run python -m pytest
+uv run python -m mypy src/
+
+# Run an installed CLI tool
+uv run fastapi dev
+uv run ruff check .
+
+# Run with extra inline dependencies (not in pyproject.toml)
+uv run --with rich python -c "from rich import print; print('[bold]Hello![/bold]')"</code></pre>
+
+                <h3>uvx — run tools without installing</h3>
+                <p><code>uvx</code> is like <code>npx</code> — it runs Python CLI tools in an isolated environment
+                    without polluting your project.</p>
+                <pre><code class="language-bash"># Run tools without installing them into your project
+uvx ruff check .
+uvx black --check .
+uvx mypy src/
+uvx isort --check .
+
+# Run a specific version
+uvx ruff@0.9.0 check .
+
+# Run a tool from a package with a different name
+uvx --from httpie http GET example.com</code></pre>
+
+                <h3>Scripts with inline dependencies</h3>
+                <p>UV supports PEP 723 inline script metadata — declare dependencies at the top of a single-file script.</p>
+                <pre><code class="language-python"># /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "httpx",
+#     "rich",
+# ]
+# ///
+
+import httpx
+from rich import print
+
+resp = httpx.get("https://api.github.com/zen")
+print(f"[bold green]{resp.text}[/bold green]")</code></pre>
+                <pre><code class="language-bash"># UV reads the metadata and installs deps automatically
+uv run my_script.py</code></pre>
+            </article>
+
+            <!-- PAGE 5: PROJECT STRUCTURE -->
+            <article id="structure" class="page-section hidden">
+                <h1>Python Project Structure</h1>
+                <p>Recommended layouts depending on project type.</p>
+
+                <h3>Application (CLI tool, web app, script collection)</h3>
+                <pre><code class="language-bash">my-app/
+  pyproject.toml
+  uv.lock
+  .python-version
+  .gitignore
+  src/
+    my_app/
+      __init__.py
+      main.py          # Entry point
+      config.py         # Settings / env vars
+      models/
+        __init__.py
+        user.py
+      routes/
+        __init__.py
+        auth.py
+      services/
+        __init__.py
+        email.py
+      utils/
+        __init__.py
+  tests/
+    __init__.py
+    conftest.py        # Shared fixtures
+    test_main.py
+    test_models/
+    test_routes/</code></pre>
+
+                <h3>Library (pip-installable package)</h3>
+                <pre><code class="language-bash">my-lib/
+  pyproject.toml
+  uv.lock
+  .python-version
+  src/
+    my_lib/
+      __init__.py      # Public API + __version__
+      core.py
+      exceptions.py
+      py.typed          # PEP 561 marker for type stubs
+  tests/
+    conftest.py
+    test_core.py</code></pre>
+
+                <h3>pyproject.toml entry points</h3>
+                <pre><code class="language-toml"># CLI entry point
+[project.scripts]
+my-app = "my_app.main:cli"
+
+# For a web app (e.g., FastAPI)
+# No entry point needed — run with: uv run fastapi dev src/my_app/main.py</code></pre>
+
+                <h3>.gitignore essentials</h3>
+                <pre><code class="language-bash"># Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.local</code></pre>
+            </article>
+
+            <!-- PAGE 6: LINTING & FORMATTING WITH RUFF -->
+            <article id="ruff" class="page-section hidden">
+                <h1>Linting & Formatting — Ruff <a class="doc-link" href="https://docs.astral.sh/ruff/"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+                <p>Ruff is an extremely fast Python linter and formatter (also from Astral). It replaces
+                    <code>flake8</code>, <code>isort</code>, <code>black</code>, <code>pyflakes</code>, and many more —
+                    in a single tool.
+                </p>
+
+                <h3>Setup</h3>
+                <pre><code class="language-bash"># Add to dev dependencies
+uv add --group dev ruff
+
+# Or run without installing
+uvx ruff check .
+uvx ruff format .</code></pre>
+
+                <h3>Configuration in pyproject.toml</h3>
+                <pre><code class="language-toml">[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "N",     # pep8-naming
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "SIM",   # flake8-simplify
+    "TCH",   # flake8-type-checking
+]
+ignore = [
+    "E501",  # line too long (formatter handles this)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["my_app"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"</code></pre>
+
+                <h3>Common commands</h3>
+                <pre><code class="language-bash"># Lint
+uv run ruff check .              # Check for issues
+uv run ruff check . --fix        # Auto-fix what it can
+
+# Format
+uv run ruff format .             # Format all files
+uv run ruff format --check .     # Check without changing
+
+# Both in sequence
+uv run ruff check . --fix && uv run ruff format .</code></pre>
+            </article>
+
+            <!-- PAGE 7: TESTING WITH PYTEST -->
+            <article id="testing" class="page-section hidden">
+                <h1>Testing — pytest <a class="doc-link" href="https://docs.pytest.org/en/stable/"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+
+                <h3>Setup</h3>
+                <pre><code class="language-bash"># Add test dependencies
+uv add --group test pytest pytest-cov pytest-asyncio</code></pre>
+
+                <h3>Configuration in pyproject.toml</h3>
+                <pre><code class="language-toml">[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+addopts = "-v --tb=short"
+asyncio_mode = "auto"          # If using pytest-asyncio</code></pre>
+
+                <h3>Running tests</h3>
+                <pre><code class="language-bash"># Run all tests
+uv run pytest
+
+# Run specific file or test
+uv run pytest tests/test_main.py
+uv run pytest tests/test_main.py::test_login
+
+# With coverage
+uv run pytest --cov=src/my_app --cov-report=term-missing
+
+# Run only tests matching a pattern
+uv run pytest -k "auth"
+
+# Stop on first failure
+uv run pytest -x</code></pre>
+
+                <h3>Fixtures (conftest.py)</h3>
+                <pre><code class="language-python"># tests/conftest.py
+import pytest
+from my_app.main import create_app
+
+
+@pytest.fixture
+def app():
+    """Create application for testing."""
+    return create_app(testing=True)
+
+
+@pytest.fixture
+def client(app):
+    """Create test client."""
+    from httpx import AsyncClient, ASGITransport
+    transport = ASGITransport(app=app)
+    return AsyncClient(transport=transport, base_url="http://test")
+
+
+@pytest.fixture
+def sample_user():
+    """Sample user data for tests."""
+    return {
+        "email": "test@example.com",
+        "name": "Test User",
+    }</code></pre>
+
+                <h3>Example test</h3>
+                <pre><code class="language-python"># tests/test_main.py
+import pytest
+
+
+async def test_health_check(client):
+    resp = await client.get("/health")
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "ok"}
+
+
+def test_create_user(sample_user):
+    assert sample_user["email"] == "test@example.com"
+
+
+@pytest.mark.parametrize("input,expected", [
+    ("hello", "HELLO"),
+    ("world", "WORLD"),
+])
+def test_uppercase(input, expected):
+    assert input.upper() == expected</code></pre>
+            </article>
+
+            <!-- PAGE 8: TYPE CHECKING -->
+            <article id="type-checking" class="page-section hidden">
+                <h1>Type Checking — mypy & Pydantic <a class="doc-link" href="https://mypy.readthedocs.io/"
+                        target="_blank"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>Docs</a></h1>
+
+                <h3>mypy setup</h3>
+                <pre><code class="language-bash">uv add --group dev mypy</code></pre>
+
+                <pre><code class="language-toml">[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+plugins = ["pydantic.mypy"]   # If using Pydantic
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false</code></pre>
+
+                <pre><code class="language-bash"># Run type checking
+uv run mypy src/</code></pre>
+
+                <h3>Modern type hints (Python 3.12+)</h3>
+                <pre><code class="language-python"># Use built-in generics — no imports needed
+def get_users() -> list[dict[str, str]]:
+    ...
+
+# Union with | operator
+def find(id: int) -> User | None:
+    ...
+
+# Type aliases with `type` statement (3.12+)
+type UserMap = dict[str, list[User]]
+
+# TypedDict for structured dicts
+from typing import TypedDict
+
+class Config(TypedDict):
+    debug: bool
+    port: int
+    host: str</code></pre>
+
+                <h3>Pydantic for runtime validation</h3>
+                <pre><code class="language-python">from pydantic import BaseModel, EmailStr, Field
+
+
+class UserCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    email: EmailStr
+    age: int = Field(ge=0, le=150)
+
+
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+
+    model_config = {"from_attributes": True}  # Works with ORM objects</code></pre>
+            </article>
+
+            <!-- PAGE 9: COMMON LIBRARIES -->
+            <article id="libraries" class="page-section hidden">
+                <h1>Common Python Libraries</h1>
+                <p>Current, well-maintained libraries for common tasks.</p>
+
+                <h3>Web frameworks</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Library</th>
+                            <th>Use case</th>
+                            <th>Install</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>FastAPI</strong></td>
+                            <td>Async APIs with auto docs</td>
+                            <td><code>uv add fastapi[standard]</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Flask</strong></td>
+                            <td>Simple web apps, microservices</td>
+                            <td><code>uv add flask</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Django</strong></td>
+                            <td>Full-featured web framework</td>
+                            <td><code>uv add django</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>HTTP & APIs</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Library</th>
+                            <th>Use case</th>
+                            <th>Install</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>httpx</strong></td>
+                            <td>Modern HTTP client (sync + async)</td>
+                            <td><code>uv add httpx</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>pydantic</strong></td>
+                            <td>Data validation & settings</td>
+                            <td><code>uv add pydantic</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Database</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Library</th>
+                            <th>Use case</th>
+                            <th>Install</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>SQLAlchemy 2</strong></td>
+                            <td>ORM + raw SQL</td>
+                            <td><code>uv add sqlalchemy</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Alembic</strong></td>
+                            <td>Database migrations</td>
+                            <td><code>uv add alembic</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>asyncpg</strong></td>
+                            <td>Async PostgreSQL driver</td>
+                            <td><code>uv add asyncpg</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>sqlite3</strong></td>
+                            <td>Embedded DB (built-in)</td>
+                            <td>No install needed</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Data & science</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Library</th>
+                            <th>Use case</th>
+                            <th>Install</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>polars</strong></td>
+                            <td>Fast DataFrames (Rust-based)</td>
+                            <td><code>uv add polars</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>pandas</strong></td>
+                            <td>Classic DataFrames</td>
+                            <td><code>uv add pandas</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>CLI tools</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Library</th>
+                            <th>Use case</th>
+                            <th>Install</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>typer</strong></td>
+                            <td>CLI apps (FastAPI-style)</td>
+                            <td><code>uv add typer</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>rich</strong></td>
+                            <td>Beautiful terminal output</td>
+                            <td><code>uv add rich</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>click</strong></td>
+                            <td>CLI framework (lower-level)</td>
+                            <td><code>uv add click</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>AI / Claude</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Library</th>
+                            <th>Use case</th>
+                            <th>Install</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>anthropic</strong></td>
+                            <td>Claude API SDK</td>
+                            <td><code>uv add anthropic</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>claude-agent-sdk</strong></td>
+                            <td>Build Claude agents</td>
+                            <td><code>uv add claude-agent-sdk</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </article>
+
+            <!-- PAGE 10: CLAUDE CODE + PYTHON -->
+            <article id="claude-python" class="page-section hidden">
+                <h1>Claude Code + Python Projects</h1>
+                <p>How to configure Claude Code specifically for Python work.</p>
+
+                <h3>CLAUDE.md for a Python project</h3>
+                <pre><code class="language-yaml"># My Python App
+
+## Overview
+FastAPI service for processing data. Python 3.12, UV for deps.
+
+## Tech Stack
+- Python 3.12 + FastAPI + SQLAlchemy 2
+- PostgreSQL 16 via asyncpg
+- Pydantic v2 for validation
+- Alembic for migrations
+
+## Commands
+uv sync --all-groups       # Install everything
+uv run fastapi dev         # Dev server (auto-reload)
+uv run pytest              # Run tests
+uv run ruff check . --fix  # Lint + fix
+uv run mypy src/           # Type check
+uv run alembic upgrade head  # Run migrations
+
+## Conventions
+- Use async/await for all I/O
+- Type hints on all function signatures
+- Tests in tests/ mirroring src/ structure
+- Pydantic models for all API request/response schemas</code></pre>
+
+                <h3>Useful hooks for Python</h3>
+                <pre><code class="language-json">{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run ruff check --fix $CLAUDE_FILE_PATH && uv run ruff format $CLAUDE_FILE_PATH",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+
+                <h3>Useful skills for Python</h3>
+                <pre><code class="language-yaml">---
+name: new-endpoint
+description: Scaffold a new FastAPI endpoint with tests
+---
+Create a new FastAPI router for the given resource:
+
+1. Create src/my_app/routes/{name}.py with CRUD endpoints
+2. Create tests/test_routes/test_{name}.py with tests
+3. Create src/my_app/models/{name}.py with Pydantic schemas
+4. Register the router in src/my_app/main.py
+5. Run: uv run pytest tests/test_routes/test_{name}.py</code></pre>
+
+                <h3>.claude/rules/ for Python conventions</h3>
+                <pre><code class="language-yaml">---
+paths:
+  - 'src/**/*.py'
+  - 'tests/**/*.py'
+---
+
+# Python Rules
+
+- Use Python 3.12+ features (type aliases, match statements, f-strings)
+- Always use async def for route handlers and database calls
+- Use Pydantic BaseModel, not raw dicts, for structured data
+- Import order: stdlib, third-party, local (Ruff handles this via isort)
+- Tests use pytest fixtures, not setUp/tearDown methods</code></pre>
+            </article>
+
+            <!-- PAGE 11: COMMON WORKFLOWS -->
+            <article id="workflows" class="page-section hidden">
+                <h1>Common Workflows</h1>
+
+                <h3>Start a new FastAPI project from scratch</h3>
+                <pre><code class="language-bash"># 1. Create project
+uv init my-api
+cd my-api
+
+# 2. Pin Python
+uv python pin 3.12
+
+# 3. Add dependencies
+uv add fastapi[standard] sqlalchemy asyncpg pydantic-settings alembic
+uv add --group dev pytest pytest-cov pytest-asyncio ruff mypy httpx
+
+# 4. Create the app
+mkdir -p src/my_api/routes src/my_api/models tests
+
+# 5. Run the dev server
+uv run fastapi dev src/my_api/main.py</code></pre>
+
+                <h3>Start a new CLI tool</h3>
+                <pre><code class="language-bash"># 1. Create project
+uv init my-tool
+cd my-tool
+
+# 2. Add dependencies
+uv add typer rich
+uv add --group dev pytest ruff
+
+# 3. Add entry point to pyproject.toml
+# [project.scripts]
+# my-tool = "my_tool.main:app"
+
+# 4. Run during development
+uv run my-tool --help</code></pre>
+
+                <h3>Add to an existing project (has requirements.txt)</h3>
+                <pre><code class="language-bash"># 1. Init UV in the existing directory
+uv init
+
+# 2. Import existing requirements
+uv add $(cat requirements.txt | grep -v "^#" | grep -v "^$")
+
+# 3. Remove old files (optional)
+rm requirements.txt setup.py setup.cfg
+
+# 4. Sync and verify
+uv sync
+uv run python -c "import my_app; print('OK')"</code></pre>
+
+                <h3>Build & publish a package</h3>
+                <pre><code class="language-bash"># Build the package
+uv build
+
+# Publish to PyPI
+uv publish
+
+# Or publish to a private registry
+uv publish --index-url https://my-registry.com/simple/</code></pre>
+            </article>
+
+            <!-- PAGE 12: QUICK REFERENCE -->
+            <article id="reference" class="page-section hidden">
+                <h1>Quick Reference</h1>
+
+                <h3>UV commands cheat sheet</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>What it does</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>uv init</code></td>
+                            <td>Create new project</td>
+                        </tr>
+                        <tr>
+                            <td><code>uv add pkg</code></td>
+                            <td>Add dependency</td>
+                        </tr>
+                        <tr>
+                            <td><code>uv add --group dev pkg</code></td>
+                            <td>Add dev dependency</td>
+                        </tr>
+                        <tr>
+                            <td><code>uv remove pkg</code></td>
+                            <td>Remove dependency</td>
+                        </tr>
+                        <tr>
+                            <td><code>uv sync</code></td>
+                            <td>Install from lockfile</td>
+                        </tr>
+                        <tr>
+                            <td><code>uv lock --upgrade</code></td>
+                            <td>Update all deps</td>
+                        </tr>
+                        <tr>
+                            <td><code>uv run cmd</code></td>
+                            <td>Run in venv</td>
+                        </tr>
+                        <tr>
+                            <td><code>uvx tool</code></td>
+                            <td>Run tool without install</td>
+                        </tr>
+                        <tr>
+                            <td><code>uv python install 3.12</code></td>
+                            <td>Install Python version</td>
+                        </tr>
+                        <tr>
+                            <td><code>uv python pin 3.12</code></td>
+                            <td>Pin Python for project</td>
+                        </tr>
+                        <tr>
+                            <td><code>uv build</code></td>
+                            <td>Build package</td>
+                        </tr>
+                        <tr>
+                            <td><code>uv publish</code></td>
+                            <td>Publish to PyPI</td>
+                        </tr>
+                        <tr>
+                            <td><code>uv venv</code></td>
+                            <td>Create venv manually</td>
+                        </tr>
+                        <tr>
+                            <td><code>uv self update</code></td>
+                            <td>Update UV itself</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Quality check commands</h3>
+                <pre><code class="language-bash"># Full quality check — run all at once
+uv run ruff check . --fix \
+  && uv run ruff format . \
+  && uv run mypy src/ \
+  && uv run pytest</code></pre>
+
+                <h3>pip equivalents</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Old way (pip)</th>
+                            <th>New way (uv)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>pip install pkg</code></td>
+                            <td><code>uv add pkg</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>pip install -r requirements.txt</code></td>
+                            <td><code>uv sync</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>pip freeze > requirements.txt</code></td>
+                            <td><code>uv lock</code> (auto)</td>
+                        </tr>
+                        <tr>
+                            <td><code>python -m venv .venv</code></td>
+                            <td><code>uv venv</code> (or auto)</td>
+                        </tr>
+                        <tr>
+                            <td><code>source .venv/bin/activate</code></td>
+                            <td><code>uv run ...</code> (no activation needed)</td>
+                        </tr>
+                        <tr>
+                            <td><code>pipx run tool</code></td>
+                            <td><code>uvx tool</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>pyenv install 3.12</code></td>
+                            <td><code>uv python install 3.12</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </article>
+
+            <!-- Navigation Footer -->
+            <div id="nav-footer" class="mt-16 pt-8 border-t border-gray-200 flex justify-between items-center hidden">
+                <button id="btn-prev"
+                    class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-accent flex items-center gap-2 transition-colors">
+                    &larr; <span id="label-prev">Previous</span>
+                </button>
+                <button id="btn-next"
+                    class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-accent flex items-center gap-2 transition-colors">
+                    <span id="label-next">Next</span> &rarr;
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nodes = [
+                { id: 'uv-overview', title: '1. UV Overview' },
+                { id: 'project-setup', title: '2. Project Setup' },
+                { id: 'dependencies', title: '3. Dependencies' },
+                { id: 'running', title: '4. Running Code' },
+                { id: 'structure', title: '5. Project Structure' },
+                { id: 'ruff', title: '6. Linting & Formatting' },
+                { id: 'testing', title: '7. Testing' },
+                { id: 'type-checking', title: '8. Type Checking' },
+                { id: 'libraries', title: '9. Common Libraries' },
+                { id: 'claude-python', title: '10. Claude Code + Python' },
+                { id: 'workflows', title: '11. Common Workflows' },
+                { id: 'reference', title: '12. Quick Reference' }
+            ];
+
+            let currentIndex = 0;
+            const navMenu = document.getElementById('nav-menu');
+            const navFooter = document.getElementById('nav-footer');
+            const btnPrev = document.getElementById('btn-prev');
+            const btnNext = document.getElementById('btn-next');
+            const labelPrev = document.getElementById('label-prev');
+            const labelNext = document.getElementById('label-next');
+            const scrollArea = document.getElementById('main-scroll');
+
+            // Build sidebar nav
+            nodes.forEach((node, index) => {
+                const a = document.createElement('a');
+                a.href = `#${node.id}`;
+                a.className = 'nav-link block px-3 py-2 rounded-md text-sm text-gray-600 mb-1';
+                a.textContent = node.title.replace(/^\d+\.\s*/, '');
+                a.dataset.index = index;
+
+                a.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateTo(index);
+                });
+
+                navMenu.appendChild(a);
+            });
+
+            // Navigation logic
+            function navigateTo(index) {
+                if (index < 0 || index >= nodes.length) return;
+                currentIndex = index;
+                const targetId = nodes[currentIndex].id;
+
+                document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+                document.getElementById(targetId).classList.remove('hidden');
+
+                document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+                navMenu.children[currentIndex].classList.add('active');
+
+                navFooter.classList.remove('hidden');
+
+                if (currentIndex === 0) {
+                    btnPrev.style.visibility = 'hidden';
+                } else {
+                    btnPrev.style.visibility = 'visible';
+                    labelPrev.textContent = nodes[currentIndex - 1].title.replace(/^\d+\.\s*/, '');
+                }
+
+                if (currentIndex === nodes.length - 1) {
+                    btnNext.style.visibility = 'hidden';
+                } else {
+                    btnNext.style.visibility = 'visible';
+                    labelNext.textContent = nodes[currentIndex + 1].title.replace(/^\d+\.\s*/, '');
+                }
+
+                scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+                history.replaceState(null, null, `#${targetId}`);
+            }
+
+            btnPrev.addEventListener('click', () => navigateTo(currentIndex - 1));
+            btnNext.addEventListener('click', () => navigateTo(currentIndex + 1));
+
+            // Copy buttons
+            document.querySelectorAll('pre').forEach(pre => {
+                const btn = document.createElement('button');
+                btn.className = 'copy-btn';
+                btn.textContent = 'Copy';
+                btn.onclick = () => {
+                    const code = pre.querySelector('code').innerText;
+                    const textarea = document.createElement('textarea');
+                    textarea.value = code;
+                    textarea.style.position = 'fixed';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        btn.textContent = 'Copied!';
+                        setTimeout(() => btn.textContent = 'Copy', 2000);
+                    } catch (err) {
+                        btn.textContent = 'Error';
+                    } finally {
+                        document.body.removeChild(textarea);
+                    }
+                };
+                pre.appendChild(btn);
+            });
+
+            // OS Toggle for install page
+            const tabLinux = document.getElementById('tab-linux');
+            const tabWindows = document.getElementById('tab-windows');
+            const installLinux = document.getElementById('install-linux');
+            const installWindows = document.getElementById('install-windows');
+
+            if (tabLinux && tabWindows) {
+                tabLinux.addEventListener('click', () => {
+                    tabLinux.className = 'px-4 py-2 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm transition-all focus:outline-none';
+                    tabWindows.className = 'px-4 py-2 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 transition-all focus:outline-none';
+                    installLinux.classList.remove('hidden');
+                    installWindows.classList.add('hidden');
+                });
+
+                tabWindows.addEventListener('click', () => {
+                    tabWindows.className = 'px-4 py-2 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm transition-all focus:outline-none';
+                    tabLinux.className = 'px-4 py-2 text-sm font-medium rounded-md text-gray-600 hover:text-gray-900 transition-all focus:outline-none';
+                    installWindows.classList.remove('hidden');
+                    installLinux.classList.add('hidden');
+                });
+            }
+
+            // Initial load
+            const hash = window.location.hash.replace('#', '');
+            const initialIndex = nodes.findIndex(n => n.id === hash);
+            navigateTo(initialIndex !== -1 ? initialIndex : 0);
+        });
+    </script>
+</body>
+
+</html>
