@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code — Memory Setup Prompt</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Menlo', 'Monaco', 'Courier New', 'monospace'] },
+                    colors: { accent: '#2563eb', surface: '#fcfcfc' }
+                }
+            }
+        }
+    </script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
+    <style>
+        body { background-color: #f9fafb; }
+
+        pre {
+            border-radius: 8px;
+            margin: 1.5rem 0 !important;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover { background: rgba(255, 255, 255, 0.2); }
+
+        .copy-all-btn {
+            transition: all 0.2s ease;
+        }
+        .copy-all-btn:hover {
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        article p { margin-bottom: 1rem; line-height: 1.7; color: #374151; }
+        article h2 { font-size: 1.5rem; font-weight: 600; color: #111827; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; }
+        article h3 { font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-top: 2rem; margin-bottom: 0.75rem; }
+        article ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; color: #374151; }
+        article li { margin-bottom: 0.5rem; }
+        article code:not([class*="language-"]) { background-color: #f3f4f6; color: #ef4444; padding: 0.2em 0.4em; border-radius: 4px; font-size: 0.85em; font-family: 'Menlo', monospace; }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; font-size: 0.95rem; }
+        th, td { border: 1px solid #e5e7eb; padding: 0.75rem 1rem; text-align: left; }
+        th { background-color: #f9fafb; font-weight: 600; color: #111827; }
+    </style>
+</head>
+
+<body class="antialiased">
+    <div class="max-w-4xl mx-auto p-8 pb-24">
+
+        <!-- Back link -->
+        <a href="index.html" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-accent mb-8 transition-colors">
+            &larr; Back to guides
+        </a>
+
+        <article>
+            <h1 class="text-3xl font-bold text-gray-900 tracking-tight mb-2">Memory Setup Prompt</h1>
+            <p class="text-gray-500 mb-6">Paste this into a Claude Code session to bootstrap the full memory system. Works with any stack.</p>
+
+            <!-- Copy All Button -->
+            <button id="copy-all"
+                class="copy-all-btn inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-white font-medium text-sm rounded-lg mb-8">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                Copy entire prompt
+            </button>
+
+            <h3>How to use</h3>
+            <ol class="list-decimal pl-6 mb-6 text-gray-700 space-y-2">
+                <li>Open a Claude Code session in any project: <code>claude</code></li>
+                <li>Click <strong>Copy entire prompt</strong> above</li>
+                <li>Paste the prompt into the session</li>
+                <li>Claude will run in plan mode, show you what it will do, then execute</li>
+            </ol>
+
+            <div class="border-l-4 border-amber-400 bg-amber-50 p-4 rounded-r-lg mb-8 text-sm text-amber-800">
+                <strong>One-time setup.</strong> You only need to run this once. After that, Claude reads and updates memory automatically each session.
+            </div>
+
+            <h2>The Prompt</h2>
+
+            <!-- The full prompt rendered as a code block -->
+            <div id="prompt-block" class="relative">
+                <pre class="!mt-2"><code class="language-markdown">Set up a structured, persistent memory management system for Claude Code. Run in plan mode, show me the plan, then execute.
+
+## Before starting
+
+Create tasks for each step below using TaskCreate, then mark each in_progress before starting it and completed when done:
+
+1. Create global memory directory structure
+2. Update CLAUDE.md
+3. Initialise project MEMORY.md files
+
+**Rule: if any file already exists and would be modified or removed, use AskUserQuestion first. Show the current content and the proposed change. Do not modify without explicit confirmation.**
+
+---
+
+## 1. Global memory directory structure
+
+Create `~/.claude/memory/` with the following files if they do not already exist:
+
+`~/.claude/memory/memory.md` — the index file:
+
+```
+# Memory Index
+
+Read this file at session start. Load specific topic files only when relevant.
+
+| File | Description | Last updated |
+|------|-------------|--------------|
+| `general.md` | Cross-project conventions and preferences | {today} |
+
+## Cross-Memory Sync Rule
+
+At session start, after reading this file:
+1. Note the Last updated dates in the table above
+2. Check projects.md (if it exists) for active project MEMORY.md paths
+3. If any project MEMORY.md has content worth promoting to a global tools/ or domain/ file, flag it
+4. Update the Last updated date on this file after any changes
+
+## Domain Knowledge Lifecycle
+
+1. Staging — knowledge accumulates in domain/{name}/
+2. Promotion — enough knowledge exists to package as a plugin/skill
+3. Pointer — after promotion, the memory file becomes a pointer to the plugin
+```
+
+`~/.claude/memory/general.md` — the cross-project conventions file:
+
+```
+# General - Cross-Project Conventions
+
+## Writing &amp; Naming Conventions
+
+(Populate as you go — add things like: preferred date formats, naming patterns, style preferences)
+
+## Workflow Preferences
+
+(Populate as you go — add things like: how you prefer to review work, commit message style)
+```
+
+Also create empty directories `~/.claude/memory/tools/` and `~/.claude/memory/domain/` if they do not exist (these fill up over time as you work).
+
+---
+
+## 2. Update CLAUDE.md
+
+If `~/.claude/CLAUDE.md` does not exist, create it as an empty file first.
+
+For each of the sections below, check if the section header already exists in the file. If it does, leave it alone. If it does not, add it:
+
+- New or empty file: add sections at the top
+- File with existing content: add sections after the last existing section
+
+**Section: Memory Management**
+
+```
+## Memory Management
+
+Maintain a structured memory system rooted at .claude/memory/
+
+### Structure
+
+- memory.md — index of all memory files, updated whenever you create or modify one
+- general.md — cross-project facts, preferences, environment setup
+- domain/{topic}.md — domain-specific knowledge (one file per topic)
+- tools/{tool}.md — tool configs, CLI patterns, workarounds
+
+### Rules
+
+1. When you learn something worth remembering, write it to the right file immediately
+2. Keep memory.md as a current index with one-line descriptions
+3. Entries: date, what, why — nothing more
+4. Read memory.md at session start. Load other files only when relevant
+5. If a file doesn't exist yet, create it
+6. Before removing or modifying any existing memory entry, use AskUserQuestion to confirm
+   with the user — show the current content and the proposed change
+
+### Maintenance
+
+When I say "reorganize memory":
+1. Read all memory files
+2. Remove duplicates and outdated entries
+3. Merge entries that belong together
+4. Split files that cover too many topics
+5. Re-sort entries by date within each file
+6. Update memory.md index
+7. Show me a summary of what changed
+```
+
+**Section: Global Memory**
+
+```
+## Global Memory
+
+Read ~/.claude/memory/memory.md at session start. Load specific topic files only when relevant.
+
+Topic files:
+- ~/.claude/memory/general.md — cross-project conventions and preferences
+```
+
+**Section: Global Memory Reference Rule**
+
+```
+## Global Memory Reference Rule
+
+Whenever you work in a project and read (or create) its MEMORY.md, check that it contains a
+## Global Memory section. If it does not, add it near the top, after the H1.
+
+The section must be a SHORT POINTER only. Do NOT duplicate the topic file list into project
+MEMORY.md. The list lives in CLAUDE.md (single source of truth). Project MEMORY.md has a
+200-line budget — use it for project knowledge, not boilerplate.
+
+Canonical template for project MEMORY.md:
+
+## Global Memory
+
+Read ~/.claude/CLAUDE.md for memory rules and topic files.
+
+When a new file is added to ~/.claude/memory/:
+- Add it to the ## Global Memory topic file list in ~/.claude/CLAUDE.md only
+- Do NOT update individual project MEMORY.md files
+```
+
+**Section: Repo Memory Auto-Init**
+
+```
+## Repo Memory Auto-Init
+
+At session start in any project, check for MEMORY.md in the project memory directory
+(~/.claude/projects/{mapped-path}/memory/). If it does not exist, create it:
+
+# {Project Name} - Project Memory
+
+## Global Memory
+
+Read ~/.claude/CLAUDE.md for memory rules and topic files.
+
+## Project Notes
+
+(Populated as you work in this project)
+```
+
+**Section: Domain Knowledge Lifecycle**
+
+```
+## Domain Knowledge Lifecycle
+
+1. Staging — knowledge accumulates in ~/.claude/memory/domain/{name}/
+2. Promotion — enough knowledge exists to package as a plugin/skill
+3. Pointer — after promotion, the memory file becomes a pointer to the plugin;
+   content lives in the plugin
+
+When an update is needed to a promoted domain, note it in the memory file so an issue
+can be created on the plugin repo.
+```
+
+---
+
+## 3. Initialise project MEMORY.md files
+
+Scan `~/.claude/projects/` for existing project directories. For each one:
+
+a) If `memory/MEMORY.md` does not exist: create it with the stub template above (use the directory name as the project name, formatted readably).
+
+b) If `memory/MEMORY.md` exists and contains a ## Global Memory section with a trigger table (a markdown table with Trigger/Load columns): replace that section with the 2-line pointer. Do not modify any other content in the file.
+
+c) If `memory/MEMORY.md` exists with a correct pointer already: leave it alone.</code></pre>
+            </div>
+
+            <h2>What it creates</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Path</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>~/.claude/memory/memory.md</code></td>
+                        <td>Master index — loaded every session, points to topic files</td>
+                    </tr>
+                    <tr>
+                        <td><code>~/.claude/memory/general.md</code></td>
+                        <td>Cross-project conventions and workflow preferences</td>
+                    </tr>
+                    <tr>
+                        <td><code>~/.claude/memory/tools/</code></td>
+                        <td>Tool configs and CLI workarounds (fills over time)</td>
+                    </tr>
+                    <tr>
+                        <td><code>~/.claude/memory/domain/</code></td>
+                        <td>Domain-specific knowledge (fills over time)</td>
+                    </tr>
+                    <tr>
+                        <td><code>~/.claude/CLAUDE.md</code></td>
+                        <td>Updated with memory management rules (5 sections)</td>
+                    </tr>
+                    <tr>
+                        <td><code>~/.claude/projects/*/memory/MEMORY.md</code></td>
+                        <td>Per-project memory stubs with global pointer</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>After setup</h2>
+            <ul>
+                <li>Claude reads <code>memory.md</code> at the start of every session</li>
+                <li>It writes notes to the right topic file as you work</li>
+                <li>Say <strong>"reorganize memory"</strong> to have Claude clean up and deduplicate</li>
+                <li>Domain knowledge graduates from memory files to skills/plugins over time</li>
+            </ul>
+
+        </article>
+    </div>
+
+    <script>
+        // Copy entire prompt (raw markdown, not HTML)
+        document.getElementById('copy-all').addEventListener('click', function () {
+            const codeEl = document.querySelector('#prompt-block code');
+            const text = codeEl.innerText;
+            const btn = this;
+
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy entire prompt';
+                }, 2000);
+            } catch (err) {
+                btn.textContent = 'Error — use Ctrl+C';
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        });
+
+        // Add copy buttons to individual code blocks
+        document.querySelectorAll('pre').forEach(pre => {
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.textContent = 'Copy';
+            btn.onclick = () => {
+                const code = pre.querySelector('code').innerText;
+                const textarea = document.createElement('textarea');
+                textarea.value = code;
+                textarea.style.position = 'fixed';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    btn.textContent = 'Copied!';
+                    setTimeout(() => btn.textContent = 'Copy', 2000);
+                } catch (err) {
+                    btn.textContent = 'Error';
+                } finally {
+                    document.body.removeChild(textarea);
+                }
+            };
+            pre.appendChild(btn);
+        });
+    </script>
+</body>
+
+</html>
