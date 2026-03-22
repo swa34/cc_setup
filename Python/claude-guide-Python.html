@@ -1023,7 +1023,95 @@ paths:
 - Import order: stdlib, third-party, local (Ruff handles this via isort)
 - Tests use pytest fixtures, not setUp/tearDown methods</code></pre>
 
-                <h3>Bootstrap the memory system</h3>
+                <h3>Memory — persistence across sessions</h3>
+                <p>Claude Code has a built-in memory system so it remembers things across conversations.
+                    Memory is <strong>fully automatic</strong> — you don't invoke memory types or manage them manually.
+                    Claude decides on its own when something is worth saving and which type fits best.</p>
+
+                <h4>How it works</h4>
+                <ul>
+                    <li><strong>Auto-memory</strong>: Claude writes notes to
+                        <code>~/.claude/projects/&lt;project&gt;/memory/MEMORY.md</code>
+                    </li>
+                    <li><strong>Global CLAUDE.md</strong>: <code>~/.claude/CLAUDE.md</code> holds rules that apply
+                        everywhere</li>
+                    <li>First 200 lines of <code>MEMORY.md</code> are loaded each session; topic files loaded on demand.</li>
+                    <li>You can also say <strong>"remember that..."</strong> to explicitly ask Claude to save something.</li>
+                </ul>
+
+                <h4>Memory types (automatic — Claude assigns these)</h4>
+                <p>These are categories Claude uses internally when saving notes. You don't pick them —
+                    Claude chooses the right type based on what it learned.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>What Claude saves</th>
+                            <th>When Claude saves it</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>user</strong></td>
+                            <td>Your role, expertise, preferences</td>
+                            <td>When it learns who you are or how you work</td>
+                            <td><em>"Python dev experienced with SQLAlchemy, new to FastAPI dependency injection"</em></td>
+                        </tr>
+                        <tr>
+                            <td><strong>feedback</strong></td>
+                            <td>Corrections and confirmed approaches</td>
+                            <td>When you correct Claude or confirm a non-obvious choice worked</td>
+                            <td><em>"Always use async session.execute(), never session.query() — we're fully async with asyncpg."</em></td>
+                        </tr>
+                        <tr>
+                            <td><strong>project</strong></td>
+                            <td>Ongoing work, decisions, deadlines</td>
+                            <td>When it learns about goals, status, or why a decision was made</td>
+                            <td><em>"Migrating from Flask to FastAPI. Auth middleware port is blocking — due 2026-04-01."</em></td>
+                        </tr>
+                        <tr>
+                            <td><strong>reference</strong></td>
+                            <td>Pointers to external resources</td>
+                            <td>When you mention where info lives outside the codebase</td>
+                            <td><em>"API contract spec lives in Confluence at team.atlassian.net/wiki/api-v2-spec."</em></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>What you do vs. what Claude does</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>You</th>
+                            <th>Claude</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Just work normally — correct mistakes, confirm approaches, mention deadlines</td>
+                            <td>Watches for patterns worth saving and writes them to memory files</td>
+                        </tr>
+                        <tr>
+                            <td>Say <strong>"remember that Alembic autogenerate misses index changes"</strong></td>
+                            <td>Saves it immediately as a <em>feedback</em> memory</td>
+                        </tr>
+                        <tr>
+                            <td>Say <strong>"forget that"</strong> or edit <code>MEMORY.md</code> directly</td>
+                            <td>Removes the entry or defers to your manual edits</td>
+                        </tr>
+                        <tr>
+                            <td>Run <code>/memory</code></td>
+                            <td>Shows all loaded CLAUDE.md and memory files for review</td>
+                        </tr>
+                        <tr>
+                            <td>Say <strong>"reorganize memory"</strong></td>
+                            <td>Deduplicates, merges, and cleans up memory files</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Bootstrap the memory system</h4>
                 <p>Use the <a href="../memory-setup.html" class="text-accent hover:underline font-medium">Memory System Setup prompt</a>
                     to create the full directory structure, global index, CLAUDE.md rules, and per-project stubs in one shot.
                     One-time setup — after that, Claude manages memory automatically.</p>

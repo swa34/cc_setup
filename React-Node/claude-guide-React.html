@@ -477,7 +477,9 @@ paths:
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                         </svg>Docs</a></h1>
-                <p>Claude Code has a built-in memory system so it remembers things across conversations.</p>
+                <p>Claude Code has a built-in memory system so it remembers things across conversations.
+                    Memory is <strong>fully automatic</strong> — you don't invoke memory types or manage them manually.
+                    Claude decides on its own when something is worth saving and which type fits best.</p>
 
                 <h3>How it works</h3>
                 <ul>
@@ -486,49 +488,82 @@ paths:
                     </li>
                     <li><strong>Global CLAUDE.md</strong>: <code>~/.claude/CLAUDE.md</code> holds rules that apply
                         everywhere</li>
-                    <li>First 200 lines of <code>MEMORY.md</code> are loaded each session; topic files loaded on demand.
-                    </li>
+                    <li>First 200 lines of <code>MEMORY.md</code> are loaded each session; topic files loaded on demand.</li>
+                    <li>You can also say <strong>"remember that..."</strong> to explicitly ask Claude to save something.</li>
                 </ul>
 
-                <h3>Memory types</h3>
+                <h3>Memory types (automatic — Claude assigns these)</h3>
+                <p>These are categories Claude uses internally when saving notes. You don't pick them —
+                    Claude chooses the right type based on what it learned. Each type shapes how the
+                    memory is written and when it gets recalled in future sessions.</p>
                 <table>
                     <thead>
                         <tr>
                             <th>Type</th>
-                            <th>What to store</th>
-                            <th>Example</th>
+                            <th>What Claude saves</th>
+                            <th>When Claude saves it</th>
+                            <th>Example (county_cont)</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><strong>user</strong></td>
-                            <td>Role, expertise, preferences</td>
-                            <td>"Senior dev, prefers terse responses"</td>
+                            <td>Your role, expertise, preferences</td>
+                            <td>When it learns who you are or how you work</td>
+                            <td><em>"UGA CAES developer, deep Express/Knex experience, new to AG Grid"</em></td>
                         </tr>
                         <tr>
                             <td><strong>feedback</strong></td>
                             <td>Corrections and confirmed approaches</td>
-                            <td>"Don't mock the database in integration tests"</td>
+                            <td>When you correct Claude or confirm a non-obvious choice worked</td>
+                            <td><em>"Don't mock PostgreSQL in integration tests — use the Docker Compose db service. Mocked tests hid a broken Knex migration last quarter."</em></td>
                         </tr>
                         <tr>
                             <td><strong>project</strong></td>
                             <td>Ongoing work, decisions, deadlines</td>
-                            <td>"Auth rewrite driven by legal compliance"</td>
+                            <td>When it learns about goals, status, or why a decision was made</td>
+                            <td><em>"Inventory module attestation workflow on hold until Julia confirms the signature field requirements — 2026-03-25 deadline."</em></td>
                         </tr>
                         <tr>
                             <td><strong>reference</strong></td>
                             <td>Pointers to external resources</td>
-                            <td>"Pipeline bugs tracked in Linear project INGEST"</td>
+                            <td>When you mention where info lives outside the codebase</td>
+                            <td><em>"Inventory bug reports tracked in the county_cont GitHub Issues board. UGA personnel API docs at caes-api.uga.edu/docs."</em></td>
                         </tr>
                     </tbody>
                 </table>
 
-                <h3>Key rules</h3>
-                <ul>
-                    <li>Run <code>/memory</code> to see all loaded CLAUDE.md and memory files.</li>
-                    <li>Say "reorganize memory" to have Claude clean up and deduplicate.</li>
-                    <li>Before modifying or removing a memory entry, Claude asks for confirmation.</li>
-                </ul>
+                <h3>What you do vs. what Claude does</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>You</th>
+                            <th>Claude</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Just work normally — correct mistakes, confirm approaches, mention deadlines</td>
+                            <td>Watches for patterns worth saving and writes them to memory files</td>
+                        </tr>
+                        <tr>
+                            <td>Say <strong>"remember that funding_source IDs are string slugs, not UUIDs"</strong></td>
+                            <td>Saves it immediately as a <em>feedback</em> memory</td>
+                        </tr>
+                        <tr>
+                            <td>Say <strong>"forget that"</strong> or edit <code>MEMORY.md</code> directly</td>
+                            <td>Removes the entry or defers to your manual edits</td>
+                        </tr>
+                        <tr>
+                            <td>Run <code>/memory</code></td>
+                            <td>Shows all loaded CLAUDE.md and memory files for review</td>
+                        </tr>
+                        <tr>
+                            <td>Say <strong>"reorganize memory"</strong></td>
+                            <td>Deduplicates, merges, and cleans up memory files</td>
+                        </tr>
+                    </tbody>
+                </table>
 
                 <h3>Bootstrap the memory system</h3>
                 <p>Use the <a href="../memory-setup.html" class="text-accent hover:underline font-medium">Memory System Setup prompt</a>
