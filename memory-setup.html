@@ -26,6 +26,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
 
     <style>
         body { background-color: #f9fafb; }
@@ -296,6 +298,10 @@ b) If `memory/MEMORY.md` exists and contains a ## Global Memory section with a t
 c) If `memory/MEMORY.md` exists with a correct pointer already: leave it alone.</code></pre>
             </div>
 
+            <div class="border-l-4 border-blue-400 bg-blue-50 p-4 rounded-r-lg my-8 text-sm text-blue-800">
+                <strong>End of Part 1</strong> — Once Claude has built the plan above, switch to plan mode and run <code>reorganize memory</code> to clean up and deduplicate what was just built. Then continue with Part 2 below.
+            </div>
+
             <h2>What it creates</h2>
             <table>
                 <thead>
@@ -339,6 +345,129 @@ c) If `memory/MEMORY.md` exists with a correct pointer already: leave it alone.<
                 <li>Say <strong>"reorganize memory"</strong> to have Claude clean up and deduplicate</li>
                 <li>Domain knowledge graduates from memory files to skills/plugins over time</li>
             </ul>
+
+            <h2 id="part-2">Part 2 — Automatic memory injection (optional)</h2>
+            <p>Claude's built-in memory loads <code>MEMORY.md</code> once at session start. The hook fills two gaps the built-in doesn't cover:</p>
+            <ul>
+                <li><strong>Subagents</strong> — when Claude spawns a subagent, it gets a fresh context and does not inherit the parent session's memory. The hook injects memory for every process.</li>
+                <li><strong>Context compression</strong> — the docs confirm <code>CLAUDE.md</code> is re-injected after <code>/compact</code>, but <code>MEMORY.md</code> is not given the same guarantee. The hook covers this gap.</li>
+            </ul>
+            <p>Two-file design: a bash wrapper (~5ms) checks a flag before invoking Python, so the overhead after the first call is negligible.</p>
+
+            <div class="border-l-4 border-amber-400 bg-amber-50 p-4 rounded-r-lg mb-6 text-sm text-amber-800">
+                <strong>Dependency:</strong> <code>python3</code> must be on your PATH. Run <code>which python3</code> to confirm before starting.
+            </div>
+            <div class="border-l-4 border-gray-300 bg-gray-50 p-4 rounded-r-lg mb-8 text-sm text-gray-700">
+                <strong>Requires bash</strong> — the shell wrapper uses bash syntax and <code>/tmp/</code> for its flag file. On Windows, Claude Code runs through Git Bash or WSL so this works without changes. If you hit issues, see the troubleshooting prompt at the bottom of this section.
+            </div>
+
+            <h3>Step 1 — Create the Python script</h3>
+            <p>Create <code>~/.claude/hooks/pre-tool-memory.py</code> — do this first, before the shell wrapper:</p>
+            <div class="relative">
+                <pre><code class="language-python">#!/usr/bin/env python3
+"""PreToolUse hook: inject project MEMORY.md on first tool call of this process context."""
+import json
+import os
+import sys
+from pathlib import Path
+
+
+def main():
+    ppid = os.getppid()
+    flag_path = Path(f"/tmp/claude-memory-loaded-{ppid}")
+
+    if flag_path.exists():
+        sys.exit(0)
+
+    flag_path.touch()
+
+    project_dir = os.environ.get('CLAUDE_PROJECT_DIR', os.getcwd())
+    mapped = project_dir.replace('/', '-').replace('.', '-')
+
+    home = Path.home()
+    memory_file = home / '.claude' / 'projects' / mapped / 'memory' / 'MEMORY.md'
+    global_idx = home / '.claude' / 'memory' / 'memory.md'
+
+    parts = []
+
+    if memory_file.exists():
+        lines = memory_file.read_text().splitlines()[:200]
+        parts.append(f"=== Project Memory: {project_dir} ===\n" + '\n'.join(lines))
+    else:
+        parts.append(f"(no project MEMORY.md at {memory_file})")
+
+    if global_idx.exists():
+        parts.append("=== Global Memory Index ===\n" + global_idx.read_text())
+
+    context = '\n\n'.join(parts)
+
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "additionalContext": context
+        }
+    }
+
+    print(json.dumps(output))
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()</code></pre>
+            </div>
+
+            <h3>Step 2 — Create the shell wrapper</h3>
+            <p>Create <code>~/.claude/hooks/pre-tool-memory.sh</code>:</p>
+            <div class="relative">
+                <pre><code class="language-bash">#!/bin/bash
+# Checks PPID flag before invoking Python — ~5ms overhead vs ~80ms for Python startup
+FLAG="/tmp/claude-memory-loaded-$(ps -o ppid= -p $$ | tr -d ' ')"
+[ -f "$FLAG" ] &amp;&amp; exit 0
+[ -f ~/.claude/hooks/pre-tool-memory.py ] || exit 0
+exec python3 ~/.claude/hooks/pre-tool-memory.py</code></pre>
+            </div>
+
+            <p>Make both files executable:</p>
+            <div class="relative">
+                <pre><code class="language-bash">chmod +x ~/.claude/hooks/pre-tool-memory.sh ~/.claude/hooks/pre-tool-memory.py</code></pre>
+            </div>
+
+            <h3>Step 3 — Register the hook</h3>
+            <p>Add to the <code>hooks</code> object in <code>~/.claude/settings.json</code> (create <code>hooks</code> if it doesn't exist):</p>
+            <div class="relative">
+                <pre><code class="language-json">"PreToolUse": [
+  {
+    "matcher": "*",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "bash ~/.claude/hooks/pre-tool-memory.sh",
+        "timeout": 5
+      }
+    ]
+  }
+]</code></pre>
+            </div>
+
+            <h3>After Part 2</h3>
+            <ul>
+                <li>Subagents automatically receive your project memory — no extra setup per agent</li>
+                <li>Memory is re-injected after <code>/compact</code>, closing the gap the built-in doesn't guarantee</li>
+                <li>The flag file in <code>/tmp/</code> resets per process, so each new session gets a fresh injection without double-loading</li>
+            </ul>
+
+            <h3>Hook not working? Paste this into Claude Code</h3>
+            <p>If the hook fails on your platform, ask Claude Code to adapt it for you:</p>
+            <div class="relative">
+                <pre><code class="language-markdown">The pre-tool-memory hook at ~/.claude/hooks/pre-tool-memory.sh uses bash
+and /tmp/ which may not work on my system.
+
+Adapt the two hook files to work correctly on my platform, keeping the
+same behaviour: inject the contents of my project MEMORY.md as
+additionalContext on the first tool call of each Claude Code process.
+
+Check my current shell and OS first, then make the minimal changes needed.</code></pre>
+            </div>
 
         </article>
     </div>

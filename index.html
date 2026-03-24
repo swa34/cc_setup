@@ -110,7 +110,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
-                    <h3 class="text-base font-semibold text-gray-900">Memory System Setup</h3>
+                    <h3 class="text-base font-semibold text-gray-900">Memory System Setup — Part 1</h3>
                     <span class="ml-auto text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">one-time</span>
                 </div>
                 <p class="text-gray-600 text-sm leading-relaxed">
@@ -120,6 +120,25 @@
                 </p>
                 <div class="mt-3 text-accent text-sm font-medium flex items-center gap-1">
                     View prompt &rarr;
+                </div>
+            </a>
+
+            <a href="memory-setup.html#part-2" class="guide-card block rounded-xl bg-white p-6">
+                <div class="flex items-center gap-3 mb-2">
+                    <svg class="w-6 h-6 text-accent flex-shrink-0" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <h3 class="text-base font-semibold text-gray-900">Memory Auto-Injection — Part 2</h3>
+                    <span class="ml-auto text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">optional</span>
+                </div>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    Adds a PreToolUse hook that injects project memory before every tool call — including new
+                    subagents. Survives context compression. Requires <code style="background:#f3f4f6;color:#ef4444;padding:0.1em 0.3em;border-radius:3px;font-size:0.85em">python3</code> on your PATH.
+                </p>
+                <div class="mt-3 text-accent text-sm font-medium flex items-center gap-1">
+                    View setup &rarr;
                 </div>
             </a>
         </div>

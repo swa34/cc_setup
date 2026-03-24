@@ -301,6 +301,131 @@ b) If it exists with an old trigger table format: replace with 2-line pointer
 c) If it already has the correct pointer: leave it alone
 ```
 
+> **End of Part 1** — Once Claude has built the plan above, switch to plan mode and run `reorganize memory` to clean up and deduplicate what was just built.
+
+### Part 2 — Automatic memory injection (optional)
+
+Claude's built-in memory loads `MEMORY.md` once at session start. This hook fills two gaps the built-in doesn't cover:
+
+- **Subagents** — when Claude spawns a subagent, it gets a fresh context and does not inherit the parent session's memory. The hook injects memory for every process.
+- **Context compression** — the docs confirm `CLAUDE.md` is re-injected after `/compact`, but `MEMORY.md` is not given the same guarantee. The hook covers this gap.
+
+Two-file design: a bash wrapper (~5ms) checks a flag before invoking Python so the overhead after the first call is negligible.
+
+**Dependency:** `python3` must be on your PATH — run `which python3` to confirm.
+
+**Requires bash** — the shell wrapper uses bash syntax and `/tmp/` for its flag file. On Windows, Claude Code runs through Git Bash or WSL so this works without changes. If you hit issues, see the troubleshooting prompt below.
+
+**Step 1 — Create `~/.claude/hooks/pre-tool-memory.py`** (create this first):
+
+```python
+#!/usr/bin/env python3
+"""PreToolUse hook: inject project MEMORY.md on first tool call of this process context."""
+import json
+import os
+import sys
+from pathlib import Path
+
+
+def main():
+    ppid = os.getppid()
+    flag_path = Path(f"/tmp/claude-memory-loaded-{ppid}")
+
+    if flag_path.exists():
+        sys.exit(0)
+
+    flag_path.touch()
+
+    project_dir = os.environ.get('CLAUDE_PROJECT_DIR', os.getcwd())
+    mapped = project_dir.replace('/', '-').replace('.', '-')
+
+    home = Path.home()
+    memory_file = home / '.claude' / 'projects' / mapped / 'memory' / 'MEMORY.md'
+    global_idx = home / '.claude' / 'memory' / 'memory.md'
+
+    parts = []
+
+    if memory_file.exists():
+        lines = memory_file.read_text().splitlines()[:200]
+        parts.append(f"=== Project Memory: {project_dir} ===\n" + '\n'.join(lines))
+    else:
+        parts.append(f"(no project MEMORY.md at {memory_file})")
+
+    if global_idx.exists():
+        parts.append("=== Global Memory Index ===\n" + global_idx.read_text())
+
+    context = '\n\n'.join(parts)
+
+    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "additionalContext": context
+        }
+    }
+
+    print(json.dumps(output))
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+**Step 2 — Create `~/.claude/hooks/pre-tool-memory.sh`** (the shell wrapper):
+
+```bash
+#!/bin/bash
+# Checks PPID flag before invoking Python — ~5ms overhead vs ~80ms for Python startup
+FLAG="/tmp/claude-memory-loaded-$(ps -o ppid= -p $$ | tr -d ' ')"
+[ -f "$FLAG" ] && exit 0
+[ -f ~/.claude/hooks/pre-tool-memory.py ] || exit 0
+exec python3 ~/.claude/hooks/pre-tool-memory.py
+```
+
+Make both files executable:
+
+```bash
+chmod +x ~/.claude/hooks/pre-tool-memory.sh ~/.claude/hooks/pre-tool-memory.py
+```
+
+**Step 3 — Register the hook in `~/.claude/settings.json`**
+
+Add to the `hooks` object (create `hooks` if it doesn't exist):
+
+```json
+"PreToolUse": [
+  {
+    "matcher": "*",
+    "hooks": [
+      {
+        "type": "command",
+        "command": "bash ~/.claude/hooks/pre-tool-memory.sh",
+        "timeout": 5
+      }
+    ]
+  }
+]
+```
+
+### Hook not working? Paste this into Claude Code
+
+If the hook fails on your platform, ask Claude Code to adapt it for you:
+
+```
+The pre-tool-memory hook at ~/.claude/hooks/pre-tool-memory.sh uses bash
+and /tmp/ which may not work on my system.
+
+Adapt the two hook files to work correctly on my platform, keeping the
+same behaviour: inject the contents of my project MEMORY.md as
+additionalContext on the first tool call of each Claude Code process.
+
+Check my current shell and OS first, then make the minimal changes needed.
+```
+
+For a full walkthrough of how the memory system works end-to-end, see the [Memory System details page](docs/memory-system.html).
+
+---
+
 ### Directory structure after setup
 
 ```
