@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anatomy of .claude/ — Claude Code Onboarding</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/prism-override.css">
+  <script src="js/theme.js"></script>
+
+  <style>
+    .anatomy-image {
+      display: block;
+      max-width: 100%;
+      width: auto;
+      margin: 1.5rem auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      border: 1px solid var(--border);
+    }
+    .anatomy-image.wide {
+      max-width: 680px;
+    }
+    .anatomy-image.medium {
+      max-width: 520px;
+    }
+    .anatomy-image.small {
+      max-width: 400px;
+    }
+    .file-role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .file-role-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+    }
+    .file-role-card .filename {
+      font-family: monospace;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.4rem;
+    }
+    .file-role-card .role-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .file-role-card .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 20px;
+      margin-top: 0.5rem;
+      font-weight: 600;
+    }
+    .badge.committed { background: #d1fae5; color: #065f46; }
+    .badge.gitignored { background: #fef3c7; color: #92400e; }
+    .badge.global { background: #dbeafe; color: #1e40af; }
+    [data-theme="dark"] .badge.committed { background: #064e3b; color: #6ee7b7; }
+    [data-theme="dark"] .badge.gitignored { background: #78350f; color: #fde68a; }
+    [data-theme="dark"] .badge.global { background: #1e3a5f; color: #93c5fd; }
+    .deep-dive-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+    }
+    .deep-dive-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .deep-dive-link:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .caption {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: -0.75rem;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2.5rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile hamburger -->
+  <button id="mobile-toggle" aria-label="Toggle navigation">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Claude Code Onboarding
+      </div>
+      <div class="sidebar-subtitle">Developer Guide</div>
+      <a href="../index.html" class="sidebar-back">&larr; All guides</a>
+    </div>
+    <nav id="sidebar-nav"><!-- Built by nav.js --></nav>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+    <header class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">
+          <a href="index.html">Docs</a>
+          <span class="sep">/</span>
+          Anatomy of .claude/
+        </div>
+      </div>
+      <div class="page-header-right">
+        <div class="level-filters">
+          <span class="level-filter-label">Show:</span>
+          <button class="level-filter-btn active" data-level="all">All</button>
+          <button class="level-filter-btn" data-level="beginner">Beginner</button>
+          <button class="level-filter-btn" data-level="intermediate">Intermediate</button>
+          <button class="level-filter-btn" data-level="advanced">Advanced</button>
+        </div>
+        <div class="search-container">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="search-input" class="search-input" placeholder="Search docs..." autocomplete="off">
+          <div id="search-results" class="search-results"></div>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-container">
+      <article>
+
+        <h1>Anatomy of the .claude/ Folder</h1>
+        <p class="page-description">The <code>.claude/</code> folder is the control center for how Claude behaves in your project. Every file inside has a specific purpose — this page maps out what lives where and why.</p>
+
+        <!-- Full Tree -->
+        <h2 id="the-full-picture" data-level="beginner">The Full Picture <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>Here's everything that can live inside <code>.claude/</code> — most projects only use a few of these at first:</p>
+
+        <img src="../images/image.jpg" alt="Anatomy of the .claude/ folder — full file tree" class="anatomy-image wide">
+        <p class="caption">The complete .claude/ folder structure. Start with CLAUDE.md and settings.json — add the rest as you need them.</p>
+
+        <hr class="section-divider">
+
+        <!-- Two Folders -->
+        <h2 id="two-folders" data-level="beginner">Project vs. Global <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>There are actually <strong>two</strong> <code>.claude/</code> directories — one for your project, one for you personally:</p>
+
+        <img src="../images/image (1).jpg" alt="Two .claude folders: project-level and global ~/.claude/" class="anatomy-image medium">
+        <p class="caption">Project config is committed to git and shared with your team. Global config is yours alone and loads in every session.</p>
+
+        <div class="file-role-grid">
+          <div class="file-role-card">
+            <div class="filename">your-project/.claude/</div>
+            <div class="role-desc">Team configuration — permissions, commands, rules, agents. Everyone gets the same setup.</div>
+            <span class="badge committed">committed to git</span>
+          </div>
+          <div class="file-role-card">
+            <div class="filename">~/.claude/</div>
+            <div class="role-desc">Your personal preferences — global CLAUDE.md, session history, auto-memory, personal commands.</div>
+            <span class="badge global">machine-local</span>
+          </div>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- CLAUDE.md Loading -->
+        <h2 id="claude-md-loading" data-level="beginner">How CLAUDE.md Loads <span class="level-badge beginner">Beginner</span></h2>
+
+        <p><code>CLAUDE.md</code> is the most important file — it's Claude's instruction manual, loaded at the start of every session. Multiple files can exist at different levels; higher-specificity files win.</p>
+
+        <img src="../images/image (2).jpg" alt="CLAUDE.md loading order diagram" class="anatomy-image medium">
+        <p class="caption">Files load in priority order into the system prompt. More specific locations override broader ones.</p>
+
+        <div class="file-role-grid">
+          <div class="file-role-card">
+            <div class="filename">~/.claude/CLAUDE.md</div>
+            <div class="role-desc">Your global preferences — applies across every project you work in.</div>
+            <span class="badge global">global</span>
+          </div>
+          <div class="file-role-card">
+            <div class="filename">./CLAUDE.md</div>
+            <div class="role-desc">Project root instructions — build commands, architecture, conventions. Commit this.</div>
+            <span class="badge committed">committed</span>
+          </div>
+          <div class="file-role-card">
+            <div class="filename">CLAUDE.local.md</div>
+            <div class="role-desc">Your personal overrides for this project — never committed.</div>
+            <span class="badge gitignored">gitignored</span>
+          </div>
+          <div class="file-role-card">
+            <div class="filename">subdir/CLAUDE.md</div>
+            <div class="role-desc">Subdirectory-specific rules (e.g., a package in a monorepo). Loads on demand.</div>
+            <span class="badge committed">committed</span>
+          </div>
+        </div>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Keep It Under 200 Lines
+          </div>
+          <p>Files longer than ~200 lines start eating too much context, and Claude's instruction adherence drops. Use <code>.claude/rules/</code> for extra instructions that only load when relevant.</p>
+        </div>
+
+        <div class="deep-dive-links">
+          <a href="claude-md.html" class="deep-dive-link">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            CLAUDE.md Best Practices &rarr;
+          </a>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- Commands -->
+        <h2 id="commands-folder" data-level="beginner">The commands/ Folder <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>Every <code>.md</code> file you drop in <code>.claude/commands/</code> becomes a slash command. The file's content becomes the prompt — and you can embed live shell output with <code>!`command`</code> syntax.</p>
+
+        <img src="../images/image (3).jpg" alt="How slash commands work — you write a .md file, Claude Code registers it" class="anatomy-image medium">
+        <p class="caption">A <code>review.md</code> file becomes <code>/project:review</code>. The <code>!</code> syntax runs shell commands and injects their output directly into the prompt.</p>
+
+        <pre><code class="language-bash">.claude/commands/
+├── review.md        →  /project:review
+├── fix-issue.md     →  /project:fix-issue
+└── deploy.md        →  /project:deploy</code></pre>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Personal Commands
+          </div>
+          <p>Commands in <code>.claude/commands/</code> are shared with your team. Put commands in <code>~/.claude/commands/</code> for personal ones available across all projects — they show up as <code>/user:command-name</code>.</p>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- Commands vs Skills -->
+        <h2 id="commands-vs-skills" data-level="intermediate">Commands vs. Skills <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p>Commands and skills look similar but trigger differently. The key distinction:</p>
+
+        <img src="../images/image (4).jpg" alt="Commands vs Skills — commands wait for you, skills act on their own" class="anatomy-image wide">
+        <p class="caption">Commands require you to type a slash command. Skills watch the conversation and invoke themselves when the task matches.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Commands (<code>commands/</code>)</th>
+              <th>Skills (<code>skills/</code>)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Trigger</td>
+              <td>You type <code>/project:name</code></td>
+              <td>Claude recognizes the task automatically</td>
+            </tr>
+            <tr>
+              <td>Structure</td>
+              <td>Single <code>.md</code> file</td>
+              <td>Subdirectory with <code>SKILL.md</code> + supporting files</td>
+            </tr>
+            <tr>
+              <td>Best for</td>
+              <td>Explicit, repeatable workflows you kick off</td>
+              <td>Specialized workflows Claude should invoke proactively</td>
+            </tr>
+            <tr>
+              <td>Shell output</td>
+              <td>Yes, via <code>!`command`</code></td>
+              <td>Yes, via <code>!`command`</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="deep-dive-links">
+          <a href="hooks-skills.html" class="deep-dive-link">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Hooks, Skills &amp; Plugins &rarr;
+          </a>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- Agents -->
+        <h2 id="agents-folder" data-level="advanced">The agents/ Folder <span class="level-badge advanced">Advanced</span></h2>
+
+        <p>For complex tasks, Claude can spawn specialized subagents — each with its own context window, tool restrictions, and system prompt. The main agent delegates and waits for compressed results.</p>
+
+        <img src="../images/image (5).jpg" alt="Subagent diagram — main agent spawns specialized subagents" class="anatomy-image medium">
+        <p class="caption">Subagents run in isolated context windows. The main agent only sees their final compressed output — keeping your main session clean.</p>
+
+        <p>Each agent is a <code>.md</code> file in <code>.claude/agents/</code> with a YAML frontmatter block:</p>
+
+        <pre><code class="language-yaml">---
+name: code-reviewer
+description: Expert code reviewer. Use PROACTIVELY when reviewing PRs or validating implementations before merging.
+model: sonnet
+tools: Read, Grep, Glob
+---
+
+You are a senior code reviewer focused on correctness and maintainability.
+- Flag bugs, not just style issues
+- Suggest specific fixes, not vague improvements
+- Check edge cases and error handling</code></pre>
+
+        <div class="callout info">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Restrict Agent Tools Intentionally
+          </div>
+          <p>The <code>tools</code> field limits what the agent can do. A security auditor only needs <code>Read, Grep, Glob</code> — it has no business writing files. Use <code>model: haiku</code> for focused read-only tasks to save cost.</p>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- settings.json -->
+        <h2 id="settings-json" data-level="intermediate">settings.json — Permissions <span class="level-badge intermediate">Intermediate</span></h2>
+
+        <p><code>.claude/settings.json</code> controls what Claude is and isn't allowed to do without asking. Use an allow list for safe operations, a deny list for hard blocks.</p>
+
+        <pre><code class="language-json">{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Read", "Write", "Edit"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(curl *)",
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
+  }
+}</code></pre>
+
+        <p>Anything not in either list causes Claude to ask before proceeding. Use <code>settings.local.json</code> for personal permission overrides — it's auto-gitignored.</p>
+
+        <div class="deep-dive-links">
+          <a href="security.html" class="deep-dive-link">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            Security &amp; Permissions &rarr;
+          </a>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- Quick Reference -->
+        <h2 id="quick-reference" data-level="beginner">Quick Reference <span class="level-badge beginner">Beginner</span></h2>
+
+        <p>Every file at a glance:</p>
+
+        <div class="file-role-grid">
+          <div class="file-role-card">
+            <div class="filename">CLAUDE.md</div>
+            <div class="role-desc">Team instructions — build commands, conventions, gotchas. Loaded every session.</div>
+            <span class="badge committed">committed</span>
+          </div>
+          <div class="file-role-card">
+            <div class="filename">CLAUDE.local.md</div>
+            <div class="role-desc">Your personal overrides for this project. Never committed.</div>
+            <span class="badge gitignored">gitignored</span>
+          </div>
+          <div class="file-role-card">
+            <div class="filename">.claude/settings.json</div>
+            <div class="role-desc">Allow/deny rules for tools and commands. Shared with team.</div>
+            <span class="badge committed">committed</span>
+          </div>
+          <div class="file-role-card">
+            <div class="filename">.claude/settings.local.json</div>
+            <div class="role-desc">Your personal permission overrides.</div>
+            <span class="badge gitignored">gitignored</span>
+          </div>
+          <div class="file-role-card">
+            <div class="filename">.claude/commands/</div>
+            <div class="role-desc">Custom slash commands — each .md file becomes <code>/project:name</code>.</div>
+            <span class="badge committed">committed</span>
+          </div>
+          <div class="file-role-card">
+            <div class="filename">.claude/rules/</div>
+            <div class="role-desc">Modular instruction files, optionally scoped to file paths. Keeps CLAUDE.md lean.</div>
+            <span class="badge committed">committed</span>
+          </div>
+          <div class="file-role-card">
+            <div class="filename">.claude/skills/</div>
+            <div class="role-desc">Auto-invoked workflows. Each skill is a subdirectory with SKILL.md.</div>
+            <span class="badge committed">committed</span>
+          </div>
+          <div class="file-role-card">
+            <div class="filename">.claude/agents/</div>
+            <div class="role-desc">Specialized subagent personas with their own tools and model settings.</div>
+            <span class="badge committed">committed</span>
+          </div>
+          <div class="file-role-card">
+            <div class="filename">~/.claude/projects/</div>
+            <div class="role-desc">Session history and auto-memory per project. Browse with <code>/memory</code>.</div>
+            <span class="badge global">global</span>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-label">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Where to Start
+          </div>
+          <p>Run <code>/init</code> to generate a starter <code>CLAUDE.md</code>, then add <code>.claude/settings.json</code> with allow/deny rules for your stack. That covers 95% of projects. Add commands, rules, skills, and agents as you identify recurring workflows worth packaging up.</p>
+        </div>
+
+      </article>
+
+      <nav id="page-nav-footer" class="page-nav-footer"><!-- Built by nav.js --></nav>
+
+      <footer class="site-footer">
+        Built for developers using <a href="https://code.claude.com" target="_blank">Claude Code</a> &mdash;
+        <a href="https://code.claude.com/docs" target="_blank">Official Docs</a>
+      </footer>
+    </div>
+  </main>
+
+  <script defer src="js/nav.js"></script>
+  <script defer src="js/tabs.js"></script>
+  <script defer src="js/collapsible.js"></script>
+  <script defer src="js/terminal.js"></script>
+  <script defer src="js/decision-tree.js"></script>
+  <script defer src="js/search.js"></script>
+  <script defer src="js/progress.js"></script>
+</body>
+</html>

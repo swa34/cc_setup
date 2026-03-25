@@ -1,6 +1,7 @@
 (function() {
   var NAV_PAGES = [
     { id: 'getting-started', file: 'index.html', title: 'Getting Started', icon: '&#x1F680;' },
+    { id: 'anatomy', file: 'anatomy.html', title: 'Anatomy of .claude/', icon: '&#x1F5C2;' },
     { id: 'core-workflows', file: 'core-workflows.html', title: 'Core Workflows', icon: '&#x2699;' },
     { id: 'claude-md', file: 'claude-md.html', title: 'CLAUDE.md Best Practices', icon: '&#x1F4DD;' },
     { id: 'token-management', file: 'token-management.html', title: 'Token Management', icon: '&#x1F4CA;' },
